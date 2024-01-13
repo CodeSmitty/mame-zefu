@@ -1,3 +1,3 @@
 class Recipe < ApplicationRecord
-    validates :name, length:{minimum:3, maximum:25}, presense:true
+    validates :name, presence:true, length:{minimum:3, maximum:25}
 end
