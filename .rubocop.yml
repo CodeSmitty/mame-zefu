@@ -1,0 +1,13 @@
+inherit_from: .rubocop_todo.yml
+
+require:
+  - rubocop-capybara
+  - rubocop-rails
+
+AllCops:
+  NewCops: enable
+  Exclude:
+    - 'app/views/**/*'
+    - 'db/**/*'
+    - 'bin/**/*'
+    - 'vendor/bundle/**/*'
