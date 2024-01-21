@@ -6,7 +6,7 @@
     <%= render @recipe %>
     <%= link_to "Edit", edit_recipe_path(@recipe), class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
     <div class="inline-block ml-2">
-      <%= button_to "Delete", recipe_path(@recipe), method: :delete,data:{ turbo_confirm: "Are you sure?" }, class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 font-medium" %>
+      <%= button_to "Delete", recipe_path(@recipe), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 font-medium" %>
     </div>
   </div>
 </div>
