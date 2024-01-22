@@ -1,17 +1,16 @@
 <div id="<%= dom_id recipe %>">
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Name:</strong>
+  <h1 class="my-5 text-2xl">
     <%= recipe.name %>
-  </p>
+  </h1>
 
   <p class="my-5">
     <strong class="block font-medium mb-1">Ingredients:</strong>
-    <%= recipe.ingredients %>
+    <%= simple_format(recipe.ingredients) %>
   </p>
 
   <p class="my-5">
     <strong class="block font-medium mb-1">Directions:</strong>
-    <%= recipe.directions %>
+    <%= simple_format(recipe.directions) %>
   </p>
 
   <% if action_name != "show" %>

@@ -13,3 +13,8 @@
  *= require_tree .
  *= require_self
  */
+
+ .logo-nav{
+    width:3rem;
+    height:3rem;
+ }
