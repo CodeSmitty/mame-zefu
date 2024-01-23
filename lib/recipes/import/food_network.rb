@@ -8,7 +8,7 @@ module Recipes
           .strip
       end
 
-      def recipe_image_url
+      def recipe_image_src
         document
           .css('section.o-RecipeLead img')
           .first

@@ -9,7 +9,7 @@ module Recipes
           .text
       end
 
-      def recipe_image_url
+      def recipe_image_src
         document
           .css('figure.primary-image img')
           .first

@@ -14,7 +14,7 @@
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
         </svg>
     </button>
-    <div class="hidden w-full lg:w-4/12 md:block md:w-auto" id="navbar-default">
+    <div class="hidden w-full lg:w-6/12 md:block md:w-auto" id="navbar-default">
       <ul class="font-medium lg:w-full lg:h-full lg:justify-end text-gray-200 flex flex-col justify-around p-4 md:p-0 mt-4 mr-7 border border-white rounded-lg md:flex-row rtl:space-x-reverse md:mt-0 md:border-0">
         <% if signed_in? %>
           <li>
@@ -39,6 +39,20 @@
                   <span class="block transition-colors duration-300 group-hover:text-transparent">Import</span>
                   <span class="absolute inset-0 text-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 flex items-center">
                     Import
+                  </span>
+                </span>
+              </span>
+              <span class="absolute bottom-0 left-3 right-3 h-0.5 bg-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+            <% end %>
+          </li>
+          <li>
+            <%= link_to archive_upload_recipes_path, class: "group relative block flex items-center mt-3 px-3 text-gray-200" do %>
+              <span class="flex items-center">
+                <%= render_icon "mini/arrow_up_tray", classes: "mx-1 transition-colors duration-300 group-hover:text-secondary" %>
+                <span class="relative overflow-hidden">
+                  <span class="block transition-colors duration-300 group-hover:text-transparent">Upload</span>
+                  <span class="absolute inset-0 text-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 flex items-center">
+                    Upload
                   </span>
                 </span>
               </span>

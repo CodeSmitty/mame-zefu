@@ -47,3 +47,6 @@ node_modules/
 /.env*
 
 /mame-zefu.yaml
+
+# Ignore archive files
+*.zip

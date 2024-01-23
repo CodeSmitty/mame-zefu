@@ -1,11 +1,13 @@
 class Recipe < ApplicationRecord
+  MAX_IMAGE_SIZE = 5.megabytes
+
   validates :name, presence: true
   has_and_belongs_to_many :categories
   belongs_to :user
   has_one_attached :image
-  attr_accessor :image_url
+  attr_accessor :image_src
 
-  before_save :attach_image_from_url, if: -> { image_url.present? && !image.attached? }
+  before_save :attach_image_from_url, if: -> { image_src.present? && !image.attached? }
 
   def category_names
     categories.pluck(:name)
@@ -39,13 +41,22 @@ class Recipe < ApplicationRecord
   private
 
   def attach_image_from_url
-    downloaded_file = Down.download(image_url, max_size: 5.megabytes)
+    return unless url?(image_src)
+
+    downloaded_file = Down.download(image_src, max_size: MAX_IMAGE_SIZE)
     image.attach(
       io: downloaded_file,
-      filename: File.basename(image_url)
+      filename: File.basename(image_src)
     )
   rescue Down::Error => e
     errors.add(:image, "couldn't be downloaded: #{e.message}")
     throw :abort
+  end
+
+  def url?(string)
+    uri = URI.parse(string)
+    uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)
+  rescue URI::InvalidURIError
+    false
   end
 end
