@@ -35,7 +35,7 @@ module Recipes
           .join("\n\n")
       end
 
-      def recipe_image_url
+      def recipe_image_src
         document
           .css('div.photo-dialog__page div#photo-dialog__item_1-0 img')
           .map { |e| e.attr('src').freeze }

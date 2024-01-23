@@ -19,9 +19,9 @@
   <div class="my-5 lg:my-2 basis-full relative w-full lg:w-1/2">
     <% if @recipe.image.attached? %>
       <%= image_tag @recipe.image, class: "preview-image" %>
-    <% elsif @recipe.image_url.present? %>
-      <%= image_tag @recipe.image_url, class: "preview-image" %>
-      <%= form.hidden_field :image_url, value: @recipe.image_url %>
+    <% elsif @recipe.image_src.present? %>
+      <%= image_tag @recipe.image_src, class: "preview-image" %>
+      <%= form.hidden_field :image_src, value: @recipe.image_src %>
     <% end %>
   </div>
 
