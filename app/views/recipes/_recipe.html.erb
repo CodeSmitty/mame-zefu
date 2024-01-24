@@ -4,6 +4,35 @@
   </h1>
 
   <p class="my-5">
+    <strong class="block font-medium mb-1">Yield:</strong>
+    <%= simple_format(recipe.yield) %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Prep Time:</strong>
+    <%= simple_format(recipe.prep_time) %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Cook Time:</strong>
+    <%= simple_format(recipe.cook_time) %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Rating:</strong>
+    <%= recipe.rating %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1"> <%= recipe.is_favorite == true ?   "Favorite: yes"  : " " %></strong>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Description:</strong>
+    <%= simple_format(recipe.description) %>
+  </p>
+
+  <p class="my-5">
     <strong class="block font-medium mb-1">Ingredients:</strong>
     <%= simple_format(recipe.ingredients) %>
   </p>
@@ -11,6 +40,11 @@
   <p class="my-5">
     <strong class="block font-medium mb-1">Directions:</strong>
     <%= simple_format(recipe.directions) %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Notes:</strong>
+    <%= simple_format(recipe.notes) %>
   </p>
 
   <% if action_name != "show" %>

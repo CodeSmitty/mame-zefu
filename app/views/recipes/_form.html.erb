@@ -16,6 +16,38 @@
     <%= form.text_field :name, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
+  <div class="my-5 flex justify-between">
+    <div>
+      <%= form.label :yield %>
+      <%= form.text_field :yield, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+    </div>
+
+    <div>
+      <%= form.label :prep_time %>
+      <%= form.text_field :prep_time, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+    </div>
+
+    <div>
+      <%= form.label :cook_time %>
+      <%= form.text_field :cook_time, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+    </div>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :rating %>
+    <%= form.number_field :rating, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-2/12" %>
+  </div>
+  
+  <div class="my-5">
+    <%= form.label :is_favorite %>
+    <%= form.check_box :is_favorite, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :description %>
+    <%= form.text_area :description, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
   <div class="my-5">
     <%= form.label :ingredients %>
     <%= form.text_area :ingredients, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
@@ -24,6 +56,11 @@
   <div class="my-5">
     <%= form.label :directions %>
     <%= form.text_area :directions, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :notes %>
+    <%= form.text_area :notes, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
   <div class="inline">
