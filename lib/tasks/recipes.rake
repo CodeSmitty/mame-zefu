@@ -10,14 +10,14 @@ namespace :recipes do
 
     document.css('.recipe-details').each do |doc|
       Recipe.find_or_initialize_by(name: doc.css('[itemprop="name"]').text).tap do |r|
-        puts doc.css('[itemprop="recipeYield"]').text
-        puts doc.css('[itemprop="prepTime"]').xpath('preceding-sibling::span').text
-        puts doc.css('[itemprop="cookTime"]').xpath('preceding-sibling::span').text
+        r.yield = doc.css('[itemprop="recipeYield"]').text
+        r.prep_time = doc.css('[itemprop="prepTime"]').xpath('preceding-sibling::span').text
+        r.cook_time = doc.css('[itemprop="cookTime"]').xpath('preceding-sibling::span').text
         r.ingredients = doc.css('[itemprop="recipeIngredients"]').text.gsub(/\A\s+|\s+\Z/, '').gsub(/^ +| +$/, '')
         r.directions = doc.css('[itemprop="recipeDirections"]').text.gsub(/\A\s+|\s+\Z/, '').gsub(/^ +| +$/, '')
-        puts doc.css('[itemprop="recipeNotes"]').text.gsub(/\A\s+|\s+\Z/, '').gsub(/^ +| +$/, '')
-        puts doc.css('[itemprop="recipeRating"]').attribute('content')
-        puts doc.css('[itemprop="recipeIsFavourite"]').attribute('content')
+        r.notes = doc.css('[itemprop="recipeNotes"]').text.gsub(/\A\s+|\s+\Z/, '').gsub(/^ +| +$/, '')
+        r.rating = doc.css('[itemprop="recipeRating"]').attribute('content').to_s
+        r.is_favorite = doc.css('[itemprop="recipeIsFavourite"]').attribute('content').to_s == 'True'
         doc.css('[itemprop="recipeCourse"]').each do |elem|
           puts elem.attribute('content')
         end
