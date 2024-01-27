@@ -1,55 +1,38 @@
 <div id="<%= dom_id recipe %>">
-  <h1 class="my-5 text-2xl">
-    <%= recipe.name %>
+  <h1 class="pt-6 flex flex-row flex-nowrap basis-1">
+    <strong class="text-3xl font-small"><%= recipe.name %></strong>
+    <% if recipe.is_favorite? %>
+          <%= render "icons/mini/heart", class: "basis-2" %>
+    <% end %> 
   </h1>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Yield:</strong>
-    <%= simple_format(recipe.yield) %>
-  </p>
+  <% if recipe.rating.present? %>
+    <div class="mb-5 flex flex-row flex-nowrap justify-between w-1/5 basis-2">
+      <div class="flex flex-row">
+        <% recipe.rating.to_i.times do %>
+          <svg class="w-4 h-4 text-yellow-300 ms-1 mt-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
+          </svg>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Prep Time:</strong>
-    <%= simple_format(recipe.prep_time) %>
-  </p>
+  <div class="flex flex-row flex-nowrap justify-between w-100">
+    <div class="flex flex-row flex-nowrap justify-between w-100">
+      <% %W[yield prep_time cook_time].each do |field| %>
+        <%= render partial: "recipes/helpers/prep", locals: { value: recipe.send(field), label: field.titleize }, class: "text-center" %>
+      <% end %>
+    </div>
+  </div>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Cook Time:</strong>
-    <%= simple_format(recipe.cook_time) %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Rating:</strong>
-    <%= recipe.rating %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1"> <%= recipe.is_favorite ? "Favorite: yes" : "" %></strong>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Description:</strong>
-    <%= simple_format(recipe.description) %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Ingredients:</strong>
-    <%= simple_format(recipe.ingredients) %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Directions:</strong>
-    <%= simple_format(recipe.directions) %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Notes:</strong>
-    <%= simple_format(recipe.notes) %>
-  </p>
-
+  <% %W[description ingredients directions notes].each do |field| %>
+    <%= render partial: "recipes/helpers/fields", locals: { value: recipe.send(field), label: field.titleize }, class: "text-center" %>
+  <% end %>
+   
   <% if action_name != "show" %>
-    <%= link_to "Show this recipe", recipe, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <%= link_to "Edit this recipe", edit_recipe_path(recipe), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
+    <%= link_to "Show this recipe", recipe, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-small" %>
+    <%= link_to "Edit this recipe", edit_recipe_path(recipe), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-small" %>
     <hr class="mt-6">
   <% end %>
 </div>

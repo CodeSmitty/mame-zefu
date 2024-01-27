@@ -33,14 +33,19 @@
     </div>
   </div>
 
-  <div class="my-5">
-    <%= form.label :rating %>
-    <%= form.number_field :rating, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-2/12" %>
+  <div class="flex flex-row flex-nowrap justify-between">
+    <%= form.label :rating, class:"mt-2" %>
+    <div class="rating mx-auto px-2">
+      <%= form.collection_radio_buttons(:rating, [[5],[4],[3],[2],[1]], :first, :last) do |star| %>
+        <%= star.radio_button %>
+        <%= star.label(class: "text-white") %>
+      <% end %>
+    </div>
   </div>
   
-  <div class="my-5">
-    <%= form.label :is_favorite %>
-    <%= form.check_box :is_favorite, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2" %>
+  <div class="my-5 flex flex-row justify-between w-1/6">
+    <%= form.label "#{:is_favorite}?" %>
+    <%= form.check_box :is_favorite, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-2 py-2 mt-1" %>
   </div>
 
   <div class="my-5">
@@ -50,12 +55,12 @@
 
   <div class="my-5">
     <%= form.label :ingredients %>
-    <%= form.text_area :ingredients, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+    <%= form.text_area :ingredients, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full h-60" %>
   </div>
 
   <div class="my-5">
     <%= form.label :directions %>
-    <%= form.text_area :directions, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+    <%= form.text_area :directions, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full h-60" %>
   </div>
 
   <div class="my-5">
