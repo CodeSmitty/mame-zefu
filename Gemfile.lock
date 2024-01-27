@@ -222,7 +222,6 @@ GEM
       rubocop-ast (>= 1.30.0, < 2.0)
     ruby-progressbar (1.13.0)
     rubyzip (2.3.2)
-    rufo (0.16.2)
     selenium-webdriver (4.16.0)
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
@@ -279,7 +278,6 @@ DEPENDENCIES
   rubocop
   rubocop-capybara
   rubocop-rails
-  rufo
   selenium-webdriver
   shoulda-matchers (~> 6.0)
   sprockets-rails
