@@ -3,7 +3,8 @@ class CategoriesController < ApplicationController
 
   # GET /categorys or /categorys.json
   def index
-    @categorys = Category.all.sorted
+    @categories = Category.all
+    @category = Category.all.by_name
   end
 
   # GET /categorys/1 or /categorys/1.json

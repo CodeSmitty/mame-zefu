@@ -1,0 +1,11 @@
+<%= form_with(model: @category, class: "contents") do |form| %>
+
+    <datalist id="categories">
+        <% Category.all.each do |c| %>
+            <option> <%= c.name %> </option>
+        <% end %>
+    </datalist>
+
+   <%= form.text_field 'categories', list:"categories" %>
+   <%= form.submit 'save' %>
+<% end %>

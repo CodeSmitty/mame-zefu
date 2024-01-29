@@ -48,6 +48,15 @@
     <%= form.check_box :is_favorite, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-2 py-2 mt-1" %>
   </div>
 
+   <%# <input class='form-control' list='categories' id='category_name' name='recipe[name]' value='<%= @category %> 
+  <datalist id="categories">
+        <% Category.all.each do |c| %>
+            <option> <%= c.name %> </option>
+        <% end %>
+    </datalist>
+
+   <%= form.text_field 'categories[name]', list:"categories" %>
+
   <div class="my-5">
     <%= form.label :description %>
     <%= form.text_area :description, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
