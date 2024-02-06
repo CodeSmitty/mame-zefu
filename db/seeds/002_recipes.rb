@@ -12,6 +12,7 @@ recipes_data = [
     notes: "You can add Parmesan cheese on top for extra flavor.",
     rating: 4.5,
     is_favorite: true,
+    categories: ["Main" "Pasta" "Fruit"]
   },
   {
     name: "Chicken Stir-Fry",
@@ -24,6 +25,7 @@ recipes_data = [
     notes: "Feel free to customize with your favorite veggies.",
     rating: 4.0,
     is_favorite: false,
+    categories: %w[Poultry Main]
   },
   {
     name: "Vegetarian Pizza",
@@ -36,6 +38,7 @@ recipes_data = [
     notes: "Experiment with different vegetable combinations.",
     rating: 4.2,
     is_favorite: true,
+    categories: %w[Vegetable Main]
   },
   {
     name: "Beef Tacos",
@@ -48,6 +51,7 @@ recipes_data = [
     notes: "Add your favorite salsa for extra flavor.",
     rating: 4.3,
     is_favorite: true,
+    categories: %w[Beef Main]
   },
   {
     name: "Pasta Primavera",
@@ -60,6 +64,7 @@ recipes_data = [
     notes: "Use whole wheat pasta for a healthier option.",
     rating: 4.1,
     is_favorite: false,
+    categories: %w[Pasta Main]
   },
   {
     name: "Grilled Salmon",
@@ -72,6 +77,7 @@ recipes_data = [
     notes: "Pair with a side of roasted vegetables.",
     rating: 4.4,
     is_favorite: true,
+    categories: %w[Seafood Main]
   },
   {
     name: "Mushroom Risotto",
@@ -84,6 +90,7 @@ recipes_data = [
     notes: "Stir continuously for a perfect risotto consistency.",
     rating: 4.6,
     is_favorite: true,
+    categories: %w[Appetizer Main]
   },
   {
     name: "Homemade Lasagna",
@@ -96,6 +103,7 @@ recipes_data = [
     notes: "Let it rest for 10 minutes before serving for easier slicing.",
     rating: 4.7,
     is_favorite: true,
+    categories: %w[Pasta Main]
   },
   {
     name: "Shrimp Scampi",
@@ -108,6 +116,7 @@ recipes_data = [
     notes: "Serve with a sprinkle of Parmesan cheese.",
     rating: 4.5,
     is_favorite: false,
+    categories: %w[Pasta Seafood Main]
   },
   {
     name: "Caprese Salad",
@@ -120,6 +129,7 @@ recipes_data = [
     notes: "Use high-quality balsamic glaze for the best flavor.",
     rating: 4.4,
     is_favorite: true,
+    categories: %w[Salad Appetizer]
   },
   {
     name: "Vegetable Curry",
@@ -132,6 +142,7 @@ recipes_data = [
     notes: "Serve over rice or with naan bread.",
     rating: 4.2,
     is_favorite: false,
+    categories: %w[Vegetable Main]
   },
   {
     name: "Homemade Macaroni and Cheese",
@@ -144,6 +155,7 @@ recipes_data = [
     notes: "Bake with breadcrumbs for a crunchy topping.",
     rating: 4.6,
     is_favorite: true,
+    categories: %w[Pasta Main]
   },
   {
     name: "Lemon Garlic Roast Chicken",
@@ -156,6 +168,7 @@ recipes_data = [
     notes: "Let the chicken rest before carving for best results.",
     rating: 4.7,
     is_favorite: true,
+    categories: %w[Poultry Main]
   },
   {
     name: "Quinoa Salad",
@@ -168,11 +181,18 @@ recipes_data = [
     notes: "Add grilled chicken for a protein boost.",
     rating: 4.2,
     is_favorite: false,
+    categories: %w[Salad Appetizer Side]
   },
 ]
 
 recipes_data.each do |recipe_data|
-  Recipe.find_or_initialize_by(name: recipe_data[:name]).update(recipe_data)
+  recipe = Recipe.find_or_initialize_by(name: recipe_data[:name])
+  categories = recipe_data.delete(:categories) { [] }
+  recipe.category_ids = Category.where(name: categories).pluck(:id)
+
+  recipe.update(recipe_data)
 end
+
+
 
 puts "Seed data for recipes created successfully!"

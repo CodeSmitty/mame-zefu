@@ -9,5 +9,6 @@ class Categories < ActiveRecord::Migration[7.0]
       t.index :recipe_id
       t.index :category_id
     end
+     add_index :categories_recipes, [:category_id, :recipe_id], unique: true
   end
 end

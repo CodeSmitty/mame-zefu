@@ -22,7 +22,7 @@ class RecipesController < ApplicationController
     @recipe = Recipe.new(recipe_params)
 
     respond_to do |format|
-      if @recipe.save
+      if @recipe.save_categories
         format.html { redirect_to recipe_url(@recipe), notice: 'Recipe was successfully created.' }
         format.json { render :show, status: :created, location: @recipe }
       else
@@ -64,6 +64,6 @@ class RecipesController < ApplicationController
   # Only allow a list of trusted parameters through.
   def recipe_params
     params.require(:recipe).permit(:name, :ingredients, :directions, :yield, :prep_time, :cook_time, :description,
-                                   :rating, :is_favorite, :notes)
+                                   :rating, :is_favorite, :notes, :category_ids, :categories)
   end
 end

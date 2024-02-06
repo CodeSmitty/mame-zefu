@@ -26,6 +26,11 @@
     </div>
   </div>
 
+  <% recipe.categories.each do |c| %>
+    <h2><%= c.name %>,</h2>
+  <% end %>
+  
+
   <% %W[description ingredients directions notes].each do |field| %>
     <%= render partial: "recipes/helpers/fields", locals: { value: recipe.send(field), label: field.titleize }, class: "text-center" %>
   <% end %>

@@ -24,6 +24,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_24_135559) do
   create_table "categories_recipes", id: false, force: :cascade do |t|
     t.bigint "recipe_id", null: false
     t.bigint "category_id", null: false
+    t.index ["category_id", "recipe_id"], name: "index_categories_recipes_on_category_id_and_recipe_id", unique: true
     t.index ["category_id"], name: "index_categories_recipes_on_category_id"
     t.index ["recipe_id"], name: "index_categories_recipes_on_recipe_id"
   end
