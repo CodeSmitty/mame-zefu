@@ -51,12 +51,11 @@
     
   <datalist id="categories">
     <% Category.all.each do |c| %>
-        <option> <%= c.name %> </option>
+        <option><%= c.name %></option>
     <% end %>
   </datalist>
  
-     <%= form.text_field ":categories", value: "", list: "categories", placeholder: "Enter categories, seperated by commas" %>  
- 
+  <%= form.text_field :category_names, value: recipe.category_names.join(', '), list: "categories", placeholder: "Enter categories, seperated by commas" %>  
 
   <div class="my-5">
     <%= form.label :description %>
