@@ -63,24 +63,7 @@ class RecipesController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def recipe_params
-    params.require(:recipe).permit(recipe_fields).tap do |p|
-      p['category_names'] = p.fetch('category_names', '').split(',').map(&:strip)
-    end
-  end
-
-  def recipe_fields # rubocop:disable Metrics/MethodLength
-    %i[
-      category_names
-      cook_time
-      description
-      directions
-      ingredients
-      is_favorite
-      name
-      notes
-      prep_time
-      rating
-      yield
-    ]
+    params.require(:recipe).permit(:name, :ingredients, :directions, :yield, :prep_time, :cook_time, :description,
+                                   :rating, :is_favorite, :notes, category_names: [])
   end
 end

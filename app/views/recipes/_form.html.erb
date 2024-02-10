@@ -48,14 +48,7 @@
     <%= form.check_box :is_favorite, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-2 py-2 mt-1" %>
   </div>
 
-    
-  <datalist id="categories">
-    <% Category.all.each do |c| %>
-        <option><%= c.name %></option>
-    <% end %>
-  </datalist>
- 
-  <%= form.text_field :category_names, value: recipe.category_names.join(', '), list: "categories", placeholder: "Enter categories, seperated by commas" %>  
+  <%= form.collection_select :category_names, Category.all, :name, :name, {}, { id: 'select-categories', multiple: true } %>
 
   <div class="my-5">
     <%= form.label :description %>
