@@ -48,7 +48,10 @@
     <%= form.check_box :is_favorite, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-2 py-2 mt-1" %>
   </div>
 
-  <%= form.collection_select :category_names, Category.all, :name, :name, {}, { id: 'select-categories', multiple: true } %>
+  <div class="my-5">
+    <%= form.label :category_names, "Categories" %>
+    <%= form.collection_select :category_names, Category.all, :name, :name, {}, { data: { controller: "tom-select" }, multiple: true } %>
+  </div>
 
   <div class="my-5">
     <%= form.label :description %>
