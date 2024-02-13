@@ -14,16 +14,7 @@
  *= require_self
  */
 
- .image-logo{
-    width:10rem;
-    height:5rem;
- }
-
- .nav-bar{
-  background-color:#013229;
- }
-
-  .rating {
+.rating {
   display: flex;
   width: 100%;
   justify-content: left;
