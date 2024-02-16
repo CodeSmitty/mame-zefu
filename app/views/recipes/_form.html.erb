@@ -69,6 +69,8 @@
   </div>
 
   <div class="inline">
-    <%= form.submit "Save", class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+    <%= button_tag( class: "inline-flex items-center rounded-lg py-2 px-3 bg-teal-900 hover:bg-white text-white hover:text-teal-900 border border-teal-900 inline-block font-medium cursor-pointer") do %>
+      <%= render partial: "icons/micro/document_check", locals: { style: "me-1" } %> Save
+    <% end %>
   </div>
 <% end %>
