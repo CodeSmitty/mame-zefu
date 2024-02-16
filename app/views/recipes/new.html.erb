@@ -1,7 +1,9 @@
 <div class="mx-auto md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl pt-6">New Recipe</h1>
+  <h1 class="font-bold text-4xl">New Recipe</h1>
 
   <%= render "form", recipe: @recipe %>
 
-  <%= link_to "Cancel", recipes_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+  <%= link_to recipes_path, class: "inline-flex items-center ml-2 rounded-lg py-2 px-3 inline-block font-medium text-teal-900 hover:text-white border border-teal-900 hover:bg-teal-900" do %>
+    <%= render partial: "icons/micro/arrow_uturn_left", locals: { style: "me-1" } %> Cancel
+  <% end %>
 </div>
