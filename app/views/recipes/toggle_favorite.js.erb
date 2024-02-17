@@ -1,0 +1,8 @@
+
+<% if @recipe.is_favorite == true %>
+
+    document.findElementsByClassNames(".recipe-<%= @recipe.id %> > a").html('is_favorite').removeClass('btn-warning').addClass('btn-success')
+<% else %>
+    document.findElementsByClassNames(".recipe-<%= @recipe.id %> > a").html('Disabled').removeClass('btn-success').addClass('btn-warning')
+<% end %>
+    document.findElementsByClassNames("#recipe-status-<%= @recipe.id %>").html("<%= @recipe.is_favorite %>")

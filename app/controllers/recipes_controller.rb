@@ -1,5 +1,5 @@
 class RecipesController < ApplicationController
-  before_action :set_recipe, only: %i[show edit update destroy]
+  before_action :set_recipe, only: %i[show edit update destroy toggle_favorite]
 
   # GET /recipes or /recipes.json
   def index
@@ -52,6 +52,10 @@ class RecipesController < ApplicationController
       format.html { redirect_to recipes_url, notice: 'Recipe was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+
+  def toggle_favorite
+    @recipe.toggle!(:is_favorite)
   end
 
   private
