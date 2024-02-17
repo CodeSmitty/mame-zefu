@@ -1,10 +1,21 @@
 <div id="<%= dom_id recipe %>">
   <h1 class="flex flex-row flex-nowrap">
     <strong class="text-3xl font-small"><%= recipe.name %></strong>
+    <td class="recipe-<%= recipe.id %>"> 
     <% if recipe.is_favorite? %>
-      <%= render partial: "icons/mini/heart", locals: { style: "text-rose-600" } %>
-    <% end %> 
+      <%= button_to toggle_favorite_recipe_path(recipe), method: :post, remote: :true, class: "btn btn-xs btn-#{ recipe.is_favorite ? 'success' : 'warning' } text-rose-600"  do %>
+        <%= render "icons/mini/heart" %>
+      <% end %>
+    <% else %>
+      <%= button_to toggle_favorite_recipe_path(recipe), method: :post, remote: :true, class: "btn btn-xs btn-#{ recipe.is_favorite ? 'success' : 'warning' } text-black"  do %>
+        <%= render "icons/mini/empty_heart" %>
+      <% end %>
+    <% end %>   
+  </td>
   </h1>
+
+  
+
 
   <% if recipe.rating.present? %>
     <div class="mb-5 flex flex-row flex-nowrap justify-between w-1/5">

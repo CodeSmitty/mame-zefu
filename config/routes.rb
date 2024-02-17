@@ -4,4 +4,9 @@ Rails.application.routes.draw do
 
   root 'recipes#index'
   get 'categories', to: 'categories#create'
+  resources :recipes do
+    member do
+      post :toggle_favorite
+    end
+  end
 end
