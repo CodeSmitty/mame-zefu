@@ -12,7 +12,7 @@ recipes_data = [
     notes: "You can add Parmesan cheese on top for extra flavor.",
     rating: 4.5,
     is_favorite: true,
-    categories: ["Main" "Pasta" "Fruit"]
+    categories: %w[Main Pasta Fruit]
   },
   {
     name: "Chicken Stir-Fry",
