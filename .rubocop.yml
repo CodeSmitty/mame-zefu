@@ -11,3 +11,15 @@ AllCops:
     - 'db/**/*'
     - 'bin/**/*'
     - 'vendor/bundle/**/*'
+
+Rails/HasAndBelongsToMany:
+  Enabled: false
+
+Rails/I18nLocaleTexts:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
