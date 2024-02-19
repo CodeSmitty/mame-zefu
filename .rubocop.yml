@@ -12,6 +12,11 @@ AllCops:
     - 'bin/**/*'
     - 'vendor/bundle/**/*'
 
+Metrics/BlockLength:
+  Enable: true
+  Exclude:
+    - spec/**/*
+
 Rails/HasAndBelongsToMany:
   Enabled: false
 
