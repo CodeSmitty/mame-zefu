@@ -14,6 +14,15 @@
   </td>
   </h1>
 
+  <td class="recipe-<%= recipe.id %>"> 
+      <%= button_to toggle_favorite_recipe_path(recipe), id: recipe.id, data:{ controller: "toggle-favorite", value: recipe.is_favorite }, remote: :true, class: "btn btn-xs btn-#{ recipe.is_favorite ? 'success' : 'warning' } text-rose-600" do %>
+        <%= render "icons/mini/#{recipe.is_favorite ? 'heart' : 'empty_heart'}" %>
+      <% end %>   
+  </td>
+
+ 
+
+
   
 
 
