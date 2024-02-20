@@ -184,7 +184,13 @@ recipes_data = [
 ]
 
 recipes_data.each do |recipe_data|
-  Recipe.find_or_initialize_by(name: recipe_data[:name]).update(recipe_data)
+  recipe = Recipe.find_or_initialize_by(name: recipe_data[:name])
+  categories = recipe_data.delete(:categories) { [] }
+  recipe.category_ids = Category.where(name: categories).pluck(:id)
+
+  recipe.update(recipe_data)
 end
+
+
 
 puts "Seed data for recipes created successfully!"

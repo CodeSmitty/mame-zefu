@@ -29,23 +29,6 @@ Layout/SpaceInsidePercentLiteralDelimiters:
   Exclude:
     - 'Gemfile'
 
-# Offense count: 3
-Rails/I18nLocaleTexts:
-  Exclude:
-    - 'app/controllers/recipes_controller.rb'
-
-# Offense count: 7
-# Configuration parameters: AllowedConstants.
-Style/Documentation:
-  Enabled: false
-
-# Offense count: 30
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: always, always_true, never
-Style/FrozenStringLiteralComment:
-  Enabled: false
-
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
 Style/GlobalStdStream:
