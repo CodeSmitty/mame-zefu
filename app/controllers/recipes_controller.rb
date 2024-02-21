@@ -56,6 +56,7 @@ class RecipesController < ApplicationController
 
   def toggle_favorite
     @recipe.toggle!(:is_favorite)
+    render json: { is_favorite: @recipe.is_favorite }
   end
 
   private
