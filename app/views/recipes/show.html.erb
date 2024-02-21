@@ -3,7 +3,9 @@
     <% if notice.present? %>
       <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
     <% end %>
+
     <%= render @recipe %>
+    
     <%= link_to edit_recipe_path(@recipe), class: "inline-flex items-center mt-2 rounded-lg py-2 px-3 inline-block font-medium text-teal-900 hover:text-white border border-teal-900 hover:bg-teal-900" do %>
       <%= render partial: "icons/micro/pencil_square", locals: { style: "me-1" } %> Edit
     <% end %>

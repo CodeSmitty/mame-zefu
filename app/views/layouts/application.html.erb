@@ -10,11 +10,11 @@
     <%= stylesheet_link_tag "https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.3.1/css/tom-select.min.css" %>
     <%= javascript_importmap_tags %>
   </head>
-  <header>
-    <%= render "layouts/navigation"%>
-  </header>
   <body class="bg-gray-50">
-    <main class="container mx-auto mt-28 px-5 flex">
+    <header>
+      <%= render "layouts/navigation"%>
+    </header>
+    <main class="container mx-auto mt-32 mb-16 px-5 flex">
       <%= yield %>
     </main>
   </body>

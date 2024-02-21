@@ -2,3 +2,4 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 import 'tom-select'
+import 'flowbite'

@@ -1,42 +1,31 @@
 <div id="<%= dom_id recipe %>">
+    <% if recipe.rating.present? %>
+      <div class="mb-2 flex flex-row flex-nowrap justify-between w-1/5">
+        <div class="flex flex-row">
+          <% recipe.rating.to_i.times do %>
+            <%= render partial: "icons/mini/star", locals: { style: "text-yellow-300" } %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
   <h1 class="flex flex-row flex-nowrap">
     <strong class="text-3xl font-small"><%= recipe.name %></strong>
-    <td class="recipe-<%= recipe.id %>"> 
+    <td class="recipe-<%= recipe.id %>">
+    <button 
+      type="button" 
+      class="btn btn-xs btn-toggle-favorite text-black" 
+      data-controller="toggle-favorite" 
+      data-toggle-favorite-url="<%= toggle_favorite_recipe_path(recipe) %>" 
+      data-toggle-favorite-target="button"
+      data-is-favorite="<% recipe.is_favorite %>" >
+        <%= render "icons/mini/#{recipe.is_favorite ? 'heart' : 'empty_heart'}" %>
+    </button>
+  </td>
   </h1>
-
-<td class="recipe-<%= recipe.id %>">
-  <button 
-    type="button" 
-    class="btn btn-xs btn-toggle-favorite text-black" 
-    data-controller="toggle-favorite" 
-    data-toggle-favorite-url="<%= toggle_favorite_recipe_path(recipe) %>" 
-    data-toggle-favorite-target="button"
-    data-is-favorite="<% recipe.is_favorite %>" >
-      <turbo-frame id='icons' ><%= render "icons/mini/#{recipe.is_favorite ? 'heart' : 'empty_heart'}", id:'icons-1' %></turbo-frame>
-  </button>
-</td>
-
-
-
-
-
- 
-
 
   
 
-
-  <% if recipe.rating.present? %>
-    <div class="mb-5 flex flex-row flex-nowrap justify-between w-1/5">
-      <div class="flex flex-row">
-        <% recipe.rating.to_i.times do %>
-          <%= render partial: "icons/mini/star", locals: { style: "text-yellow-300" } %>
-        <% end %>
-      </div>
-    </div>
-  <% end %>
-
-  <div class="flex flex-row flex-nowrap justify-between w-100">
+  <div class="flex flex-row flex-wrap justify-between w-100 py-2">
     <div class="flex flex-row flex-nowrap justify-between w-100">
       <% %W[yield prep_time cook_time].each do |field| %>
         <%= render partial: "recipes/helpers/prep", locals: { value: recipe.send(field), label: field.titleize }, class: "text-center" %>
@@ -44,10 +33,13 @@
     </div>
   </div>
 
-  <% recipe.categories.each do |c| %>
-    <h2><%= c.name %>,</h2>
-  <% end %>
-  
+  <div class="flex flex-row flex-nowrap justify-start">
+    <% @recipe.categories.each do |c| %>
+      <div class="py-1">
+        <p class="bg-teal-50 text-teal-900 text-xs font-semibold me-2 px-2.5 py-0.5 rounded-full border border-teal-900"><%= c.name %></p>
+      </div>
+    <% end %>
+  </div>
 
   <% %W[description ingredients directions notes].each do |field| %>
     <%= render partial: "recipes/helpers/fields", locals: { value: recipe.send(field), label: field.titleize }, class: "text-center" %>
