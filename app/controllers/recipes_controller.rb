@@ -14,6 +14,8 @@ class RecipesController < ApplicationController
     @recipe = Recipe.new
   end
 
+  def import; end
+
   # GET /recipes/1/edit
   def edit; end
 
