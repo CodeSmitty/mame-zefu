@@ -14,7 +14,14 @@ class RecipesController < ApplicationController
     @recipe = Recipe.new
   end
 
-  def import; end
+  def import
+    @recipe = Recipe.new
+  end
+
+  def from_url
+    recipe = Recipes::Import.from_url(params[:url]).recipe
+    render partial: 'form', locals: { recipe: }
+  end
 
   # GET /recipes/1/edit
   def edit; end

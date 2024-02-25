@@ -19,7 +19,14 @@ export default class extends Controller {
             const link = node.querySelector("div.gs-result a");
             link.addEventListener("click", function (e) {
               e.preventDefault();
-              console.log(this.getAttribute("href"))
+
+              const url = this.getAttribute("href");
+              const params = new URLSearchParams({ url: url });
+              const form = document.getElementById('recipe-form');
+
+              fetch(`from_url?${params}`)
+                .then(response => response.text())
+                .then(html => form.innerHTML = html);
             });
           }
         }

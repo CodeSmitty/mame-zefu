@@ -3,6 +3,7 @@ Rails.application.routes.draw do
 
   resources :recipes do
     get 'import', on: :collection
+    get 'from_url', on: :collection
   end
 
   root 'recipes#index'
