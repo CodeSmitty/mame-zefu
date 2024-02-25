@@ -11,69 +11,64 @@
     </div>
   <% end %>
 
-  <div class="my-5">
-    <%= form.label :name %>
-    <%= form.text_field :name, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5 flex justify-between">
-    <div>
-      <%= form.label :yield %>
-      <%= form.text_field :yield, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+    <div class="my-5 relative">
+      <%= form.text_field :name, class: "block rounded-t-lg px-2.5 pb-2.5 pt-5 w-full text-sm font-bold text-teal-900 border-0 border-b-2 border-teal-900 appearance-none focus:outline-none focus:ring-0 focus:border-teal-600 peer", placeholder: " " %>
+      <%= form.label :name, class: "absolute text-sm text-teal-900 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-teal-900 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto" %>
+    </div>
+  
+  <div class="my-5 flex justify-between ">
+    <div class="my-5 relative">
+      <%= form.text_field :yield, class: "block rounded-t-lg px-2.5 pb-2.5 pt-5 w-full text-sm font-bold text-teal-900 border-0 border-b-2 border-teal-900 appearance-none focus:outline-none focus:ring-0 focus:border-teal-600 peer", placeholder: " " %>
+      <%= form.label :yield , class: "absolute text-sm text-teal-900 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-teal-900 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto" %>
     </div>
 
-    <div>
-      <%= form.label :prep_time %>
-      <%= form.text_field :prep_time, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+    <div class="my-5 relative">
+      <%= form.text_field :prep_time, class: "block rounded-t-lg px-2.5 pb-2.5 pt-5 w-full text-sm font-bold text-teal-900 border-0 border-b-2 border-teal-900 appearance-none focus:outline-none focus:ring-0 focus:border-teal-600 peer", placeholder: " " %>
+      <%= form.label :prep_time, class: "absolute text-sm text-teal-900 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-teal-900 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto" %>
     </div>
 
-    <div>
-      <%= form.label :cook_time %>
-      <%= form.text_field :cook_time, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+    <div class="my-5 relative">
+      <%= form.text_field :cook_time, class: "block rounded-t-lg px-2.5 pb-2.5 pt-5 w-full text-sm font-bold text-teal-900  border-0 border-b-2 border-teal-900 appearance-none focus:outline-none focus:ring-0 focus:border-teal-600 peer", placeholder: " " %>
+      <%= form.label :cook_time, class: "absolute text-sm text-teal-900 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-teal-900 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto" %>
     </div>
   </div>
 
   <div class="flex flex-row flex-nowrap justify-between">
-    <%= form.label :rating, class:"mt-2" %>
+    <%= form.label :rating, class:"mt-2 text-teal-900 font-bold" %>
     <div class="rating mx-auto px-2">
       <%= form.collection_radio_buttons(:rating, [[5],[4],[3],[2],[1]], :first, :last) do |star| %>
         <%= star.radio_button %>
-        <%= star.label(class: "text-white") %>
+        <%= star.label(class: "text-teal-900") %>
       <% end %>
     </div>
   </div>
-
-  <div class="my-5 flex flex-row justify-between w-1/6">
-    <%= form.label "#{:is_favorite}?" %>
-    <%= form.check_box :is_favorite, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-2 py-2 mt-1" %>
-  </div>
   
-  <div class="my-5">
-    <%= form.label :category_names, "Categories" %>
-    <%= form.collection_select :category_names, Category.all, :name, :name, {}, { data: { controller: "tom-select" }, multiple: true } %>
+  <div class="my-5 relative collection-label">
+    <%= form.collection_select :category_names, Category.all, :name, :name, {}, { data: { controller: "tom-select" }, multiple: true} %>
+    <%= form.label :category_names, "Categories", class: "absolute font-bold text-sm text-teal-900 duration-300 transform -translate-y-7 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-teal-900 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"%>
   </div>
 
-  <div class="my-5">
-    <%= form.label :description %>
-    <%= form.text_area :description, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  <div class="my-5 relative">
+    <%= form.text_area :description, rows: 4, class: "block rounded-t-lg px-2.5 pb-2.5 pt-5 w-full text-sm font-bold text-teal-900  border-0 border-b-2 border-teal-900 appearance-none focus:outline-none focus:ring-0 focus:border-teal-600 peer", placeholder: " " %>
+    <%= form.label :description, class: "absolute text-sm font-bold text-teal-900 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-teal-900 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto" %>
   </div>
 
-  <div class="my-5">
-    <%= form.label :ingredients %>
-    <%= form.text_area :ingredients, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full h-60" %>
+  <div class="my-5 relative">
+    <%= form.text_area :ingredients, rows: 4, class: "h-60 block rounded-t-lg px-2.5 pb-2.5 pt-5 w-full text-sm font-bold text-teal-900  border-0 border-b-2 border-teal-900 appearance-none focus:outline-none focus:ring-0 focus:border-teal-600 peer", placeholder: " " %>
+    <%= form.label :ingredients, class: "absolute text-sm font-bold text-teal-900 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-teal-900 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto" %>
   </div>
 
-  <div class="my-5">
-    <%= form.label :directions %>
-    <%= form.text_area :directions, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full h-60" %>
+   <div class="my-5 relative">
+    <%= form.text_area :directions, rows: 4, class: "h-60 block rounded-t-lg px-2.5 pb-2.5 pt-5 w-full text-sm font-bold text-teal-900  border-0 border-b-2 border-teal-900 appearance-none focus:outline-none focus:ring-0 focus:border-teal-600 peer", placeholder: " " %>
+    <%= form.label :directions, class: "absolute text-sm font-bold text-teal-900 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-teal-900 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto" %>
   </div>
 
-  <div class="my-5">
-    <%= form.label :notes %>
-    <%= form.text_area :notes, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  <div class="my-5 relative">
+    <%= form.text_area :notes, rows: 4, class: "block rounded-t-lg px-2.5 pb-2.5 pt-5 w-full text-sm font-bold text-teal-900  border-0 border-b-2 border-teal-900 appearance-none focus:outline-none focus:ring-0 focus:border-teal-600 peer", placeholder: " " %>
+    <%= form.label :notes, class: "absolute text-sm font-bold text-teal-900 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-teal-900 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto" %>
   </div>
 
-  <div class="inline">
+  <div class="inline relative">
     <%= button_tag( class: "inline-flex items-center rounded-lg py-2 px-3 bg-teal-900 hover:bg-white text-white hover:text-teal-900 border border-teal-900 inline-block font-medium cursor-pointer") do %>
       <%= render partial: "icons/micro/document_check", locals: { style: "me-1" } %> Save
     <% end %>
