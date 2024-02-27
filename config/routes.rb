@@ -2,8 +2,8 @@ Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   resources :recipes do
-    get 'import', on: :collection
-    get 'from_url', on: :collection
+    get 'web_search', on: :collection
+    get 'web_result', on: :collection
   end
 
   root 'recipes#index'

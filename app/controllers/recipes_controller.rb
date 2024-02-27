@@ -1,6 +1,12 @@
 class RecipesController < ApplicationController
   before_action :set_recipe, only: %i[show edit update destroy toggle_favorite]
 
+  def web_search; end
+
+  def web_result
+    @recipe = Recipes::Import.from_url(params[:url]).recipe
+  end
+
   # GET /recipes or /recipes.json
   def index
     @recipes = Recipe.all.sorted
@@ -12,15 +18,6 @@ class RecipesController < ApplicationController
   # GET /recipes/new
   def new
     @recipe = Recipe.new
-  end
-
-  def import
-    @recipe = Recipe.new
-  end
-
-  def from_url
-    recipe = Recipes::Import.from_url(params[:url]).recipe
-    render partial: 'form', locals: { recipe: }
   end
 
   # GET /recipes/1/edit

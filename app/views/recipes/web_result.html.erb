@@ -1,0 +1,9 @@
+<div class="mx-auto md:w-2/3 w-full">
+  <h1 class="font-bold text-4xl">Import Recipe</h1>
+
+  <%= render "form", recipe: @recipe %>
+
+  <%= link_to 'javascript:history.back()', class: "inline-flex items-center ml-2 rounded-lg py-2 px-3 inline-block font-medium text-teal-900 hover:text-white border border-teal-900 hover:bg-teal-900" do %>
+    <%= render partial: "icons/micro/arrow_uturn_left", locals: { style: "me-1" } %> Back
+  <% end %>
+</div>

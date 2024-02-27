@@ -20,13 +20,8 @@ export default class extends Controller {
             link.addEventListener("click", function (e) {
               e.preventDefault();
 
-              const url = this.getAttribute("href");
-              const params = new URLSearchParams({ url: url });
-              const form = document.getElementById('recipe-form');
-
-              fetch(`from_url?${params}`)
-                .then(response => response.text())
-                .then(html => form.innerHTML = html);
+              const params = new URLSearchParams({ url: this.getAttribute("href") });
+              window.location.href = `web_result?${params}`;
             });
           }
         }
