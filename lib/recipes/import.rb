@@ -1,10 +1,14 @@
 module Recipes
   class Import
+    require 'net/http'
     require 'nokogiri'
-    require 'open-uri'
+    require 'uri'
 
     def self.from_url(url)
-      new(Nokogiri::HTML(URI.open(url)))
+      uri = URI(url)
+      body = Net::HTTP.get(uri)
+
+      new(Nokogiri::HTML(body))
     end
 
     def initialize(document)
