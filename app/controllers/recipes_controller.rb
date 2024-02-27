@@ -55,7 +55,7 @@ class RecipesController < ApplicationController
   end
 
   def toggle_favorite
-    @recipe.toggle!(:is_favorite)
+    @recipe.toggle!(:is_favorite) # rubocop:disable Rails/SkipsModelValidations
     render json: { is_favorite: @recipe.is_favorite }
   end
 
