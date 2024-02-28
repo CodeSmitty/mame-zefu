@@ -2,14 +2,14 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static targets = ["button"];
-  
+
   connect() {
     this.buttonTarget.addEventListener('click', this.toggleFavorite.bind(this));
   }
 
   async toggleFavorite(event) {
-    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     event.preventDefault();
+    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     const toggleFavoriteUrl = this.element.dataset.toggleFavoriteUrl;
     try {
 
