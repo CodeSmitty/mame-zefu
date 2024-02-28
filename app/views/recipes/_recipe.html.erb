@@ -1,13 +1,13 @@
 <div id="<%= dom_id recipe %>">
-    <% if recipe.rating.present? %>
-      <div class="mb-2 flex flex-row flex-nowrap justify-between w-1/5">
-        <div class="flex flex-row">
-          <% recipe.rating.to_i.times do %>
-            <%= render partial: "icons/mini/star", locals: { style: "text-yellow-300" } %>
-          <% end %>
-        </div>
+  <% if recipe.rating.present? %>
+    <div class="mb-2 flex flex-row flex-nowrap justify-between w-1/5">
+      <div class="flex flex-row">
+        <% recipe.rating.to_i.times do %>
+            %= render partial: "icons/mini/star", locals: { style: "text-yellow-300" } %>
+        <% end %>
       </div>
-    <% end %>
+    </div>
+  <% end %>
 
   <h1 class="flex flex-row flex-nowrap">
     <strong class="text-3xl font-small"><%= recipe.name %></strong>
