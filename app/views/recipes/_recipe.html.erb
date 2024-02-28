@@ -8,21 +8,20 @@
         </div>
       </div>
     <% end %>
-    
+
   <h1 class="flex flex-row flex-nowrap">
     <strong class="text-3xl font-small"><%= recipe.name %></strong>
-    <td class="recipe-<%= recipe.id %>">
-    <button 
-      type="button" 
-      class="btn btn-xs btn-toggle-favorite text-black" 
-      data-controller="toggle-favorite" 
-      data-toggle-favorite-url="<%= toggle_favorite_recipe_path(recipe) %>" 
-      data-toggle-favorite-target="button"
-      data-is-favorite="<% recipe.is_favorite %>" >
-        <%= render "icons/mini/#{recipe.is_favorite ? 'heart' : 'empty_heart'}" %>
-    </button>
-  </td>
-
+    <div class="recipe-<%= recipe.id %>">
+      <button 
+        type="button" 
+        class="btn btn-xs text-black" 
+        data-controller="toggle-favorite" 
+        data-toggle-favorite-url="<%= toggle_favorite_recipe_path(recipe) %>" 
+        data-toggle-favorite-target="button"
+        data-is-favorite="<% recipe.is_favorite %>" >
+          <%= render "icons/mini/#{recipe.is_favorite ? 'heart' : 'empty_heart'}" %>
+      </button>
+    </div>
   </h1>
 
   <div class="flex flex-row flex-wrap justify-between w-100 py-2">

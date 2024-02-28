@@ -66,14 +66,6 @@
   appearance: none !important;
 }
 
-.st-contol:focus > .collection-label > label:focus{
-  display:none;
-}
-
-
 .ts-dropdown{
   z-index: 20 !important;
 }
-
-/* block rounded-t-lg px-2.5 pb-2.5 pt-5 w-full text-sm font-bold text-teal-900  
-border-0 border-b-2 border-teal-900 appearance-none focus:outline-none focus:ring-0 focus:border-teal-600 peer */
