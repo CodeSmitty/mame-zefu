@@ -3,7 +3,7 @@
     <div class="mb-2 flex flex-row flex-nowrap justify-between w-1/5">
       <div class="flex flex-row">
         <% recipe.rating.to_i.times do %>
-            %= render partial: "icons/mini/star", locals: { style: "text-yellow-300" } %>
+          <%= render_icon "mini/star", classes: "text-yellow-300" %>
         <% end %>
       </div>
     </div>
