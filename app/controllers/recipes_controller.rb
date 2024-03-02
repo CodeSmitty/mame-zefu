@@ -4,7 +4,7 @@ class RecipesController < ApplicationController
   def web_search; end
 
   def web_result
-    @recipe = Recipes::Import.from_url(params[:url]).recipe
+    @recipe = Recipes::Import.from_url(params[:url])
   end
 
   # GET /recipes or /recipes.json

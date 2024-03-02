@@ -5,53 +5,39 @@ module Recipes
     require 'uri'
 
     def self.from_url(url)
-      uri = URI(url)
-      body = Net::HTTP.get(uri)
-
-      new(Nokogiri::HTML(body))
-    end
-
-    def initialize(document)
-      @document = document
+      new(uri: URI(url)).recipe
     end
 
     def recipe
-      Recipe.new.tap do |r|
-        r.name = recipe_name
-        r.yield = recipe_yield
-        r.ingredients = recipe_ingredients
-        r.directions = recipe_directions
-      end
+      recipe_class.new(document).recipe
     end
 
     private
 
-    attr_reader :document
+    attr_reader :uri
 
-    def recipe_name
-      document
-        .css('h1.recipe-title')
-        .text
+    def initialize(uri:)
+      @uri = uri
     end
 
-    def recipe_yield
-      document
-        .css('div.makes p')
-        .text
+    def recipe_class
+      @recipe_class ||=
+        case uri.host
+        when 'www.tasteofhome.com'
+          TasteOfHome
+        else
+          raise UnknownHostError
+        end
     end
 
-    def recipe_ingredients
-      document
-        .css('div.recipe-ingredients ul.recipe-ingredients__list li')
-        .map(&:text)
-        .join("\n")
+    def document
+      @document ||= Nokogiri::HTML(body)
     end
 
-    def recipe_directions
-      document
-        .css('div.recipe-directions ol.recipe-directions__list li.recipe-directions__item')
-        .map { |li| li.css('span').text.strip }
-        .join("\n\n")
+    def body
+      @body ||= Net::HTTP.get(uri)
     end
+
+    class UnknownHostError < StandardError; end
   end
 end
