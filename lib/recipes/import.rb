@@ -25,6 +25,8 @@ module Recipes
         case uri.host
         when 'www.tasteofhome.com'
           TasteOfHome
+        when 'www.delish.com'
+          Delish
         else
           raise UnknownHostError
         end
