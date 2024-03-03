@@ -3,7 +3,7 @@
     <div class="mb-2 flex flex-row flex-nowrap justify-between w-1/5">
       <div class="flex flex-row">
         <% recipe.rating.to_i.times do %>
-            <%= render partial: "icons/mini/star", locals: { style: "text-yellow-300" } %>
+          <%= render_icon "mini/star", classes: "text-yellow-300" %>
         <% end %>
       </div>
     </div>
@@ -16,9 +16,11 @@
         type="button" 
         class="btn btn-xs text-black" 
         data-controller="toggle-favorite" 
-        data-toggle-favorite-url="<%= toggle_favorite_recipe_path(recipe) %>" 
-        data-toggle-favorite-target="button">
-          <%= render "icons/mini/#{recipe.is_favorite ? 'heart' : 'empty_heart'}" %>
+        data-toggle-favorite-target="button"
+        data-toggle-favorite-url-value="<%= toggle_favorite_recipe_path(recipe) %>" 
+        data-toggle-favorite-is-favorite-value="<%= recipe.is_favorite %>" 
+        data-toggle-favorite-heart-value='<%= render_icon "mini/heart", classes: "text-rose-600" %>'
+        data-toggle-favorite-empty-heart-value='<%= render_icon "mini/empty_heart", classes: "text-rose-600" %>' >
       </button>
     </div>
   </h1>
