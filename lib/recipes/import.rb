@@ -4,6 +4,12 @@ module Recipes
     require 'nokogiri'
     require 'uri'
 
+    RECIPE_CLASSES = {
+      'www.tasteofhome.com' => TasteOfHome,
+      'www.delish.com' => Delish,
+      'www.allrecipes.com' => AllRecipes
+    }.freeze
+
     def self.from_url(url)
       new(uri: URI(url)).recipe
     end
@@ -21,15 +27,9 @@ module Recipes
     end
 
     def recipe_class
-      @recipe_class ||=
-        case uri.host
-        when 'www.tasteofhome.com'
-          TasteOfHome
-        when 'www.delish.com'
-          Delish
-        else
-          raise UnknownHostError
-        end
+      RECIPE_CLASSES.fetch(uri.host) do
+        raise UnknownHostError, "Unknown host: #{uri.host}"
+      end
     end
 
     def document
