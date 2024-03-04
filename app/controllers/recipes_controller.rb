@@ -5,6 +5,11 @@ class RecipesController < ApplicationController
 
   def web_result
     @recipe = Recipes::Import.from_url(params[:url])
+  rescue Recipes::Import::UnknownHostError => e
+    @recipe =
+      Recipe.new.tap do |r|
+        r.errors.add(:base, e.message)
+      end
   end
 
   # GET /recipes or /recipes.json
