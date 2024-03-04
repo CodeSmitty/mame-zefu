@@ -19,6 +19,10 @@ module Recipes
         recipe_details['cook_time']
       end
 
+      def recipe_total_time
+        recipe_details['total_time']
+      end
+
       def recipe_ingredients
         document
           .css('ul.mntl-structured-ingredients__list li.mntl-structured-ingredients__list-item')

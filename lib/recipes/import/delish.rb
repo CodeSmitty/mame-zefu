@@ -8,21 +8,15 @@ module Recipes
       end
 
       def recipe_yield
-        document
-          .css('div.recipe-body dl div')[0]
-          .css('dd span')
-          .map { |e| e.text.strip }
-          .select(&:present?)
-          .join(' ')
+        recipe_details['yields']
       end
 
       def recipe_prep_time
-        document
-          .css('div.recipe-body dl div')[1]
-          .css('dd span')
-          .map { |e| e.text.strip }
-          .select(&:present?)
-          .join(' ')
+        recipe_details['prep_time']
+      end
+
+      def recipe_total_time
+        recipe_details['total_time']
       end
 
       def recipe_ingredients
@@ -37,6 +31,20 @@ module Recipes
           .css('div.recipe-body ul.directions ol li')
           .map { |li| li.xpath('text()') }
           .join("\n\n")
+      end
+
+      private
+
+      def recipe_details
+        @recipe_details ||=
+          document
+          .css('div.recipe-body dl dt')
+          .map { |e| e.text.parameterize.underscore }
+          .zip(
+            document
+            .css('div.recipe-body dl dd')
+            .map { |e| e.css('span').text.strip }
+          ).to_h
       end
     end
   end
