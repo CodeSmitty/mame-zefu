@@ -7,7 +7,8 @@ module Recipes
     RECIPE_CLASSES = {
       'www.tasteofhome.com' => TasteOfHome,
       'www.delish.com' => Delish,
-      'www.allrecipes.com' => AllRecipes
+      'www.allrecipes.com' => AllRecipes,
+      'www.gordonramsay.com' => GordonRamsay
     }.freeze
 
     def self.from_url(url)
