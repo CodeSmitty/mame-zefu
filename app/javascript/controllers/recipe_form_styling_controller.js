@@ -6,8 +6,6 @@ export default class extends Controller {
         const tx = document.getElementsByTagName("textarea");
 
         for (let i = 0; i < tx.length; i++) {
-
-
             tx[i].setAttribute('style', `height: ${tx[i]?.id === 'recipe_description' || tx[i]?.id === 'recipe_notes' ? '70px' : '230px'}`);
             tx[i].addEventListener("input", OnInput, false);
         }
