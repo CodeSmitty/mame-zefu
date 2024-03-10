@@ -9,7 +9,8 @@ module Recipes
       'www.delish.com' => Delish,
       'www.allrecipes.com' => AllRecipes,
       'www.gordonramsay.com' => GordonRamsay,
-      'www.simplyrecipes.com' => SimplyRecipes
+      'www.simplyrecipes.com' => SimplyRecipes,
+      'www.foodandwine.com' => FoodAndWine
     }.freeze
 
     def self.from_url(url)
