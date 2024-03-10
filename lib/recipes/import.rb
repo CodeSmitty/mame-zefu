@@ -8,7 +8,8 @@ module Recipes
       'www.tasteofhome.com' => TasteOfHome,
       'www.delish.com' => Delish,
       'www.allrecipes.com' => AllRecipes,
-      'www.gordonramsay.com' => GordonRamsay
+      'www.gordonramsay.com' => GordonRamsay,
+      'www.simplyrecipes.com' => SimplyRecipes
     }.freeze
 
     def self.from_url(url)
