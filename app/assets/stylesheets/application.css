@@ -13,10 +13,14 @@
  *= require_tree .
  *= require_self
  */
+
+ input, textarea, .ts-control{
+  box-shadow: inset -1px -1px 2px 0 rgba(13, 148, 137, 0.94) !important;
+ }
+
 .rating {
   display: flex;
   width: 100%;
-  justify-content: left;
   overflow: hidden;
   flex-direction: row-reverse;
   position: relative;
@@ -61,11 +65,30 @@
   width:100% !important;
   font-size: .8em !important;
   color:teal !important;
-  border:none !important;
-  border-bottom: solid 2px rgb(19, 78, 74) !important;
+  border: solid 1px rgb(14, 75, 71) !important;
   appearance: none !important;
+}
+
+.ts-control:focus > select {
+  border: solid 1px rgb(67, 252, 240) !important;
 }
 
 .ts-dropdown{
   z-index: 20 !important;
+  color:rgb(1, 57, 57) !important;
+}
+
+.ts-dropdown > div >  div:hover{
+  background-color: rgba(0, 128, 128, 0.211) !important;
+}
+
+.ts-dropdown .active{
+  background-color: rgba(0, 128, 128, 0.211) !important;
+}
+
+.category-items{
+  background-color: rgba(22, 241, 226, 0.065) !important;
+  border-radius:5px !important;
+  color:teal !important;
+  margin: 3px !important;
 }
