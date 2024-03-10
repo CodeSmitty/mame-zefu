@@ -6,12 +6,14 @@ export default class extends Controller {
         const tx = document.getElementsByTagName("textarea");
 
         for (let i = 0; i < tx.length; i++) {
-            tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+
+
+            tx[i].setAttribute('style', `height: ${tx[i]?.id === 'recipe_description' || tx[i]?.id === 'recipe_notes' ? '70px' : '230px'}`);
             tx[i].addEventListener("input", OnInput, false);
         }
 
         function OnInput() {
-            this.style.height = 'auto';
+            this.style.height = this?.id === 'recipe_description' || this?.id === 'recipe_notes' ? "70px" : "230px";
             this.style.height = (this.scrollHeight) + "px";
         }
     }
