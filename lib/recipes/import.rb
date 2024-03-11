@@ -10,7 +10,8 @@ module Recipes
       'www.allrecipes.com' => AllRecipes,
       'www.gordonramsay.com' => GordonRamsay,
       'www.simplyrecipes.com' => SimplyRecipes,
-      'www.foodandwine.com' => FoodAndWine
+      'www.foodandwine.com' => FoodAndWine,
+      'www.foodnetwork.com' => FoodNetwork
     }.freeze
 
     def self.from_url(url)
