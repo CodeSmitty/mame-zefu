@@ -1,0 +1,22 @@
+name: Prettier JavaScript
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Prettier
+        run: |
+          npm install prettier
+
+      - name: Run prettier
+        run: |-
+          npx prettier --check .
