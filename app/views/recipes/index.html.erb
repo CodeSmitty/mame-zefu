@@ -4,7 +4,7 @@
   <% end %>
   <div id="recipes" class="min-w-full flex-column">
     <% @recipes.each do |recipe| %>
-      <%= link_to "#{recipe.name}", recipe, class: "block font-medium mb-1 text-2xl p-4 text-center" %>
+      <%= link_to recipe.name, recipe, class: "block font-medium mb-1 text-2xl p-4 text-center" %>
     <% end %>
   </div>
 </div>

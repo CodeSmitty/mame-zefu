@@ -13,7 +13,7 @@ AllCops:
     - 'vendor/bundle/**/*'
 
 Metrics/BlockLength:
-  Enable: true
+  Enabled: true
   Exclude:
     - spec/**/*
 
