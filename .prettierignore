@@ -2,3 +2,6 @@
 !/app
 /app/*
 !/app/javascript
+!/app/assets
+/app/assets/*
+!/app/assets/stylesheets
