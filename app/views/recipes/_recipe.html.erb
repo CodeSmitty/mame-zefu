@@ -13,12 +13,12 @@
     <strong class="text-3xl font-small"><%= recipe.name %></strong>
     <% if recipe.is_favorite? %>
       <%= render partial: "icons/mini/heart", locals: { style: "text-rose-600" } %>
-    <% end %> 
+    <% end %>
   </h1>
 
   <div class="flex flex-row flex-wrap justify-between w-100 py-2">
     <div class="flex flex-row flex-nowrap justify-between w-100">
-      <% %W[yield prep_time cook_time].each do |field| %>
+      <% %w[yield prep_time cook_time].each do |field| %>
         <%= render partial: "recipes/helpers/prep", locals: { value: recipe.send(field), label: field.titleize }, class: "text-center" %>
       <% end %>
     </div>
@@ -32,7 +32,7 @@
     <% end %>
   </div>
 
-  <% %W[description ingredients directions notes].each do |field| %>
+  <% %w[description ingredients directions notes].each do |field| %>
     <%= render partial: "recipes/helpers/fields", locals: { value: recipe.send(field), label: field.titleize }, class: "text-center" %>
   <% end %>
 </div>
