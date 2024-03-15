@@ -12,15 +12,15 @@
   <h1 class="flex flex-row flex-nowrap">
     <strong class="text-3xl font-small"><%= recipe.name %></strong>
     <div class="recipe-<%= recipe.id %>">
-      <button 
-        type="button" 
-        class="btn btn-xs text-black" 
-        data-controller="toggle-favorite" 
+      <button
+        type="button"
+        class="btn btn-xs text-black"
+        data-controller="toggle-favorite"
         data-toggle-favorite-target="button"
-        data-toggle-favorite-url-value="<%= toggle_favorite_recipe_path(recipe) %>" 
-        data-toggle-favorite-is-favorite-value="<%= recipe.is_favorite %>" 
+        data-toggle-favorite-url-value="<%= toggle_favorite_recipe_path(recipe) %>"
+        data-toggle-favorite-is-favorite-value="<%= recipe.is_favorite %>"
         data-toggle-favorite-heart-value='<%= render_icon "mini/heart", classes: "text-rose-600" %>'
-        data-toggle-favorite-empty-heart-value='<%= render_icon "mini/empty_heart", classes: "text-rose-600" %>' >
+        data-toggle-favorite-empty-heart-value='<%= render_icon "mini/empty_heart", classes: "text-rose-600" %>'>
       </button>
     </div>
   </h1>
