@@ -1,18 +1,17 @@
-import { Controller } from "@hotwired/stimulus";
+import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-    connect() {
+  connect() {
+    this.initialHeight = this.element.offsetHeight
+    this.resizeElement(this.element)
+  }
 
-        this.initialHeight = this.element.offsetHeight
-        this.resizeElement(this.element)
-    }
+  resize(event) {
+    this.resizeElement(event.target)
+  }
 
-    resize(event) {
-        this.resizeElement(event.target)
-    }
-
-    resizeElement(element) {
-        element.style.height = this.initialHeight + "px";
-        element.style.height = element.scrollHeight + 3 + "px";
-    }
+  resizeElement(element) {
+    element.style.height = this.initialHeight + "px"
+    element.style.height = element.scrollHeight + 3 + "px"
+  }
 }
