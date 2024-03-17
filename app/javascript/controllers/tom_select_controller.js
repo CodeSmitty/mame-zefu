@@ -4,7 +4,7 @@ import TomSelect from "tom-select"
 export default class extends Controller {
   connect() {
     new TomSelect(this.element, {
-      plugins: ["remove_button", "input_autogrow", "change_listener"],
+      plugins: ["remove_button", "input_autogrow"],
       create: true,
       createOnBlur: true,
       persist: false,
@@ -15,18 +15,5 @@ export default class extends Controller {
         this.refreshOptions()
       },
     })
-
-    if (
-      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent,
-      )
-    ) {
-      // true for mobile device
-      const ts = document.getElementsByClassName("ts-control")
-      ts[0].setAttribute("style", "height: 70px !important")
-    } else {
-      const ts = document.getElementsByClassName("ts-control")
-      ts[0].setAttribute("style", "height: 40px !important")
-    }
   }
 }
