@@ -8,8 +8,6 @@ export default class extends Controller {
       create: true,
       createOnBlur: true,
       persist: false,
-      itemClass: "category-items",
-      optionClass: "category-dropdown",
       onItemAdd: function () {
         this.setTextboxValue("")
         this.refreshOptions()

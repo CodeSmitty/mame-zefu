@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.3.1/css/tom-select.min.css";
 
 /*
 
@@ -11,3 +12,20 @@
 }
 
 */
+@import "https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.3.1/css/tom-select.min.css";
+
+.ts-control {
+  @apply rounded-lg px-2.5 pb-2.5 bg-gray-50 border-teal-900 !important;
+}
+
+.ts-wrapper.plugin-remove_button .item {
+  @apply rounded-md bg-teal-200 text-teal-900 m-1 !important;
+}
+
+.ts-wrapper.plugin-remove_button .item .remove {
+  @apply border-none text-lg leading-none py-1 rounded-r-lg !important;
+}
+
+.ts-dropdown {
+  @apply z-20 !important;
+}
