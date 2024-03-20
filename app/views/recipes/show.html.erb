@@ -1,4 +1,4 @@
-<div class="mx-auto md:w-2/3 w-full flex">
+<div class="mx-auto md:w-4/5 w-full form-container lg:px-20 p-5 flex justify-center">
   <div class="mx-auto">
     <% if notice.present? %>
       <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
@@ -7,11 +7,12 @@
     <%= render @recipe %>
 
     <%= link_to edit_recipe_path(@recipe), class: "inline-flex items-center mt-2 rounded-lg py-2 px-3 inline-block font-medium text-teal-900 hover:text-white border border-teal-900 hover:bg-teal-900" do %>
-      <%= render partial: "icons/micro/pencil_square", locals: { style: "me-1" } %> Edit
+      <%= render_icon "micro/pencil_square", classes: "me-1" %> Edit
     <% end %>
+
     <div class="inline-block ml-2">
       <%= button_to recipe_path(@recipe), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "inline-flex items-center mt-2 rounded-lg py-2 px-3 font-medium text-teal-900 hover:text-white border border-teal-900 hover:bg-teal-900" do %>
-        <%= render partial: "icons/micro/trash", locals: { style: "me-1" } %> Delete
+        <%= render_icon "micro/trash", classes: "me-1" %> Delete
       <% end %>
     </div>
   </div>
