@@ -9,9 +9,9 @@
     </div>
   <% end %>
 
-  <h1 class="flex flex-row flex-nowrap">
+  <h1 class="flex flex-row flex-nowrap gap-x-1">
     <strong class="text-3xl font-small"><%= recipe.name %></strong>
-    <div class="recipe-<%= recipe.id %>">
+    <div>
       <button
         type="button"
         class="btn btn-xs text-black"
@@ -22,6 +22,13 @@
         data-toggle-favorite-heart-value='<%= render_icon "mini/heart", classes: "text-rose-600" %>'
         data-toggle-favorite-empty-heart-value='<%= render_icon "mini/empty_heart", classes: "text-rose-600" %>'>
       </button>
+    </div>
+    <div class="ml-auto">
+      <% if recipe.source.present? %>
+        <%= link_to recipe.source, target: "_blank", rel: "noopener" do %>
+          <%= render_icon "mini/link" %>
+        <% end %>
+      <% end %>
     </div>
   </h1>
 

@@ -15,7 +15,9 @@ module Recipes
     }.freeze
 
     def self.from_url(url)
-      new(uri: URI(url)).recipe
+      new(uri: URI(url)).recipe.tap do |recipe|
+        recipe.source = url
+      end
     end
 
     def recipe
