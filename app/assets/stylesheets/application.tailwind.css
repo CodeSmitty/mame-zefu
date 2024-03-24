@@ -38,3 +38,8 @@ span.gscb_a {
 .gsc-adBlock {
   @apply hidden !important;
 }
+
+.gsc-results img,
+.gsc-results svg {
+  @apply inline !important;
+}
