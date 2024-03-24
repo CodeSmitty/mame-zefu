@@ -1,6 +1,17 @@
 class RecipesController < ApplicationController
   before_action :set_recipe, only: %i[show edit update destroy toggle_favorite]
 
+  def web_search; end
+
+  def web_result
+    @recipe = Recipes::Import.from_url(params[:url])
+  rescue Recipes::Import::UnknownHostError => e
+    @recipe =
+      Recipe.new.tap do |r|
+        r.errors.add(:base, e.message)
+      end
+  end
+
   # GET /recipes or /recipes.json
   def index
     @recipes = Recipe.all.sorted
@@ -69,6 +80,6 @@ class RecipesController < ApplicationController
   # Only allow a list of trusted parameters through.
   def recipe_params
     params.require(:recipe).permit(:name, :ingredients, :directions, :yield, :prep_time, :cook_time, :description,
-                                   :rating, :is_favorite, :notes, category_names: [])
+                                   :rating, :is_favorite, :notes, :source, category_names: [])
   end
 end
