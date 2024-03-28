@@ -2,9 +2,19 @@
   <% if notice.present? %>
     <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
   <% end %>
-  <div id="recipes" class="flex-column flex-wrap justify-center lg:flex-nowrap">
-    <% @recipes.each do |recipe| %>
-      <%= link_to recipe.name, recipe, class: "block m-auto lg:w-1/3 font-medium mb-1 text-2xl p-4 text-center lg:text-left" %>
+  <div class="m-1">
+    <%= form_tag @recipe_path, method: :get, data: { turbo_frame: :recipes, turbo_action: "advance", controller: "filter", action: "input->filter#submit" } do |f| %>
+      <div class="flex flex-row flex-nowrap justify-center">
+        <%= text_field_tag "query", nil, placeholder: "Search ...", class: "block rounded-lg px-2.5 pb-2.5 w-1/2 text-sm text-gray-900 bg-gray-50  border border-teal-900 appearance-none focus:outline-none focus:ring-0 focus:border-teal-600 peer", autocomplete: 'off' %>
+        <%= submit_tag "Search", class: "inline-flex items-center rounded-lg py-1 px-2 bg-teal-900 hover:bg-white text-white hover:text-teal-900 border border-teal-900 inline-block font-medium cursor-pointer" %>
+      </div>
     <% end %>
   </div>
+  <turbo_frame_tag :recipes data-turbo-if="@recipes.any?" />
+    <div id="recipes" class="flex-column flex-wrap justify-center lg:flex-nowrap">
+      <% @recipes.each do |recipe| %>
+        <%= link_to recipe.name, recipe, class: "block m-auto lg:w-1/3 font-medium mb-1 text-2xl p-4 text-center lg:text-left" %>
+      <% end %>
+    </div>
+  </turbo_frame_tag>
 </div>
