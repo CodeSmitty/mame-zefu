@@ -3,11 +3,10 @@ import debounce from "lodash/debounce"
 
 export default class extends Controller {
   initialize() {
-    this.submit = debounce(this.submit.bind(this), 1000)
+    this.submit = debounce(this.submit.bind(this), 300)
   }
 
   submit(event) {
-    event.preventDefault()
     this.element.requestSubmit()
   }
 }

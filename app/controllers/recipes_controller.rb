@@ -14,7 +14,7 @@ class RecipesController < ApplicationController
 
   # GET /recipes or /recipes.json
   def index
-    @recipes = Recipe.search(params)
+    @recipes = Recipe.search(params).sorted
   end
 
   # GET /recipes/1 or /recipes/1.json
@@ -30,7 +30,7 @@ class RecipesController < ApplicationController
 
   # POST /recipes or /recipes.json
   def create
-    @recipe = Recipe.new(find_recipe_params)
+    @recipe = Recipe.new(recipe_params)
 
     respond_to do |format|
       if @recipe.save
@@ -81,9 +81,5 @@ class RecipesController < ApplicationController
   def recipe_params
     params.require(:recipe).permit(:name, :ingredients, :directions, :yield, :prep_time, :cook_time, :description,
                                    :rating, :is_favorite, :notes, :source, category_names: [])
-  end
-
-  def find_recipe_params
-    params.require(:recipe).permit(:name, :ingredients, :directions, :notes, category_names: [])
   end
 end
