@@ -40,3 +40,5 @@ node_modules/
 
 # Ignore all environment files.
 /.env*
+
+/mame-zefu.yaml

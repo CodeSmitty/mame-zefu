@@ -46,3 +46,5 @@
 /.dockerignore
 /compose.yml
 /Dockerfile*
+
+/mame-zefu.yaml
