@@ -22,7 +22,11 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ vars.IMAGE_NAME}}
+          images: ${{ vars.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=ref,event=branch
+            type=sha
 
       - name: Build and push Docker image
         id: push
