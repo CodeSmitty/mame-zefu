@@ -18,6 +18,5 @@ module MameZefu
     #
     # config.time_zone = "Central Time (US & Canada)"
     config.autoload_lib(ignore: %w[assets tasks])
-    config.assume_ssl = true
   end
 end
