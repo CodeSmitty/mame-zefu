@@ -14,7 +14,7 @@ class RecipesController < ApplicationController
 
   # GET /recipes or /recipes.json
   def index
-    @recipes = Recipe.all.sorted
+    @recipes = Recipe.search(params).sorted
   end
 
   # GET /recipes/1 or /recipes/1.json
