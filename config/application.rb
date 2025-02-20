@@ -9,7 +9,7 @@ Bundler.require(*Rails.groups)
 module MameZefu
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.0
+    config.load_defaults 7.2
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -17,6 +17,6 @@ module MameZefu
     # in config/environments, which are processed later.
     #
     # config.time_zone = "Central Time (US & Canada)"
-    config.eager_load_paths << Rails.root.join('lib')
+    config.autoload_lib(ignore: %w[assets tasks])
   end
 end
