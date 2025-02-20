@@ -14,7 +14,7 @@ class RecipesController < ApplicationController
 
   # GET /recipes or /recipes.json
   def index
-    @recipes = Recipe.search(params).sorted
+    @recipes = Recipe.search(params[:query]).category_search(params[:category_names]).sorted
   end
 
   # GET /recipes/1 or /recipes/1.json

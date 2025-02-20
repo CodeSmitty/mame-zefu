@@ -10,16 +10,20 @@ class Recipe < ApplicationRecord
     self.category_ids = Category.from_names(category_names).pluck(:id)
   end
 
-  def self.search(params)
-    return all if params[:query].blank?
-
-    query = "%#{sanitize_sql_like(params[:query])}%"
-
+  scope :search, -> (params){
+    return all if params.blank?
+    query = "%#{sanitize_sql_like(params)}%"
     where('name ILIKE ?', query)
       .or(where('directions ILIKE ?', query))
       .or(where('ingredients ILIKE ?', query))
       .or(where('notes ILIKE ?', query))
-  end
+  }
+
+  scope :category_search, ->(category_names){
+    return all if category_names.blank?
+    category_name = "%#{sanitize_sql_like(category_names)}%"
+    joins(:categories).where('categories.name  ILIKE ?', category_name)
+  }
 
   scope :sorted, -> { order(name: :asc) }
 end
