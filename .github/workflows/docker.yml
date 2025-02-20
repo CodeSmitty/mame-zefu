@@ -3,6 +3,7 @@ name: Publish Docker image
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   push_to_registry:
@@ -25,8 +26,7 @@ jobs:
           images: ${{ vars.IMAGE_NAME }}
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
-            type=ref,event=branch
-            type=sha
+            type=sha,prefix=,event=workflow_dispatch
 
       - name: Build and push Docker image
         id: push
