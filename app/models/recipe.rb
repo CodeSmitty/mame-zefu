@@ -13,10 +13,10 @@ class Recipe < ApplicationRecord
   scope :search, -> (params){
     return all if params.blank?
     query = "%#{sanitize_sql_like(params)}%"
-    where('name ILIKE ?', query)
-      .or(where('directions ILIKE ?', query))
-      .or(where('ingredients ILIKE ?', query))
-      .or(where('notes ILIKE ?', query))
+    where('recipes.name ILIKE ?', query)
+      .or(where('recipes.directions ILIKE ?', query))
+      .or(where('recipes.ingredients ILIKE ?', query))
+      .or(where('recipes.notes ILIKE ?', query))
   }
 
   scope :category_search, ->(category_names){

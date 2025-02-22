@@ -9,6 +9,12 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors:{
+        primary:"rgb(29 32 34)",
+        secondary: "#eeb14a",
+        hoverNavLink: "rgb(165 68 29)",
+        inputLabel: "rgb(238 177 74 / 73%)"
+      },
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],
       },
