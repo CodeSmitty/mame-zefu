@@ -52,4 +52,39 @@ RSpec.describe Recipe, type: :model do
       end
     end
   end
+
+  describe '.search' do
+    subject { Recipe.search(query) }
+
+    let!(:recipes) do
+      Array.new(3) do |i|
+        Recipe.create(name: "Recipe #{i}")
+      end
+    end
+
+    context 'when query is an empty string' do
+      let(:query) { '' }
+
+      it { is_expected.to match_array recipes }
+    end
+
+    context 'when query is nil' do
+      let(:query) { nil }
+
+      it { is_expected.to match_array recipes }
+    end
+
+    context 'when query does not match case' do
+      let(:recipe) { Recipe.create(name: 'Birria Tacos') }
+      let(:query) { 'taco' }
+
+      it { is_expected.to include recipe }
+      it { is_expected.to contain_exactly recipe }
+    end
+  end
+
+  describe '.category_search' do
+    it 'returns all when param is empty'
+    it 'returns recipes for category'
+  end
 end

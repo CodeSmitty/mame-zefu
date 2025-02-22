@@ -11,7 +11,8 @@ class Recipe < ApplicationRecord
   end
 
   scope :search, -> (params){
-    return all if params.blank?
+    return if params.blank?
+
     query = "%#{sanitize_sql_like(params)}%"
     where('recipes.name ILIKE ?', query)
       .or(where('recipes.directions ILIKE ?', query))
@@ -20,9 +21,12 @@ class Recipe < ApplicationRecord
   }
 
   scope :category_search, ->(category_names){
-    return all if category_names.blank?
-    category_name = "%#{sanitize_sql_like(category_names)}%"
-    joins(:categories).where('categories.name  ILIKE ?', category_name)
+    return if category_names.blank?
+
+    joins(:categories)
+      .where(categories: { name: category_names })
+      .group('recipes.id')
+      .having('count(distinct categories.id) = ?', category_names.size)
   }
 
   scope :sorted, -> { order(name: :asc) }
