@@ -27,7 +27,7 @@ gem "turbo-rails"
 gem "stimulus-rails"
 
 # Use Tailwind CSS [https://github.com/rails/tailwindcss-rails]
-gem "tailwindcss-rails"
+gem "tailwindcss-rails", "~> 3.3.1"
 
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
@@ -58,7 +58,7 @@ group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
   gem 'erb_lint'
   gem 'pry'
-  gem 'rspec-rails', '~> 6.1.0'
+  gem 'rspec-rails', '~> 7.1.0'
   gem 'rubocop', require: false
   gem 'rubocop-capybara', require: false
   gem 'rubocop-rails', require: false
@@ -81,5 +81,4 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
-
 end
