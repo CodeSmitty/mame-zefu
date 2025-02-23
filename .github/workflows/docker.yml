@@ -2,8 +2,12 @@ name: Publish Docker image
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "staging" ]
   workflow_dispatch:
+
+env:
+  is_main_branch: ${{ github.ref == 'refs/heads/main' }}
+  is_staging_branch: ${{ github.ref == 'refs/heads/staging' }}
 
 jobs:
   push_to_registry:
@@ -25,8 +29,9 @@ jobs:
         with:
           images: ${{ vars.IMAGE_NAME }}
           tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=sha,prefix=,enable=${{ github.ref != format('refs/heads/{0}', 'main') }}
+            type=raw,value=latest,enable=${{ fromJSON(env.is_main_branch) }}
+            type=ref,event=branch,enable=${{ fromJSON(env.is_staging_branch) }}
+            type=sha,prefix=,enable=${{ !fromJSON(env.is_main_branch) && !fromJSON(env.is_staging_branch) }}
 
       - name: Build and push Docker image
         id: push
@@ -37,3 +42,15 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: push_to_registry
+    steps:
+      - name: Deploy to Staging
+        if: ${{ fromJSON(env.is_staging_branch) }}
+        env:
+          deploy_url: ${{ secrets.STAGING_DEPLOY_HOOK_URL }}
+        run: |
+          curl "$deploy_url"
