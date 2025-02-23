@@ -48,7 +48,42 @@
     <% end %>
   </div>
 
-  <% %w[description ingredients directions notes].each do |field| %>
-    <%= render partial: "recipes/helpers/fields", locals: { value: recipe.send(field), label: field.titleize }, class: "text-center" %>
+  <% if recipe.description.present? %>
+    <p class="my-5">
+      <%= simple_format(recipe.description) %>
+    </p>
+  <% end %>
+
+  <p class="my-5">
+    <strong class="block font-small mb-1">Ingredients</strong>
+  </p>
+  <% recipe.ingredients.split(/\n{2,}/).each do |list| %>
+    <ul data-controller="list" class="mb-3">
+      <% list.split("\n").each do |item| %>
+        <li data-action="click->list#strike"><%= item %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <p class="my-5">
+    <strong class="block font-small mb-1">Directions</strong>
+  </p>
+  <% recipe.directions.split(/\n{3,}/).each do |list| %>
+    <ol data-controller="list" class="mb-3">
+      <% list.split("\n\n").each do |item| %>
+        <li data-list-target="item" data-action="click->list#focus" class="mb-3"><%= item %></li>
+      <% end %>
+    </ol>
+  <% end %>
+
+  <% if recipe.notes.present? %>
+    <p class="my-5">
+      <strong class="block font-small mb-1">Notes</strong>
+      <% recipe.notes.split(/\n{2,}/) do |note| %>
+        <p class="mb-3">
+          <%= note %>
+        </p>
+      <% end %>
+    </p>
   <% end %>
 </div>
