@@ -4,11 +4,11 @@
 @import "https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.3.1/css/tom-select.min.css";
 
 .ts-control {
-  @apply block rounded-lg px-2.5 pb-2.5 pt-2.5 bg-gray-50 !important;
+  @apply block rounded-lg border-secondary focus:border-hoverNavLink active:border-hoverNavLink px-2.5 pb-2.5 pt-2.5 bg-gray-50 !important;
 }
 
 .ts-wrapper.plugin-remove_button .item {
-  @apply rounded-md bg-white text-secondary border-1 border-secondary m-1 !important;
+  @apply rounded-md bg-white text-secondary border border-secondary m-1 !important;
 }
 
 .ts-wrapper.plugin-remove_button .item .remove {
