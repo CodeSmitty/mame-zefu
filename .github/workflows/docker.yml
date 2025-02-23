@@ -3,6 +3,7 @@ name: Publish Docker image
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   push_to_registry:
@@ -22,7 +23,10 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ vars.IMAGE_NAME}}
+          images: ${{ vars.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,prefix=,enable=${{ github.ref != format('refs/heads/{0}', 'main') }}
 
       - name: Build and push Docker image
         id: push
