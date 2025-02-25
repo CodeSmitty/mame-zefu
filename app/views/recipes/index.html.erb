@@ -3,17 +3,17 @@
     <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
   <% end %>
   <div class="m-1">
-    <%= form_tag recipes_path, method: :get, data: { turbo_frame: :recipes, turbo_action: "advance", controller: "filter" } do |f| %>
+    <%= form_tag recipes_path, method: :get, data: { turbo_frame: :recipes, turbo_action: "advance" } do |f| %>
       <div class="mb-5">
         <div class="lg:w-7/12 flex flex-col justify-center m-auto">
           <div class="relative my-2">
               <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                 <%= image_tag "recipe.png", class: "w-7/12" %>
               </div>
-              <%= text_field_tag :query, params[:query], data: { filter_target: "query" }, placeholder: "Search ...", class: "w-full block rounded-lg px-2.5 pb-2.5 ps-10 text-sm text-gray-900 bg-gray-50 border border-teal-900 appearance-none focus:outline-none focus:ring-0 focus:border-teal-600 peer", autocomplete: 'off', autofocus: 'true', type: 'search', onfocus: "this.setSelectionRange(this.value.length,this.value.length);" %>
+              <%= text_field_tag :query, params[:query], data: { action: "input->filter#autoSave", controller: "filter" }, placeholder: "Search ...", class: "w-full block rounded-lg px-2.5 pb-2.5 ps-10 text-sm text-gray-900 bg-gray-50 border border-teal-900 appearance-none focus:outline-none focus:ring-0 focus:border-teal-600 peer", autocomplete: 'off', autofocus: 'true', type: 'search', onfocus: "this.setSelectionRange(this.value.length,this.value.length);" %>
           </div>
           <div>
-            <%= select_tag(:category_names, options_from_collection_for_select(Category.all, :name, :name), { data: { controller: "tom-select", 'tom-select-create-value': false }, multiple: true, placeholder: "Select Categories" }) %>
+            <%= select_tag(:category_names, options_from_collection_for_select(Category.all, :name, :name), { data: { controller: "tom-select", 'tom-select-create-value': false, filter_target: "category" }, multiple: true, placeholder: "Select Categories" }) %>
           </div>
           <div class="query-btn flex justify-end py-4">
             <%= submit_tag 'submit', class:"float-right inline-flex items-center rounded-lg py-1 px-2 bg-white hover:bg-teal-600 text-teal-900 hover:text-white border border-teal-900 inline-block font-medium cursor-pointer" %>

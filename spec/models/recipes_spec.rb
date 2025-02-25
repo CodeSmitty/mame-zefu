@@ -58,8 +58,8 @@ RSpec.describe Recipe, type: :model do
     end
   end
 
-  describe '.search' do
-    subject { described_class.search(query) }
+  describe '.with_text' do
+    subject { described_class.with_text(query) }
 
     let!(:recipes) do
       Array.new(3) do |i|
@@ -88,7 +88,7 @@ RSpec.describe Recipe, type: :model do
     end
   end
 
-  describe '.category_search' do
+  describe '.in_categories' do
     it 'returns all when param is empty'
     it 'returns recipes for category'
   end
