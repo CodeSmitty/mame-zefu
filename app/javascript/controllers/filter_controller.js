@@ -1,9 +1,9 @@
 import { Controller } from "@hotwired/stimulus"
-import debounce from "lodash"
+import debounce from "lodash/debounce"
 
 export default class extends Controller {
-  connect() {
-    this.autoSubmit = debounce(this.submit.bind(this), 500)
+  initialize() {
+    this.submit = debounce(this.submit, 500).bind(this)
   }
 
   submit() {
