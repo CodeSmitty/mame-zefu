@@ -57,23 +57,27 @@
   <p class="my-5">
     <strong class="block font-small mb-1">Ingredients</strong>
   </p>
-  <% recipe.ingredients.split(/\n{2,}/).each do |list| %>
-    <ul data-controller="list" class="mb-3">
-      <% list.split("\n").each do |item| %>
-        <li data-action="click->list#strike"><%= item %></li>
-      <% end %>
-    </ul>
+  <% if recipe.ingredients.present? %>
+    <% recipe.ingredients.split(/\n{2,}/).each do |list| %>
+      <ul data-controller="list" class="mb-3">
+        <% list.split("\n").each do |item| %>
+          <li data-action="click->list#strike"><%= item %></li>
+        <% end %>
+      </ul>
+    <% end %>
   <% end %>
 
   <p class="my-5">
     <strong class="block font-small mb-1">Directions</strong>
   </p>
-  <% recipe.directions.split(/\n{3,}/).each do |list| %>
-    <ol data-controller="list" class="mb-3">
-      <% list.split("\n\n").each do |item| %>
-        <li data-list-target="item" data-action="click->list#focus" class="mb-3"><%= item %></li>
-      <% end %>
-    </ol>
+  <% if recipe.directions.present? %>
+    <% recipe.directions.split(/\n{3,}/).each do |list| %>
+      <ol data-controller="list" class="mb-3">
+        <% list.split("\n\n").each do |item| %>
+          <li data-list-target="item" data-action="click->list#focus" class="mb-3"><%= item %></li>
+        <% end %>
+      </ol>
+    <% end %>
   <% end %>
 
   <% if recipe.notes.present? %>

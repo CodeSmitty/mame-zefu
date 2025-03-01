@@ -89,7 +89,45 @@ RSpec.describe Recipe, type: :model do
   end
 
   describe '.in_categories' do
-    it 'returns all when param is empty'
-    it 'returns recipes for category'
+    subject { described_class.in_categories(category_names) }
+
+    let!(:mexican) { Category.create!(name: 'Mexican') }
+    let!(:italian) { Category.create!(name: 'Italian') }
+    let!(:japanese) { Category.create!(name: 'Japanese') }
+
+    let!(:tacos) { described_class.create!(name: 'Tacos', categories: [mexican]) }
+    let!(:pasta) { described_class.create!(name: 'Pasta', categories: [italian]) }
+    let!(:sushi) { described_class.create!(name: 'Sushi', categories: [japanese]) }
+    let!(:fusion) { described_class.create!(name: 'Fusion Dish', categories: [mexican, japanese]) }
+
+    context 'when category_names is empty' do
+      let(:category_names) { '' }
+
+      it { is_expected.to contain_exactly(tacos, pasta, sushi, fusion) }
+    end
+
+    context 'when category_names is nil' do
+      let(:category_names) { nil }
+
+      it { is_expected.to contain_exactly(tacos, pasta, sushi, fusion) }
+    end
+
+    context 'when passing category that matches one recipe' do
+      let(:category_names) { [italian.name] }
+
+      it { is_expected.to contain_exactly pasta }
+    end
+
+    context 'when category has no recipes' do
+      let(:category_names) { ['french'] }
+
+      it { is_expected.to match_array [] }
+    end
+
+    context 'when multiple categories match a recipe' do
+      let(:category_names) { [mexican.name, japanese.name] }
+
+      it { is_expected.to contain_exactly fusion }
+    end
   end
 end

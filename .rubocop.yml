@@ -24,6 +24,9 @@ Rails/HasAndBelongsToMany:
 Rails/I18nLocaleTexts:
   Enabled: false
 
+RSpec/MultipleMemoizedHelpers:
+  Max: 12
+
 RSpec/NestedGroups:
   Max: 4
 
