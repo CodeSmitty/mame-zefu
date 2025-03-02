@@ -33,7 +33,7 @@
   </div>
 
   <div class="my-5 lg:my-2 relative">
-    <%= form.collection_select :category_names, Category.all, :name, :name, {}, { data: { controller: "tom-select" }, multiple: true, placeholder: "Add Categories" } %>
+    <%= form.collection_select :category_names, Category.all, :name, :name, {}, { data: { controller: "tom-select", 'tom-select-create-value': true }, multiple: true, placeholder: "Add Categories" } %>
   </div>
 
   <div class="my-10 relative">
