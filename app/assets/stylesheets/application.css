@@ -17,7 +17,7 @@
 input,
 textarea,
 .ts-control {
-  box-shadow: inset -1px -1px 2px 0 rgba(13, 148, 137, 0.94) !important;
+  box-shadow: 1px 2px 4px 1px rgba(206, 205, 205, 0.94) !important;
 }
 
 .rating {
