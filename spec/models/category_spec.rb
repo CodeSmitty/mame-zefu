@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Category, type: :model do
+RSpec.describe Category do
   it { is_expected.to validate_presence_of(:name) }
 
   describe '.from_names' do

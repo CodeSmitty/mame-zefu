@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Recipes', type: :request do
+RSpec.describe 'Recipes' do
   let(:recipe_name) { 'Spaghetti' }
   let(:category_name) { 'Italian' }
   let(:category) { Category.create(name: category_name) }
