@@ -1,6 +1,24 @@
 services:
   web:
-    build: .
-    env_file: .env
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/rails
     ports:
       - "3000:3000"
+    environment:
+      - DATABASE_URL=postgres://mame_zefu:password@postgres:5432/mame_zefu_development
+      - IMAGE_TAG_URL=https://hub.docker.com/v2/repositories/nfoos/mame-zefu/tags/latest
+  postgres:
+    image: postgres:15-alpine
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=mame_zefu_development
+      - POSTGRES_USER=mame_zefu
+      - POSTGRES_PASSWORD=password
+volumes:
+  pgdata:

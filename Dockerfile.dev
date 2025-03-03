@@ -1,0 +1,26 @@
+# syntax=docker/dockerfile:1
+# check=error=true
+
+ARG RUBY_VERSION=3.1.2
+FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
+
+WORKDIR /rails
+
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y curl libjemalloc2 libvips libpq-dev && \
+    apt-get install --no-install-recommends -y build-essential curl git pkg-config libyaml-dev && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+ENV RAILS_ENV="development" \
+    BUNDLE_PATH="/usr/local/bundle"
+
+COPY Gemfile Gemfile.lock ./
+RUN bundle install
+
+COPY . .
+
+# Precompiling assets for production without requiring secret RAILS_MASTER_KEY
+# RUN SECRET_KEY_BASE=DUMMY ./bin/rails assets:precompile
+
+EXPOSE 3000
+CMD ["./bin/dev"]
