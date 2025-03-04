@@ -16,12 +16,14 @@ module Recipes
       def recipe_prep_time
         prep_time = total_time.index('Prep Time')
         return nil unless prep_time
+
         total_time[prep_time + 1]
       end
 
       def recipe_cook_time
-        cook_time = cook_time = total_time.index('Cook Time')
+        cook_time = total_time.index('Cook Time')
         return nil unless cook_time
+
         total_time[cook_time + 1]
       end
 
