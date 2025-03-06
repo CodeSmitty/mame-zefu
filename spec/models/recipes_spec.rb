@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Recipe, type: :model do
+RSpec.describe Recipe do
   it { is_expected.to validate_presence_of(:name) }
 
   describe '#category_names' do
