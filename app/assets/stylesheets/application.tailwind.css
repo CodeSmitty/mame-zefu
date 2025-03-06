@@ -4,7 +4,7 @@
 @import "https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.3.1/css/tom-select.min.css";
 
 .ts-control {
-  @apply block rounded-lg border-secondary focus:border-hoverNavLink active:border-hoverNavLink px-2.5 pb-2.5 pt-2.5 bg-gray-50 !important;
+  @apply block rounded-lg px-2.5 pb-2.5 pt-2.5 bg-gray-50 !important;
 }
 
 .ts-wrapper.plugin-remove_button .item {
@@ -32,7 +32,7 @@ span.gscb_a {
 }
 
 .gsc-search-button-v2 {
-  @apply rounded-lg py-2 px-3 text-lg !important;
+  @apply inline-flex items-center rounded-lg py-2 px-3 bg-inputLabel hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer !important;
 }
 
 .gsc-adBlock {
