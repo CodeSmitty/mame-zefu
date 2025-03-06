@@ -15,42 +15,20 @@ module Recipes
         recipe_details['total_time']
       end
 
-      def recipe_ingredients # rubocop:disable Metrics
+      def recipe_ingredients
         document
-          .css('div.mntl-structured-ingredients')
-          .children
-          .reduce('') do |text, node|
-            next text unless node.element?
-
-            if node.name == 'ul'
-              text << node.children.map { |e| e.text.strip }.compact_blank.join("\n")
-            elsif node.name == 'p' && node.text.present?
-              text << "\n\n" if text.present?
-
-              text << "#{node.text.upcase}\n"
-            end
-
-            text
-          end
+          .css('ul.mm-recipes-structured-ingredients__list li p > span')
+          .map { |t| t.text.strip }
+          .compact_blank
+          .join("\n")
       end
 
-      def recipe_directions # rubocop:disable Metrics
+      def recipe_directions
         document
-          .css('div.recipe__steps-content')
-          .children
-          .reduce('') do |text, node|
-            next text unless node.element?
-
-            if node.name == 'ol'
-              text << node.children.map { |e| e.text.strip }.compact_blank.join("\n\n")
-            elsif node.name == 'h3' && node.text.present?
-              text << "\n\n" if text.present?
-
-              text << "#{node.text.strip.upcase}\n"
-            end
-
-            text
-          end
+          .css('li.mntl-sc-block-group--LI > p')
+          .map { |t| t.text.strip }
+          .compact_blank
+          .join("\n\n")
       end
 
       private
@@ -58,11 +36,11 @@ module Recipes
       def recipe_details
         @recipe_details ||=
           document
-          .css('div.mntl-recipe-details__content div.mntl-recipe-details__item div.mntl-recipe-details__label')
+          .css('div.mm-recipes-details__content div.mm-recipes-details__item div.mm-recipes-details__label')
           .map { |e| e.text.parameterize.underscore }
           .zip(
             document
-            .css('div.mntl-recipe-details__content div.mntl-recipe-details__item div.mntl-recipe-details__value')
+            .css('div.mm-recipes-details__content div.mm-recipes-details__item div.mm-recipes-details__value')
             .map { |e| e.text.strip }
           ).to_h
       end
