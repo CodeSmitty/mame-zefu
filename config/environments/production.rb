@@ -79,7 +79,7 @@ Rails.application.configure do
   config.log_formatter = ::Logger::Formatter.new
 
   # Clearance mailer production configuration.
-  config.action_mailer.default_url_options = { host: ENV['PRODUCTION_URL'] }
+  config.action_mailer.default_url_options = { host: ENV.fetch('PRODUCTION_URL') }
 
   # Use a different logger for distributed setups.
   # require "syslog/logger"
