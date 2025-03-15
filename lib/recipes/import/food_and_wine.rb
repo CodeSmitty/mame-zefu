@@ -15,20 +15,42 @@ module Recipes
         recipe_details['total_time']
       end
 
-      def recipe_ingredients
+      def recipe_ingredients # rubocop:disable Metrics
         document
-          .css('ul.mm-recipes-structured-ingredients__list li p > span')
-          .map { |t| t.text.strip }
-          .compact_blank
-          .join("\n")
+          .css('div.mm-recipes-structured-ingredients')
+          .children
+          .reduce('') do |text, node|
+            next text unless node.element?
+
+            if node.name == 'ul'
+              text << node.children.map { |e| e.text.strip }.compact_blank.join("\n")
+            elsif node.name == 'p' && node.text.present?
+              text << "\n\n" if text.present?
+
+              text << "#{node.text.upcase}\n"
+            end
+
+            text
+          end
       end
 
-      def recipe_directions
+      def recipe_directions # rubocop:disable Metrics
         document
-          .css('li.mntl-sc-block-group--LI > p')
-          .map { |t| t.text.strip }
-          .compact_blank
-          .join("\n\n")
+          .css('div.mm-recipes-steps__content')
+          .children
+          .reduce('') do |text, node|
+            next text unless node.element?
+
+            if node.name == 'ol'
+              text << node.children.map { |e| e.css('> p').text.strip }.compact_blank.join("\n\n")
+            elsif node.name == 'h3' && node.text.present?
+              text << "\n\n" if text.present?
+
+              text << "#{node.text.strip.upcase}\n"
+            end
+
+            text
+          end
       end
 
       private
