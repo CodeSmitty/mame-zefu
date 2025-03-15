@@ -20,7 +20,7 @@
 }
 
 .gsc-input-box {
-  @apply rounded-lg bg-gray-50 border-teal-900 !important;
+  @apply rounded-lg bg-gray-50 border-gray-500 !important;
 }
 
 input.gsc-input {
@@ -28,11 +28,11 @@ input.gsc-input {
 }
 
 span.gscb_a {
-  @apply text-teal-900 !important;
+  @apply text-gray-900 !important;
 }
 
 .gsc-search-button-v2 {
-  @apply inline-flex items-center rounded-lg py-2 px-3 bg-inputLabel hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer !important;
+  @apply inline-flex items-center rounded-lg py-2 px-3 bg-input-label hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer !important;
 }
 
 .gsc-adBlock {

@@ -10,7 +10,7 @@
               <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                 <%= image_tag "recipe.png", class: "w-7/12" %>
               </div>
-              <%= text_field_tag :query, params[:query], data: { action: "input->filter#throttledSubmit" }, placeholder: "Search ...", class: "w-full block rounded-lg px-2.5 pb-2.5 ps-10 text-sm text-gray-900 bg-gray-50 border border-secondary appearance-none focus:outline-none focus:ring-0 focus:border-hoverNavLink peer", autocomplete: 'off', autofocus: 'true', type: 'search', onfocus: "this.setSelectionRange(this.value.length,this.value.length);" %>
+              <%= text_field_tag :query, params[:query], data: { action: "input->filter#throttledSubmit" }, placeholder: "Search ...", class: "w-full block rounded-lg px-2.5 pb-2.5 ps-10 text-sm text-gray-900 bg-gray-50 border border-gray-50 appearance-none focus:outline-none focus:ring-0 focus:border-secondary peer", autocomplete: 'off', autofocus: 'true', type: 'search', onfocus: "this.setSelectionRange(this.value.length,this.value.length);" %>
           </div>
           <div>
             <%= select_tag(:category_names, options_from_collection_for_select(Category.all, :name, :name, params[:category_names]), { data: { controller: "tom-select", 'tom-select-create-value': false, action: "change->filter#submit" }, multiple: true, placeholder: "Select Categories" }) %>
@@ -21,7 +21,7 @@
   </div>
   <div id="recipes" class="flex-column flex-wrap justify-center lg:flex-nowrap">
     <% @recipes.each do |recipe| %>
-      <div class="lg:w-3/6 lg:m-auto border border-b-1 border-secondary border-l-0 border-r-0 border-t-0 m-2 hover:border-hoverNavLink">
+      <div class="lg:w-3/6 lg:m-auto border border-b-1 border-secondary border-l-0 border-r-0 border-t-0 m-2 hover:border-">
         <%= link_to recipe, class: "recipe block m-auto pb-1 lg-w-7/12 font-medium mb-1 text-2l p-4 text-left lg:text-left" do %>
           <%= recipe.name %>
           <% if recipe.is_favorite? %>
