@@ -21,7 +21,7 @@
   </div>
   <div id="recipes" class="flex-column flex-wrap justify-center lg:flex-nowrap">
     <% @recipes.each do |recipe| %>
-      <div class="lg:w-3/6 lg:m-auto border border-b-1 border-secondary border-l-0 border-r-0 border-t-0 m-2 hover:border-">
+      <div class="lg:w-3/6 lg:m-auto border border-b-1 border-secondary border-l-0 border-r-0 border-t-0 m-2 hover:border-tertiary">
         <%= link_to recipe, class: "recipe block m-auto pb-1 lg-w-7/12 font-medium mb-1 text-2l p-4 text-left lg:text-left" do %>
           <%= recipe.name %>
           <% if recipe.is_favorite? %>

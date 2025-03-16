@@ -12,7 +12,7 @@ module.exports = {
       colors:{
         primary:"rgb(29 32 34)",
         secondary: "#eeb14a",
-        'tertiary-color': "rgb(165 68 29)",
+        'tertiary': "rgb(165 68 29)",
         'input-label': "rgb(238 177 74 / 73%)"
       },
       fontFamily: {
