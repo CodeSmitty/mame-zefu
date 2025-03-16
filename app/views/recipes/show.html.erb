@@ -6,12 +6,12 @@
 
     <%= render @recipe %>
 
-    <%= link_to edit_recipe_path(@recipe), class: "inline-flex items-center mt-2 rounded-lg py-2 px-3 inline-block font-medium text-teal-900 hover:text-white border border-teal-900 hover:bg-teal-900" do %>
+    <%= link_to edit_recipe_path(@recipe), class: "inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer" do %>
       <%= render_icon "micro/pencil_square", classes: "me-1" %> Edit
     <% end %>
 
     <div class="inline-block ml-2">
-      <%= button_to recipe_path(@recipe), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "inline-flex items-center mt-2 rounded-lg py-2 px-3 font-medium text-teal-900 hover:text-white border border-teal-900 hover:bg-teal-900" do %>
+      <%= button_to recipe_path(@recipe), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer" do %>
         <%= render_icon "micro/trash", classes: "me-1" %> Delete
       <% end %>
     </div>

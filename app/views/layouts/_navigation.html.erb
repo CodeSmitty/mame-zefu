@@ -1,11 +1,11 @@
-<nav class="bg-teal-900 w-full z-20 top-0 fixed">
+<nav class="bg-primary w-full z-20 top-0 fixed">
   <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2">
-    <div class="rounded-full bg-white">
+    <div>
         <%= link_to root_path do %>
-          <%= image_tag "Mamezefu-02.png", class: "size-20" %>
+          <%= image_tag "Mamezefu-02.png", class: "size-20 mx-4 p-1 rounded-full border-2 border-secondary" %>
         <% end %>
     </div>
-    <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center justify-center rounded-lg p-3 text-white md:hidden hover:bg-teal-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" aria-controls="navbar-default" aria-expanded="false">
+    <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center justify-center rounded-lg p-3 text-white md:hidden  hover:text-secondary focus:outline-none focus:ring-2 focus:ring-inset focus:ring-secondary" aria-controls="navbar-default" aria-expanded="false">
         <span class="sr-only">Open main menu</span>
         <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
@@ -14,12 +14,12 @@
     <div class="hidden w-full md:block md:w-auto" id="navbar-default">
       <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 mr-4 border border-white rounded-lg md:flex-row rtl:space-x-reverse md:mt-0 md:border-0">
         <li>
-          <%= link_to new_recipe_path, class: "block flex items-center py-2 px-3 rounded-lg text-white hover:bg-teal-700" do %>
+          <%= link_to new_recipe_path, class: "text-secondary block flex items-center py-2 px-3 rounded-lg hover:text-tertiary" do %>
             <%= render_icon "mini/plus", classes: "mr-1" %> New Recipe
           <% end %>
         </li>
         <li>
-          <%= link_to web_search_recipes_path, class: "block flex items-center py-2 px-3 rounded-lg text-white hover:bg-teal-700" do %>
+          <%= link_to web_search_recipes_path, class: "text-secondary block flex items-center py-2 px-3 rounded-lg hover:text-tertiary" do %>
             <%= render_icon "mini/globe_alt", classes: "mr-1" %> Import
           <% end %>
         </li>
