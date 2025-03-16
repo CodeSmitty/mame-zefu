@@ -3,26 +3,29 @@ module Recipes
     class TasteOfHome < Base
       def recipe_name
         document
-          .css('h1.recipe-title')
+          .css('h2.recipe-title')
           .text
       end
 
       def recipe_yield
         document
-          .css('div.makes p')
-          .text
+          .css('div.yield span')
+          &.last
+          &.text
       end
 
       def recipe_prep_time
-        total_time[/Prep: (\d+ \w+)/, 1]
+        document
+          .css('div.prep span')
+          &.last
+          &.text
       end
 
       def recipe_cook_time
-        total_time[/(?:Cook|Bake): (\d+ \w+)/, 1]
-      end
-
-      def recipe_total_time
-        total_time[%r{Prep/Total Time: (\d+ \w+)}, 1]
+        document
+          .css('div.cook span')
+          &.last
+          &.text
       end
 
       def recipe_ingredients
@@ -37,14 +40,6 @@ module Recipes
           .css('div.recipe-directions ol.recipe-directions__list li.recipe-directions__item')
           .map { |li| li.css('span').text.strip }
           .join("\n\n")
-      end
-
-      private
-
-      def total_time
-        document
-          .css('div.total-time p')
-          .text
       end
     end
   end
