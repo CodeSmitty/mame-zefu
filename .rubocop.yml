@@ -14,7 +14,9 @@ AllCops:
     - 'app/views/**/*'
     - 'db/**/*'
     - 'bin/**/*'
+    - 'config/**/*'
     - 'vendor/bundle/**/*'
+    - Gemfile
 
 Metrics/BlockLength:
   Enabled: true
