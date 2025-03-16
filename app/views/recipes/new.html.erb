@@ -1,4 +1,6 @@
 <div class="mx-auto md:w-4/5 w-full form-container lg:px-20 p-5">
+  <%= render partial: "recipes/helpers/flash" %>
+
   <h1 class="font-bold text-2xl lg:text-4xl text-teal-900 text-start">Create your recipe</h1>
 
   <%= render "form", recipe: @recipe %>
