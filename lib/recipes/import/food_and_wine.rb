@@ -11,12 +11,17 @@ module Recipes
         recipe_details['yield']
       end
 
+      def recipe_prep_time
+        recipe_details['active_time']
+      end
+
       def recipe_total_time
         recipe_details['total_time']
       end
 
       def recipe_ingredients # rubocop:disable Metrics
         document
+          .css('div.mm-recipes-structured-ingredients')
           .css('div.mm-recipes-structured-ingredients')
           .children
           .reduce('') do |text, node|
@@ -59,9 +64,11 @@ module Recipes
         @recipe_details ||=
           document
           .css('div.mm-recipes-details__content div.mm-recipes-details__item div.mm-recipes-details__label')
+          .css('div.mm-recipes-details__content div.mm-recipes-details__item div.mm-recipes-details__label')
           .map { |e| e.text.parameterize.underscore }
           .zip(
             document
+            .css('div.mm-recipes-details__content div.mm-recipes-details__item div.mm-recipes-details__value')
             .css('div.mm-recipes-details__content div.mm-recipes-details__item div.mm-recipes-details__value')
             .map { |e| e.text.strip }
           ).to_h

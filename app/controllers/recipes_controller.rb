@@ -1,4 +1,5 @@
 class RecipesController < ApplicationController
+  before_action :require_login
   before_action :set_recipe, only: %i[show edit update destroy toggle_favorite]
 
   def web_search; end
