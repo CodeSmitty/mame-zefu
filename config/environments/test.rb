@@ -7,8 +7,6 @@ require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
-  # since you don't have to restart the web server when you make code changes.
-  config.enable_reloading = true
   config.middleware.use Clearance::BackDoor do |username|
     Clearance.configuration.user_model.find_by(username: username)
   end
