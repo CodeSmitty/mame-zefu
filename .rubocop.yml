@@ -2,7 +2,11 @@ inherit_from: .rubocop_todo.yml
 
 require:
   - rubocop-capybara
+  - rubocop-rspec_rails
+
+plugins:
   - rubocop-rails
+  - rubocop-rspec
 
 AllCops:
   NewCops: enable
@@ -10,7 +14,9 @@ AllCops:
     - 'app/views/**/*'
     - 'db/**/*'
     - 'bin/**/*'
+    - 'config/**/*'
     - 'vendor/bundle/**/*'
+    - Gemfile
 
 Metrics/BlockLength:
   Enabled: true
@@ -22,6 +28,12 @@ Rails/HasAndBelongsToMany:
 
 Rails/I18nLocaleTexts:
   Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Max: 12
+
+RSpec/NestedGroups:
+  Max: 4
 
 Style/Documentation:
   Enabled: false
