@@ -15,7 +15,7 @@ RSpec.feature 'Visitor resets password' do
     visit sign_in_path
 
     click_link_or_button I18n.t('sessions.form.forgot_password')
-    expect(have_current_path).to eq new_password_path
+    expect(page).to have_current_path(new_password_path)
   end
 
   scenario 'with valid email' do
@@ -56,7 +56,7 @@ RSpec.feature 'Visitor resets password' do
         email.text_part.body =~ /#{body}/
     end
 
-    expect(message).to
+    expect(message).to be_truthy
   end
 
   def expect_mailer_to_have_no_deliveries

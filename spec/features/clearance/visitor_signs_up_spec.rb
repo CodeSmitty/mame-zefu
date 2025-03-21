@@ -6,7 +6,7 @@ RSpec.feature 'Visitor signs up' do
     visit sign_in_path
 
     click_link_or_button I18n.t('sessions.form.sign_up')
-    expect(current_path).to eq sign_up_path
+    expect(page).to have_current_path(sign_up_path)
   end
 
   scenario 'with valid email and password' do

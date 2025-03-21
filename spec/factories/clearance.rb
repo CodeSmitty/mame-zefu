@@ -1,11 +1,10 @@
 FactoryBot.define do
   sequence :email do |n|
-    base_email = ENV['TEST_SENDER_EMAIL'] || "user#{n}@gmail.com"
-    base_email
+    "user#{n}@example.com"
   end
 
   factory :user do
-    email { generate(:email) }
+    email
     password { 'password' }
   end
 end

@@ -5,7 +5,6 @@ RSpec.feature 'Visitor updates password' do
   scenario 'with valid password' do
     user = user_with_reset_password
     update_password user, 'newpassword'
-    puts " user token: #{user.confirmation_token}"
     expect_user_to_be_signed_in
   end
 
