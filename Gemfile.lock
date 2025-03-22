@@ -284,6 +284,9 @@ GEM
     rubocop-capybara (2.22.1)
       lint_roller (~> 1.1)
       rubocop (~> 1.72, >= 1.72.1)
+    rubocop-factory_bot (2.27.1)
+      lint_roller (~> 1.1)
+      rubocop (~> 1.72, >= 1.72.1)
     rubocop-rails (2.30.3)
       activesupport (>= 4.2.0)
       lint_roller (~> 1.1)
@@ -368,6 +371,7 @@ DEPENDENCIES
   rspec-rails (~> 7.1.0)
   rubocop
   rubocop-capybara
+  rubocop-factory_bot
   rubocop-rails
   rubocop-rspec
   rubocop-rspec_rails
