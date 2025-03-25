@@ -5,7 +5,7 @@ RSpec.describe 'Recipes' do
   let(:category_name) { 'Italian' }
   let(:category) { Category.create(name: category_name) }
   let!(:recipe) { Recipe.create(name: recipe_name, categories: [category]) }
-  let(:user) { FactoryBot.create(:user) }
+  let(:user) { create(:user) }
 
   describe 'GET /recipes' do
     it 'returns a 200' do
