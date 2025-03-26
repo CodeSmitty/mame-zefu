@@ -1,0 +1,15 @@
+<div id="clearance" class="sign-up lg:w-1/2 w-full m-auto">
+  <h2 class="text-secondary text-semibold"><%= t(".title") %></h2>
+  <%= form_for @user do |form| %>
+    <%= render partial: '/users/form', object: form %>
+
+    <div class="flex justify-end">
+      <div class="submit-field mr-2.5">
+        <%= form.submit class: "inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer" %>
+      </div>
+      <div class="other-links ml-2.5">
+        <%= link_to t(".sign_in"), sign_in_path, class: "inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer" %>
+      </div>
+    </div>
+  <% end %>
+</div>

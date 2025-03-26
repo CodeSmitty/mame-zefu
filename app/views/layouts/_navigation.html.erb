@@ -12,17 +12,22 @@
         </svg>
     </button>
     <div class="hidden w-full md:block md:w-auto" id="navbar-default">
-      <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 mr-4 border border-white rounded-lg md:flex-row rtl:space-x-reverse md:mt-0 md:border-0">
-        <li>
-          <%= link_to new_recipe_path, class: "text-secondary block flex items-center py-2 px-3 rounded-lg hover:text-tertiary" do %>
-            <%= render_icon "mini/plus", classes: "mr-1" %> New Recipe
-          <% end %>
-        </li>
-        <li>
-          <%= link_to web_search_recipes_path, class: "text-secondary block flex items-center py-2 px-3 rounded-lg hover:text-tertiary" do %>
-            <%= render_icon "mini/globe_alt", classes: "mr-1" %> Import
-          <% end %>
-        </li>
+      <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 mr-7 border border-white rounded-lg md:flex-row rtl:space-x-reverse md:mt-0 md:border-0">
+        <% if signed_in? %>
+          <li>
+            <%= link_to new_recipe_path, class: "text-secondary block flex items-center py-2 px-3 rounded-lg hover:text-tertiary" do %>
+              <%= render_icon "mini/plus", classes: "mr-1" %> New Recipe
+            <% end %>
+          </li>
+          <li>
+            <%= link_to web_search_recipes_path, class: "text-secondary block flex items-center py-2 px-3 rounded-lg hover:text-tertiary" do %>
+              <%= render_icon "mini/globe_alt", classes: "mr-1" %> Import
+            <% end %>
+          </li>
+          <li><%= button_to 'Sign out', sign_out_path, method: :delete, class: "text-secondary block flex items-center py-2 px-3 rounded-lg hover:text-tertiary" %></li>
+        <% else %>
+          <li><%= link_to 'Sign in', sign_in_path, class: "text-secondary block flex items-center py-2 px-3 rounded-lg hover:text-tertiary" %></li>
+        <% end %>
       </ul>
     </div>
   </div>

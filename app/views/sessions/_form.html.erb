@@ -1,0 +1,24 @@
+<%= form_for :session, url: session_path do |form| %>
+  <div class="text-field my-5 relative">
+    <%= form.email_field :email, class: "block rounded-lg px-2.5 pb-2.5 pt-5 w-full text-sm text-gray-900 bg-gray-50 border-transparent appearance-none focus:outline-none focus:ring-0 focus:border-secondary peer", placeholder: " " %>
+    <%= form.label :email, class: "absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-gray-50 px-2 peer-focus:bg-gray-50 peer-focus:pb-0 peer-focus:px-2 peer-focus:text-tertiary peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-6 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1" %>
+  </div>
+
+  <div class="password-field my-5 relative">
+    <%= form.password_field :password, class: "block rounded-lg px-2.5 pb-2.5 pt-5 w-full text-sm text-gray-900 bg-gray-50 border-transparent appearance-none focus:outline-none focus:ring-0 focus:border-secondary peer", placeholder: " " %>
+     <%= form.label :password, class: "absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-gray-50 px-2 peer-focus:bg-gray-50 peer-focus:pb-0 peer-focus:px-2 peer-focus:text-tertiary peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-6 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1" %>
+  </div>
+
+  <div class="submit-field flex justify-end">
+    <%= form.submit class: "inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer" %>
+  </div>
+
+  <div class="other-links my-10">
+    <% if Clearance.configuration.allow_sign_up? %>
+      <%= link_to t(".sign_up"), sign_up_path, class: "inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer" %>
+    <% end %>
+    <% if Clearance.configuration.allow_password_reset? %>
+      <%= link_to t(".forgot_password"), new_password_path, class: "inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer" %>
+    <% end %>
+  </div>
+<% end %>

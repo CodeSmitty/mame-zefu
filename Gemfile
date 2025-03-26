@@ -47,6 +47,9 @@ gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 
+# Clearance authentication with email & password
+gem "clearance"
+
 # Use Sass to process CSS
 # gem "sassc-rails"
 
@@ -57,10 +60,12 @@ group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
   gem 'erb_lint'
+  gem 'factory_bot_rails'
   gem 'pry'
   gem 'rspec-rails', '~> 7.1.0'
   gem 'rubocop', require: false
   gem 'rubocop-capybara', require: false
+  gem 'rubocop-factory_bot', require: false
   gem 'rubocop-rails', require: false
   gem 'rubocop-rspec', require: false
   gem 'rubocop-rspec_rails', require: false

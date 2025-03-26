@@ -15,7 +15,8 @@
     <header>
       <%= render "layouts/navigation" %>
     </header>
-    <main class="container mx-auto mt-32 mb-16 px-5 flex">
+    <main class="container mx-auto mt-32 mb-16 px-5 flex flex-col flex-nowrap">
+      <%= render partial: "recipes/helpers/flash" %>
       <%= yield %>
     </main>
   </body>

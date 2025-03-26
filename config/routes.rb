@@ -1,5 +1,14 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  resources :passwords, only: [:create, :new]
+  resource :session, only: [:create]
+
+  resources :users, only: [:create] do
+    resource :password, only: [:edit, :update]
+  end
+
+  get '/sign_in' => 'sessions#new', as: 'sign_in'
+  delete '/sign_out' => 'sessions#destroy', as: 'sign_out'
+  get '/sign_up' => 'users#new', as: 'sign_up'
 
   get 'health_check', to: 'application#health_check'
 

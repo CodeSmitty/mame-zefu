@@ -1,0 +1,5 @@
+<div id="flash" class="flex justify-center text-xs font-bold mb-10">
+    <% flash.each do |key, value| %>
+      <div class="flash rounded-lg bg-red-50 text-center border-2 border-red-600 w-1/5 p-2 <%= key %>"><%= value %></div>
+    <% end %>
+</div>
