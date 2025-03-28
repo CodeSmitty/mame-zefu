@@ -20,9 +20,14 @@ textarea,
   box-shadow: 1px 2px 4px 1px rgba(206, 205, 205, 0.94) !important;
 }
 
-nav{
-  background: rgb(43,47,42);
-  background: radial-gradient(circle, rgba(43,47,42,1) 0%, rgba(43,48,42,1) 0%, rgba(0,0,0,1) 52%);
+nav {
+  background: rgb(43, 47, 42);
+  background: radial-gradient(
+    circle,
+    rgba(43, 47, 42, 1) 0%,
+    rgba(43, 48, 42, 1) 0%,
+    rgba(0, 0, 0, 1) 52%
+  );
 }
 
 .rating {
