@@ -1,12 +1,12 @@
 <nav class="w-full z-20 top-0 fixed">
   <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2">
    <div class="flex items-center">
-      <%= link_to root_path, class: "inline-block mx-4 p-[4px] rounded-full" do %>
+      <%= link_to root_path, class: "group inline-block mx-4 p-[4px] rounded-full flex flex-row flex-nowrap items-center text-gray-300" do %>
         <div class="size-20 rounded-full bg-transparent flex items-center justify-center">
-          <%= image_tag "Mamezefu-02.png", class: "h-full w-full object-contain rounded-full rounded-full border-2 border-gray-200 hover:border-secondary" %>
+          <%= image_tag "Mamezefu-02.png", class: "h-full w-full object-contain rounded-full rounded-full border-2 border-gray-200 group-hover:border-secondary" %>
         </div>
+        <span class="font-semibold relative ml-2 group-hover:text-secondary">MameZefu</span>
       <% end %>
-      <span class="font-semibold text-gray-300 relative">MameZefu</span>
     </div>
     <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center justify-center rounded-lg p-3 text-white md:hidden  hover:text-secondary focus:outline-none focus:ring-2 focus:ring-inset focus:ring-secondary" aria-controls="navbar-default" aria-expanded="false">
         <span class="sr-only">Open main menu</span>
