@@ -1,9 +1,12 @@
-<nav class="bg-primary w-full z-20 top-0 fixed">
+<nav class="w-full z-20 top-0 fixed">
   <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2">
-    <div>
-        <%= link_to root_path do %>
-          <%= image_tag "Mamezefu-02.png", class: "size-20 mx-4 p-1 rounded-full border-2 border-secondary" %>
-        <% end %>
+   <div class="flex items-center">
+      <%= link_to root_path, class: "inline-block mx-4 p-[4px] rounded-full" do %>
+        <div class="size-20 rounded-full bg-transparent flex items-center justify-center">
+          <%= image_tag "Mamezefu-02.png", class: "h-full w-full object-contain rounded-full rounded-full border-2 border-gray-200 hover:border-secondary" %>
+        </div>
+      <% end %>
+      <span class="font-semibold text-gray-300 relative">MameZefu</span>
     </div>
     <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center justify-center rounded-lg p-3 text-white md:hidden  hover:text-secondary focus:outline-none focus:ring-2 focus:ring-inset focus:ring-secondary" aria-controls="navbar-default" aria-expanded="false">
         <span class="sr-only">Open main menu</span>
@@ -11,22 +14,61 @@
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
         </svg>
     </button>
-    <div class="hidden w-full md:block md:w-auto" id="navbar-default">
-      <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 mr-7 border border-white rounded-lg md:flex-row rtl:space-x-reverse md:mt-0 md:border-0">
+    <div class="hidden w-full lg:w-4/12 md:block md:w-auto" id="navbar-default">
+      <ul class="font-medium lg:w-full lg:h-full lg:justify-end text-gray-200 flex flex-col justify-around p-4 md:p-0 mt-4 mr-7 border border-white rounded-lg md:flex-row rtl:space-x-reverse md:mt-0 md:border-0">
         <% if signed_in? %>
           <li>
-            <%= link_to new_recipe_path, class: "text-secondary block flex items-center py-2 px-3 rounded-lg hover:text-tertiary" do %>
-              <%= render_icon "mini/plus", classes: "mr-1" %> New Recipe
+            <%= link_to new_recipe_path, class: "group relative block flex items-center mt-3 px-3 text-gray-200" do %>
+              <span class="flex items-center">
+                <%= render_icon "mini/plus", classes: "mx-1 transition-colors duration-300 group-hover:text-secondary" %>
+                <span class="relative overflow-hidden">
+                  <span class="block transition-colors duration-300 group-hover:text-transparent">New Recipe</span>
+                  <span class="absolute inset-0 text-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-400 flex items-center justify-start">
+                    New Recipe
+                  </span>
+                </span>
+              </span>
+              <span class="absolute bottom-0 left-3 right-3 h-0.5 bg-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
             <% end %>
           </li>
           <li>
-            <%= link_to web_search_recipes_path, class: "text-secondary block flex items-center py-2 px-3 rounded-lg hover:text-tertiary" do %>
-              <%= render_icon "mini/globe_alt", classes: "mr-1" %> Import
+            <%= link_to web_search_recipes_path, class: "group relative block flex items-center mt-3 px-3 text-gray-200" do %>
+              <span class="flex items-center">
+                <%= render_icon "mini/globe_alt", classes: "mx-1 transition-colors duration-300 group-hover:text-secondary" %>
+                <span class="relative overflow-hidden">
+                  <span class="block transition-colors duration-300 group-hover:text-transparent">Import</span>
+                  <span class="absolute inset-0 text-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 flex items-center">
+                    Import
+                  </span>
+                </span>
+              </span>
+              <span class="absolute bottom-0 left-3 right-3 h-0.5 bg-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
             <% end %>
           </li>
-          <li><%= button_to 'Sign out', sign_out_path, method: :delete, class: "text-secondary block flex items-center py-2 px-3 rounded-lg hover:text-tertiary" %></li>
+          <li>
+            <%= button_to sign_out_path, method: :delete, class: "group relative inline-flex lg:border-l-2 border-gray-200 text-stroke-3 stroke-gray-200 text-gray-200 items-center mt-3 px-3" do %>
+              <span class="relative z-10 flex items-center">
+                <span class="mr-1 transition-all duration-300 group-hover:text-secondary group-hover:stroke-secondary group-hover:scale-110">
+                  <%= render_icon "mini/sign_out", classes: "w-4 h-4" %>
+                </span>
+                <span class="relative overflow-hidden">
+                  <span class="block transition-colors duration-300 group-hover:text-transparent">Sign Out</span>
+                  <span class="absolute inset-0 text-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 flex items-center">
+                    Sign Out
+                  </span>
+                </span>
+              </span>
+              <span class="absolute bottom-0 left-3 right-3 h-0.5 bg-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+            <% end %>
         <% else %>
-          <li><%= link_to 'Sign in', sign_in_path, class: "text-secondary block flex items-center py-2 px-3 rounded-lg hover:text-tertiary" %></li>
+          <li>
+            <%= link_to sign_in_path, class: "group relative inline-flex border-l-2 border-gray-200 text-stroke-3 stroke-gray-200 text-gray-200 items-center mt-3 px-3 transform duration-300 hover:text-lg hover:text-tertiary" do %>
+              <span class="relative z-10 flex items-center transition-colors duration-300 group-hover:text-tertiary hover:stroke-tertiary">
+                <%= render_icon "mini/sign_in", classes: "mr-1 w-4 h-4" %>
+                Sign In
+              </span>
+              <span class="absolute bottom-0 left-3 right-3 h-0.5 bg-tertiary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+            <% end %>
         <% end %>
       </ul>
     </div>
