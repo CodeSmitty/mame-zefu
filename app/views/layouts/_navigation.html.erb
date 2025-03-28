@@ -3,9 +3,9 @@
    <div class="flex items-center">
       <%= link_to root_path, class: "group inline-block mx-4 p-[4px] rounded-full flex flex-row flex-nowrap items-center text-gray-300" do %>
         <div class="size-20 rounded-full bg-transparent flex items-center justify-center">
-          <%= image_tag "Mamezefu-02.png", class: "h-full w-full object-contain rounded-full rounded-full border-2 border-gray-200 group-hover:border-secondary" %>
+          <%= image_tag "Mamezefu-02.png", class: "h-full w-full object-contain rounded-full rounded-full border-2 border-gray-200 group-hover:border-secondary transform duration-500" %>
         </div>
-        <span class="font-semibold relative ml-2 group-hover:text-secondary">MameZefu</span>
+        <span class="font-semibold relative ml-2 group-hover:text-secondary transform duration-500">MameZefu</span>
       <% end %>
     </div>
     <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center justify-center rounded-lg p-3 text-white md:hidden  hover:text-secondary focus:outline-none focus:ring-2 focus:ring-inset focus:ring-secondary" aria-controls="navbar-default" aria-expanded="false">
@@ -62,12 +62,12 @@
             <% end %>
         <% else %>
           <li>
-            <%= link_to sign_in_path, class: "group relative inline-flex border-l-2 border-gray-200 text-stroke-3 stroke-gray-200 text-gray-200 items-center mt-3 px-3 transform duration-300 hover:text-lg hover:text-tertiary" do %>
-              <span class="relative z-10 flex items-center transition-colors duration-300 group-hover:text-tertiary hover:stroke-tertiary">
+            <%= link_to sign_in_path, class: "group relative inline-flex border-l-2 border-gray-200 text-stroke-3 stroke-gray-200 text-gray-200 items-center mt-3 px-3 transform duration-300 hover:text-secondary" do %>
+              <span class="relative z-10 flex items-center transition-colors duration-300 group-hover:text-seoncdary hover:stroke-secondary">
                 <%= render_icon "mini/sign_in", classes: "mr-1 w-4 h-4" %>
                 Sign In
               </span>
-              <span class="absolute bottom-0 left-3 right-3 h-0.5 bg-tertiary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+              <span class="absolute bottom-0 left-3 right-3 h-0.5 bg-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
             <% end %>
         <% end %>
       </ul>
