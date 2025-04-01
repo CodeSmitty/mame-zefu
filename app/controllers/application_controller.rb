@@ -4,6 +4,8 @@ require 'net/http'
 
 class ApplicationController < ActionController::Base
   include Clearance::Controller
+  include Pundit::Authorization
+
   def health_check
     render json: { started_at:, updated_at:, ok: healthy? }, status:
   end

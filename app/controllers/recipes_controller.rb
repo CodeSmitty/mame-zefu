@@ -23,7 +23,7 @@ class RecipesController < ApplicationController
 
   # GET /recipes/new
   def new
-    @recipe = Recipe.new
+    @recipe = current_user.recipes.build
   end
 
   # GET /recipes/1/edit
@@ -31,7 +31,7 @@ class RecipesController < ApplicationController
 
   # POST /recipes or /recipes.json
   def create
-    @recipe = Recipe.new(recipe_params)
+    @recipe = current_user.recipes.build(recipe_params)
 
     respond_to do |format|
       if @recipe.save
@@ -46,6 +46,7 @@ class RecipesController < ApplicationController
 
   # PATCH/PUT /recipes/1 or /recipes/1.json
   def update
+    redirect_to :edit, notice: 'This user is not allowed to update this recipe.' unless authorize @recipe
     respond_to do |format|
       if @recipe.update(recipe_params)
         format.html { redirect_to recipe_url(@recipe), notice: 'Recipe was successfully updated.' }
@@ -59,6 +60,7 @@ class RecipesController < ApplicationController
 
   # DELETE /recipes/1 or /recipes/1.json
   def destroy
+    redirect_to :show, notice: 'This user is not allowed to delete this recipe.' unless authorize @recipe
     @recipe.destroy
     respond_to do |format|
       format.html { redirect_to recipes_url, notice: 'Recipe was successfully destroyed.' }
@@ -67,6 +69,7 @@ class RecipesController < ApplicationController
   end
 
   def toggle_favorite
+    authorize @recipe
     @recipe.toggle!(:is_favorite) # rubocop:disable Rails/SkipsModelValidations
     render json: { is_favorite: @recipe.is_favorite }
   end
