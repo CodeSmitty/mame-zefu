@@ -1,31 +1,45 @@
-class RecipePolicy
-    attr_reader :user, :recipe
-  
-    def initialize(user, recipe)
+class RecipePolicy < ApplicationPolicy
+  attr_reader :user, :recipe
+
+  def initialize(user, recipe)
+    @user = user
+    @recipe = recipe
+  end
+
+  def create?
+    owner?
+  end
+
+  def update?
+    owner?
+  end
+
+  def destroy?
+    owner?
+  end
+
+  def toggle_favorite?
+    owner?
+  end
+
+  class Scope
+    def initialize(user, scope)
       @user = user
-      @recipe = recipe
+      @scope = scope
     end
 
-    def create?
-        is_owner?
-    end
-  
-    def update?
-      is_owner? 
-    end
-
-    def destroy?
-        is_owner?
-    end
-
-    def toggle_favorite?
-        is_owner?
+    def resolve
+      scope.where(user: user)
     end
 
     private
 
-    def is_owner?
-        user == recipe.user
-    end
-    
+    attr_reader :user, :scope
   end
+
+  private
+
+  def owner?
+    user == recipe.user
+  end
+end

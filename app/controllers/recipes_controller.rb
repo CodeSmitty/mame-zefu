@@ -15,7 +15,7 @@ class RecipesController < ApplicationController
 
   # GET /recipes or /recipes.json
   def index
-    @recipes = Recipe.with_text(params[:query]).in_categories(params[:category_names]).sorted
+    @recipes = policy_scope(Recipe.with_text(params[:query]).in_categories(params[:category_names]).sorted)
   end
 
   # GET /recipes/1 or /recipes/1.json
