@@ -1,5 +1,7 @@
 exit unless Rails.env.development?
 
+user = User.find_by(email: 'admin@example.com')
+
 recipes_data = [
   {
     name: 'Crispy Balsamic Chicken Thighs',
@@ -13,7 +15,6 @@ recipes_data = [
     description: 'A delightfully tangy and sweet sauce makes the perfect finish for seared chicken thighs. Serve with vegetables, soup, or a grain side dish for a family favorite weeknight meal that is ready in less than 30 minutes.',
     notes: "When searing meat, leave it untouched in a medium-high skillet until the bottom is lightly browned and crispy. If you turn or move the meat too frequently, the brown crust will not form.\n\nInstead of the chicken thighs, try lean 4-ounce steaks.",
     category_names: %w[Chicken Main],
-    user_id: 1
   },
   {
     name: 'Best Ever Potato Soup',
@@ -27,7 +28,6 @@ recipes_data = [
     description: '',
     notes: "If you prefer a thicker soup, you can add an additional tablespoon of flour, or substitute some of the 2% milk for whole or heavy cream.\n\nIf you don’t have Velveeta, cheddar or Colby jack are good substitutes.",
     category_names: %w[Soup],
-    user_id: 1
   },
   {
     name: 'Best Banana Bread',
@@ -41,7 +41,6 @@ recipes_data = [
     description: '',
     notes: '',
     category_names: %w[Bread],
-    user_id: 1
   },
   {
     name: 'Curried Apricot Couscous',
@@ -55,7 +54,6 @@ recipes_data = [
     description: '',
     notes: '',
     category_names: %w[Side],
-    user_id: 1
   },
   {
     name: 'Garlic Beef Enchiladas',
@@ -69,7 +67,6 @@ recipes_data = [
     description: '',
     notes: '',
     category_names: %w[Beef Main],
-    user_id: 1
   },
   {
     name: 'Lemony Green Beans with Almonds',
@@ -83,7 +80,6 @@ recipes_data = [
     description: 'Green beans are packed with vitamins and minerals, and are low in calories. This recipe dresses them up with olive oil, lemon, Parmesan cheese, and almonds for a delicious side dish.',
     notes: "Blanch and shock the green beans, boiling them for a few minutes then transferring them immediately to ice water. This helps keep the green beans crips and preserves their bright green color.\n\nTry broccoli instead of green beans.",
     category_names: %w[Vegetable Side],
-    user_id: 1
   },
   {
     name: 'Italian-Style Turkey Meat Loaf',
@@ -97,7 +93,6 @@ recipes_data = [
     description: 'Good old meat loaf gets a flavor upgrade in this recipe by incorporating Italian seasoning, mozzarella cheese, and marinara sauce. Although turkey is a lean meat, this meat loaf is tender and juicy because it contains ingredients like Dijon mustard that provide moisture and flavor.',
     notes: "Make mini meat loaves by spooning the mixture into greased muffin tin wells. Bake for 15 to 25 minutes, until cooked through.\n\nTry lean ground beef, pork, or chicken.",
     category_names: %w[Turkey Main],
-    user_id: 1
   },
   {
     name: 'Fettuccine Alfredo',
@@ -111,7 +106,6 @@ recipes_data = [
     description: '',
     notes: '',
     category_names: %w[Pasta Main],
-    user_id: 1
   },
   {
     name: 'Roasted Red Pepper & Pesto Omelet',
@@ -125,7 +119,6 @@ recipes_data = [
     description: 'You can put almost any vegetable in an omelet, and this variation takes the traditional omelet to the next level with roasted red peppers and pesto. Make the pesto at home with fresh basil and spinach so you can instantly add flavor to many dishes with one sauce.',
     notes: 'Replace roasted red peppers with kalamata olives or artichokes.',
     category_names: %w[Breakfast Egg],
-    user_id: 1
   },
   {
     name: 'Rosemary-Apricot Pork Tenderloin',
@@ -139,7 +132,6 @@ recipes_data = [
     description: '',
     notes: '',
     category_names: %w[Pork Main],
-    user_id: 1
   },
   {
     name: 'Maple Mustard Brussels Sprouts with Toasted Walnuts',
@@ -153,7 +145,6 @@ recipes_data = [
     description: 'Brussels sprouts, a cruciferous vegetable, are a great source of vitamin K, vitamin C, vitamin B6, potassium, and fiber. When sauteed in a hot skillet, they become crispy on the outside and fork tender. The maple mustard sauce and crunchy walnuts take this dish to the next level.',
     notes: "Try honey instead of maple syrup.\n\nTry broccoli instead of Brussels sprouts.",
     category_names: %w[Vegetable Side],
-    user_id: 1
   },
   {
     name: 'Stir-Fry Sauce',
@@ -167,7 +158,6 @@ recipes_data = [
     description: "Stir-fry sauce can be whipped up in a matter of minutes and stored in the fridge to be used all week. It's perfectly balance, with savory, sweet, umami, and spicy notes.",
     notes: '',
     category_names: %w[Sauce],
-    user_id: 1
   },
   {
     name: 'Tofu & Green Bean Stir-Fry',
@@ -181,7 +171,6 @@ recipes_data = [
     description: 'Stir-fried dishes are perfect for weeknights because the cooking process is quick, especially if the sauce is made in advance.',
     notes: 'Try seitan instead of tofu. It also is a great source of protein and lends itself well to Asian-style dishes.',
     category_names: %w[Tofu Vegetarian Main],
-    user_id: 1
   },
   {
     name: 'Vegetarian Linguine',
@@ -195,7 +184,6 @@ recipes_data = [
     description: '',
     notes: '',
     category_names: %w[Vegetarian Pasta Main],
-    user_id: 1
   },
   {
     name: 'Grilled Pork & Pineapple Kebabs',
@@ -209,12 +197,11 @@ recipes_data = [
     description: "Kebabs are a quintessential summer recipe, and our version got a sweet upgrade with fresh pineapple, red bell pepper, and a mixture of honey, soy sauce, and apple cider vinegar. If you have a bit of extra time, you could marinate the kebabs first, but it's equally delicious brushed on while grilling.",
     notes: "If using wooden skewers, soak them in water for 30 minutes before threading to avoid them charring or catching on fire.\n\nTry using steak instead of  pork and mango instead of pineapple.",
     category_names: %w[Pork Main],
-    user_id: 1
   },
 ]
 
 recipes_data.each do |recipe_data|
-  Recipe.find_or_initialize_by(name: recipe_data[:name]).update(recipe_data)
+  user.recipes.find_or_initialize_by(name: recipe_data[:name]).update(recipe_data)
 end
 
 puts "Seed data for recipes created successfully!"

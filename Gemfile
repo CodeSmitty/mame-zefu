@@ -50,6 +50,9 @@ gem "bootsnap", require: false
 # Clearance authentication with email & password
 gem "clearance"
 
+# Pundit user authorization
+gem "pundit", "~> 2.5"
+
 # Use Sass to process CSS
 # gem "sassc-rails"
 
@@ -89,5 +92,3 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
-
-gem "pundit", "~> 2.5"

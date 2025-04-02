@@ -6,6 +6,14 @@ class RecipePolicy < ApplicationPolicy
     @recipe = recipe
   end
 
+  def show
+    owner?
+  end
+
+  def index
+    owner?
+  end
+
   def create?
     owner?
   end
