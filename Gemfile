@@ -64,6 +64,7 @@ group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
   gem 'erb_lint'
   gem 'factory_bot_rails'
+  gem 'pundit-matchers', '~> 4.0'
   gem 'pry'
   gem 'rspec-rails', '~> 7.1.0'
   gem 'rubocop', require: false
