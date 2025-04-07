@@ -4,18 +4,7 @@ FactoryBot.define do
   end
 
   factory :user do
-    email { generate(:email) }
+    email
     password { 'password' }
-  end
-end
-
-FactoryBot.define do
-  sequence :name do |n|
-    "chicken#{n}"
-  end
-
-  factory :recipe do
-    name { :name }
-    user { :user }
   end
 end
