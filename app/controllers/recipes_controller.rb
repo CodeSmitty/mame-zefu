@@ -20,8 +20,8 @@ class RecipesController < ApplicationController
 
   # GET /recipes/1 or /recipes/1.json
   def show
-    @recipe = Recipe.find(params[:id])
     authorize @recipe
+    @recipe = Recipe.find(params[:id])
   end
 
   # GET /recipes/new

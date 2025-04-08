@@ -6,10 +6,15 @@ RSpec.describe 'Recipes' do
   let(:recipe_name) { 'Spaghetti' }
   let(:category_name) { 'Italian' }
   let(:category) { Category.create(name: category_name) }
-  let!(:recipe) { Recipe.create(name: recipe_name, categories: [category], user: user) }
+  let!(:recipe) { create(:recipe, user: user) }
   let(:other_user) { create(:user) }
 
   describe 'GET /recipes' do
+    it 'returns a 200' do
+      get recipes_path(params: { query: recipe.name, category_names: [category_name], as: user })
+      expect(response).to have_http_status(:ok)
+    end
+
     context 'when unauthenticated' do
       it 'redirects to login' do
         get '/recipes'
@@ -19,9 +24,16 @@ RSpec.describe 'Recipes' do
   end
 
   describe 'GET /recipes/:id' do
+    it 'returns a 200' do
+      get recipe_path(recipe, as: user)
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
+  describe 'GET /recipes/:id' do
     context 'when unauthenticated' do
       it 'redirects to login' do
-        get recipe_path(:id)
+        get recipe_path(recipe)
         expect(response).to redirect_to(sign_in_path)
       end
     end
@@ -39,19 +51,36 @@ RSpec.describe 'Recipes' do
     context 'when user is unauthenticated' do
       it 'redirects to login' do
         post '/recipes'
-        puts user.id
-        expect(response).to redirect_to(sign_in_path)
+        expect(post recipes_path).to redirect_to(sign_in_path)
       end
     end
 
     context 'when user is authenticated' do
-
       it 'creates recipe for signed in user.' do
         post recipes_path, params: { recipe: attributes_for(:recipe) }
         follow_redirect!
-        puts recipe.user.id
-        puts user.id
         expect(response).to have_http_status(:ok)
+      end
+    end
+  end
+
+  describe 'PUT /recipes/:id' do
+    context 'when user is unauthenticated' do
+      it 'redirects to login' do
+        put recipe_path(recipe), params: { recipe: { name: 'updated name' } }
+        expect(response).to redirect_to(sign_in_path)
+      end
+    end
+
+    context 'when user updates recipe' do
+
+      before { sign_in user }
+      it 'returns 200' do
+        expect { put recipe_path(recipe), params: { recipe: { name: 'new name' } } }
+        .to change { recipe.reload.name }.from(recipe.name).to('new name')
+        expect(response).to redirect_to(recipe_path(recipe))
+        follow_redirect!
+        expect(response).to have_http_status(:success)
       end
     end
   end
