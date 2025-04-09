@@ -24,13 +24,6 @@ RSpec.describe 'Recipes' do
   end
 
   describe 'GET /recipes/:id' do
-    it 'returns a 200' do
-      get recipe_path(recipe, as: user)
-      expect(response).to have_http_status(:ok)
-    end
-  end
-
-  describe 'GET /recipes/:id' do
     context 'when unauthenticated' do
       it 'redirects to login' do
         get recipe_path(recipe)
@@ -38,10 +31,17 @@ RSpec.describe 'Recipes' do
       end
     end
 
-    context 'when unuathenticated and recipe non owner' do
+    context 'when authenticated' do
+      it 'returns a 200' do
+        get recipe_path(recipe, as: user)
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context 'when athenticated and recipe non owner' do
       before { sign_in(other_user) }
 
-      it 'does not show recipes to non owner.' do
+      it 'does not show recipes for another user.' do
         expect { get recipe_path(recipe) }.to raise_error(Pundit::NotAuthorizedError)
       end
     end
@@ -51,13 +51,17 @@ RSpec.describe 'Recipes' do
     context 'when user is unauthenticated' do
       it 'redirects to login' do
         post '/recipes'
-        expect(post recipes_path).to redirect_to(sign_in_path)
+        expect { post recipes_path }.to redirect_to(sign_in_path)
       end
     end
 
     context 'when user is authenticated' do
-      it 'creates recipe for signed in user.' do
-        post recipes_path, params: { recipe: attributes_for(:recipe) }
+      before { sign_in user }
+
+      it 'creates recipe for user.' do
+        expect { post recipes_path, params: { recipe: attributes_for(:recipe) } }
+          .to change(Recipe, :count).by(1)
+
         follow_redirect!
         expect(response).to have_http_status(:ok)
       end
@@ -73,11 +77,11 @@ RSpec.describe 'Recipes' do
     end
 
     context 'when user updates recipe' do
-
       before { sign_in user }
+
       it 'returns 200' do
         expect { put recipe_path(recipe), params: { recipe: { name: 'new name' } } }
-        .to change { recipe.reload.name }.from(recipe.name).to('new name')
+          .to change { recipe.reload.name }.from(recipe.name).to('new name')
         expect(response).to redirect_to(recipe_path(recipe))
         follow_redirect!
         expect(response).to have_http_status(:success)

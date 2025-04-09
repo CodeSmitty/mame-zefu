@@ -30,6 +30,9 @@ Rails/HasAndBelongsToMany:
 Rails/I18nLocaleTexts:
   Enabled: false
 
+RSpec/MultipleExpectations:
+  Max: 4
+
 RSpec/MultipleMemoizedHelpers:
   Max: 12
 
