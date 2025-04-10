@@ -92,6 +92,7 @@ RSpec.describe 'Recipes' do
         sign_in other_user
         expect { put recipe_path(recipe) }.to raise_error(Pundit::NotAuthorizedError)
       end
+    end
   end
 
   describe 'POST /recipes/:id/toggle_favorite' do
@@ -122,33 +123,33 @@ RSpec.describe 'Recipes' do
         expect { post toggle_favorite_recipe_path(recipe) }.to raise_error(Pundit::NotAuthorizedError)
       end
     end
+  end
 
-    describe 'DELETE /recipe/:id' do
-      context 'when unauthenticated' do
-        it 'redirects to login' do
-          delete recipe_path(recipe)
-          expect(response).to redirect_to(sign_in_path)
-        end
+  describe 'DELETE /recipe/:id' do
+    context 'when unauthenticated' do
+      it 'redirects to login' do
+        delete recipe_path(recipe)
+        expect(response).to redirect_to(sign_in_path)
+      end
+    end
+
+    context 'when authenticated' do
+      before { sign_in user }
+
+      it 'returns 204' do
+        delete recipe_path(recipe)
+        follow_redirect!
+        expect(response).to have_http_status(:ok)
       end
 
-      context 'when authenticated' do
-        before { sign_in user }
+      it 'deletes recipe' do
+        expect { delete recipe_path(recipe) }.to change { Recipe.count }.by(-1) # rubocop:disable RSpec/ExpectChange
+      end
 
-        it 'returns 204' do
-          delete recipe_path(recipe)
-          follow_redirect!
-          expect(response).to have_http_status(:ok)
-        end
+      it 'does not delete delete recipe of another user.' do
+        sign_in other_user
 
-        it 'deletes recipe' do
-          expect { delete recipe_path(recipe) }.to change { Recipe.count }.by(-1)
-        end
-
-        it 'does not delete delete recipe of another user.' do
-          sign_in other_user
-
-          expect { delete recipe_path(recipe) }.to raise_error(Pundit::NotAuthorizedError)
-        end
+        expect { delete recipe_path(recipe) }.to raise_error(Pundit::NotAuthorizedError)
       end
     end
   end
@@ -156,13 +157,12 @@ end
 
   private
 
-  def sign_in(user)
-    post session_path, params: {
-      session: {
-        email: user.email,
-        password: 'password'
-      }
+def sign_in(user)
+  post session_path, params: {
+    session: {
+      email: user.email,
+      password: 'password'
     }
-    follow_redirect!
-  end
+  }
+  follow_redirect!
 end
