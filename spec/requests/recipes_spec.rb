@@ -8,6 +8,7 @@ RSpec.describe 'Recipes' do
   let(:category) { Category.create(name: category_name) }
   let!(:recipe) { create(:recipe, user: user) }
   let(:other_user) { create(:user) }
+  let(:other_recipe) { create(:recipe, user: other_user) }
 
   describe 'GET /recipes' do
     it 'returns a 200' do
@@ -51,7 +52,7 @@ RSpec.describe 'Recipes' do
     context 'when user is unauthenticated' do
       it 'redirects to login' do
         post '/recipes'
-        expect { post recipes_path }.to redirect_to(sign_in_path)
+        expect(response).to redirect_to(sign_in_path)
       end
     end
 
@@ -86,8 +87,72 @@ RSpec.describe 'Recipes' do
         follow_redirect!
         expect(response).to have_http_status(:success)
       end
+
+      it 'does not update recipe for other user.' do
+        sign_in other_user
+        expect { put recipe_path(recipe) }.to raise_error(Pundit::NotAuthorizedError)
+      end
+  end
+
+  describe 'POST /recipes/:id/toggle_favorite' do
+    context 'when user is unauthenticated' do
+      it 'redirects to login' do
+        post toggle_favorite_recipe_path(recipe)
+        expect(response).to redirect_to(sign_in_path)
+      end
+    end
+
+    context 'when user is authenticated' do
+      before { sign_in user }
+
+      it 'returns 200' do
+        post toggle_favorite_recipe_path(recipe)
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'toggles is_favorite on recipe' do
+        expect { post toggle_favorite_recipe_path(recipe), params: { recipe: { is_favorite: true } } }
+          .to change { recipe.reload.is_favorite }.from(false).to(true)
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'does not toggle favorite for anohter user.' do
+        sign_in other_user
+
+        expect { post toggle_favorite_recipe_path(recipe) }.to raise_error(Pundit::NotAuthorizedError)
+      end
+    end
+
+    describe 'DELETE /recipe/:id' do
+      context 'when unauthenticated' do
+        it 'redirects to login' do
+          delete recipe_path(recipe)
+          expect(response).to redirect_to(sign_in_path)
+        end
+      end
+
+      context 'when authenticated' do
+        before { sign_in user }
+
+        it 'returns 204' do
+          delete recipe_path(recipe)
+          follow_redirect!
+          expect(response).to have_http_status(:ok)
+        end
+
+        it 'deletes recipe' do
+          expect { delete recipe_path(recipe) }.to change { Recipe.count }.by(-1)
+        end
+
+        it 'does not delete delete recipe of another user.' do
+          sign_in other_user
+
+          expect { delete recipe_path(recipe) }.to raise_error(Pundit::NotAuthorizedError)
+        end
+      end
     end
   end
+end
 
   private
 

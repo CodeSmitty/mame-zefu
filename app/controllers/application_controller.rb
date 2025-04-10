@@ -5,7 +5,7 @@ require 'net/http'
 class ApplicationController < ActionController::Base
   include Clearance::Controller
   include Pundit::Authorization
-  after_action :verify_authorized unless :health_check
+  after_action :verify_authorized, except: %i[health_check]
 
   def health_check
     render json: { started_at:, updated_at:, ok: healthy? }, status:
