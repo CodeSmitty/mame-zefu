@@ -51,7 +51,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_pundit_authorization
-    if action_name == "index"
+    if action_name == 'index'
       verify_policy_scoped
     else
       verify_authorized

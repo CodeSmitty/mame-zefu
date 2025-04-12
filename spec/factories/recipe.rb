@@ -5,6 +5,6 @@ FactoryBot.define do
 
   factory :recipe do
     name
-    association :user
+    user
   end
 end

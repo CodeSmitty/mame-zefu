@@ -46,7 +46,6 @@ class RecipesController < ApplicationController
 
   # PATCH/PUT /recipes/1 or /recipes/1.json
   def update
-    redirect_to :edit, notice: 'This user is not allowed to update this recipe.' unless authorize @recipe
     respond_to do |format|
       if @recipe.update(recipe_params)
         format.html { redirect_to recipe_url(@recipe), notice: 'Recipe was successfully updated.' }
@@ -69,7 +68,6 @@ class RecipesController < ApplicationController
   end
 
   def toggle_favorite
-    authorize @recipe
     @recipe.toggle!(:is_favorite) # rubocop:disable Rails/SkipsModelValidations
     render json: { is_favorite: @recipe.is_favorite }
   end
