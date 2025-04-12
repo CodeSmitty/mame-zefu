@@ -59,7 +59,6 @@ class RecipesController < ApplicationController
 
   # DELETE /recipes/1 or /recipes/1.json
   def destroy
-    redirect_to :show, notice: 'This user is not allowed to delete this recipe.' unless authorize @recipe
     @recipe.destroy
     respond_to do |format|
       format.html { redirect_to recipes_url, notice: 'Recipe was successfully destroyed.' }
