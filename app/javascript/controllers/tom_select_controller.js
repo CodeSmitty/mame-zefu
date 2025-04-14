@@ -27,7 +27,7 @@ export default class extends Controller {
       })
     document
       .getElementById("recipe_category_names-ts-control")
-      .addEventListener("blur", (e) => {
+      .addEventListener("blur-sm", (e) => {
         tsSelect.style.borderColor = "transparent"
       })
   }
