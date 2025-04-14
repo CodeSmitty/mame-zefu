@@ -1,6 +1,7 @@
 class RecipesController < ApplicationController
   before_action :require_login
   before_action :set_recipe, only: %i[show edit update destroy toggle_favorite]
+  skip_after_action :verify_pundit_authorization, only: %i[web_search web_result new create]
 
   def web_search; end
 

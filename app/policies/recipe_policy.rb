@@ -1,20 +1,5 @@
 class RecipePolicy < ApplicationPolicy
-  attr_reader :user, :recipe
-
-  def initialize(user, recipe)
-    @user = user
-    @recipe = recipe
-  end
-
   def show?
-    owner?
-  end
-
-  def index?
-    true
-  end
-
-  def create?
     owner?
   end
 
@@ -43,11 +28,5 @@ class RecipePolicy < ApplicationPolicy
     private
 
     attr_reader :user, :scope
-  end
-
-  private
-
-  def owner?
-    user == recipe.user
   end
 end
