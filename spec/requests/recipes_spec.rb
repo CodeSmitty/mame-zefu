@@ -1,5 +1,4 @@
 require 'rails_helper'
-require './spec/support/features/clearance_helpers'
 
 RSpec.describe 'Recipes' do
   let(:user) { create(:user) }
@@ -40,10 +39,8 @@ RSpec.describe 'Recipes' do
     end
 
     context 'when athenticated and recipe non owner' do
-      before { sign_in(other_user) }
-
       it 'does not show recipes for another user.' do
-        expect { get recipe_path(recipe) }.to raise_error(Pundit::NotAuthorizedError)
+        expect { get recipe_path(recipe, as: other_user) }.to raise_error(Pundit::NotAuthorizedError)
       end
     end
   end
@@ -57,10 +54,8 @@ RSpec.describe 'Recipes' do
     end
 
     context 'when user is authenticated' do
-      before { sign_in user }
-
       it 'creates recipe for user.' do
-        expect { post recipes_path, params: { recipe: attributes_for(:recipe) } }
+        expect { post recipes_path(params: { recipe: attributes_for(:recipe) }, as: user) }
           .to change(Recipe, :count).by(1)
 
         follow_redirect!
@@ -78,10 +73,8 @@ RSpec.describe 'Recipes' do
     end
 
     context 'when user updates recipe' do
-      before { sign_in user }
-
       it 'returns 200' do
-        expect { put recipe_path(recipe), params: { recipe: { name: 'new name' } } }
+        expect { put recipe_path(recipe, as: user), params: { recipe: { name: 'new name' } } }
           .to change { recipe.reload.name }.from(recipe.name).to('new name')
         expect(response).to redirect_to(recipe_path(recipe))
         follow_redirect!
@@ -89,8 +82,7 @@ RSpec.describe 'Recipes' do
       end
 
       it 'does not update recipe for other user.' do
-        sign_in other_user
-        expect { put recipe_path(recipe) }.to raise_error(Pundit::NotAuthorizedError)
+        expect { put recipe_path(recipe, as: other_user) }.to raise_error(Pundit::NotAuthorizedError)
       end
     end
   end
@@ -104,23 +96,19 @@ RSpec.describe 'Recipes' do
     end
 
     context 'when user is authenticated' do
-      before { sign_in user }
-
       it 'returns 200' do
-        post toggle_favorite_recipe_path(recipe)
+        post toggle_favorite_recipe_path(recipe, as: user)
         expect(response).to have_http_status(:ok)
       end
 
       it 'toggles is_favorite on recipe' do
-        expect { post toggle_favorite_recipe_path(recipe), params: { recipe: { is_favorite: true } } }
+        expect { post toggle_favorite_recipe_path(recipe, as: user), params: { recipe: { is_favorite: true } } }
           .to change { recipe.reload.is_favorite }.from(false).to(true)
         expect(response).to have_http_status(:ok)
       end
 
       it 'does not toggle favorite for anohter user.' do
-        sign_in other_user
-
-        expect { post toggle_favorite_recipe_path(recipe) }.to raise_error(Pundit::NotAuthorizedError)
+        expect { post toggle_favorite_recipe_path(recipe, as: other_user) }.to raise_error(Pundit::NotAuthorizedError)
       end
     end
   end
@@ -134,35 +122,19 @@ RSpec.describe 'Recipes' do
     end
 
     context 'when authenticated' do
-      before { sign_in user }
-
       it 'returns 204' do
-        delete recipe_path(recipe)
+        delete recipe_path(recipe, as: user)
         follow_redirect!
         expect(response).to have_http_status(:ok)
       end
 
       it 'deletes recipe' do
-        expect { delete recipe_path(recipe) }.to change { Recipe.count }.by(-1) # rubocop:disable RSpec/ExpectChange
+        expect { delete recipe_path(recipe, as: user) }.to change { Recipe.count }.by(-1) # rubocop:disable RSpec/ExpectChange
       end
 
       it 'does not delete delete recipe of another user.' do
-        sign_in other_user
-
-        expect { delete recipe_path(recipe) }.to raise_error(Pundit::NotAuthorizedError)
+        expect { delete recipe_path(recipe, as: other_user) }.to raise_error(Pundit::NotAuthorizedError)
       end
     end
   end
-end
-
-  private
-
-def sign_in(user)
-  post session_path, params: {
-    session: {
-      email: user.email,
-      password: 'password'
-    }
-  }
-  follow_redirect!
 end
