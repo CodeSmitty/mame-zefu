@@ -1,5 +1,7 @@
 exit unless Rails.env.development?
 
+user = User.find_by(email: 'admin@example.com')
+
 recipes_data = [
   {
     name: 'Crispy Balsamic Chicken Thighs',
@@ -199,7 +201,7 @@ recipes_data = [
 ]
 
 recipes_data.each do |recipe_data|
-  Recipe.find_or_initialize_by(name: recipe_data[:name]).update(recipe_data)
+  user.recipes.find_or_initialize_by(name: recipe_data[:name]).update(recipe_data)
 end
 
 puts "Seed data for recipes created successfully!"

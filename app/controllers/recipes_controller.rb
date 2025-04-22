@@ -1,6 +1,7 @@
 class RecipesController < ApplicationController
   before_action :require_login
   before_action :set_recipe, only: %i[show edit update destroy toggle_favorite]
+  skip_after_action :verify_pundit_authorization, only: %i[web_search web_result new create]
 
   def web_search; end
 
@@ -15,7 +16,7 @@ class RecipesController < ApplicationController
 
   # GET /recipes or /recipes.json
   def index
-    @recipes = Recipe.with_text(params[:query]).in_categories(params[:category_names]).sorted
+    @recipes = policy_scope(Recipe).with_text(params[:query]).in_categories(params[:category_names]).sorted
   end
 
   # GET /recipes/1 or /recipes/1.json
@@ -23,7 +24,7 @@ class RecipesController < ApplicationController
 
   # GET /recipes/new
   def new
-    @recipe = Recipe.new
+    @recipe = current_user.recipes.new
   end
 
   # GET /recipes/1/edit
@@ -31,7 +32,7 @@ class RecipesController < ApplicationController
 
   # POST /recipes or /recipes.json
   def create
-    @recipe = Recipe.new(recipe_params)
+    @recipe = current_user.recipes.new(recipe_params)
 
     respond_to do |format|
       if @recipe.save
@@ -75,7 +76,7 @@ class RecipesController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_recipe
-    @recipe = Recipe.find(params[:id])
+    @recipe = authorize Recipe.find(params[:id])
   end
 
   # Only allow a list of trusted parameters through.

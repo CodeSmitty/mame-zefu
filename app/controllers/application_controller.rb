@@ -4,6 +4,9 @@ require 'net/http'
 
 class ApplicationController < ActionController::Base
   include Clearance::Controller
+  include Pundit::Authorization
+  after_action :verify_pundit_authorization, except: %i[health_check]
+
   def health_check
     render json: { started_at:, updated_at:, ok: healthy? }, status:
   end
@@ -45,5 +48,13 @@ class ApplicationController < ActionController::Base
 
   def cache_key
     'health_check:image_updated'
+  end
+
+  def verify_pundit_authorization
+    if action_name == 'index'
+      verify_policy_scoped
+    else
+      verify_authorized
+    end
   end
 end

@@ -6,7 +6,7 @@ RSpec.describe Recipe do
   describe '#category_names' do
     subject { recipe.category_names }
 
-    let(:recipe) { described_class.create(name: 'Spaghetti') }
+    let(:recipe) { create(:recipe, name: 'Spaghetti') }
     let(:category_names) { %w[Pasta Italian Main] }
 
     context 'when recipe has no categories' do
@@ -23,7 +23,7 @@ RSpec.describe Recipe do
   describe '#category_names=' do
     subject(:described_method) { recipe.category_names = category_names }
 
-    let(:recipe) { described_class.create(name: 'Spaghetti') }
+    let(:recipe) { create(:recipe, name: 'Spaghetti') }
     let(:category_names) { %w[Pasta Italian Main] }
 
     context 'when there are no categories' do
@@ -61,11 +61,7 @@ RSpec.describe Recipe do
   describe '.with_text' do
     subject { described_class.with_text(query) }
 
-    let!(:recipes) do
-      Array.new(3) do |i|
-        described_class.create(name: "Recipe #{i}")
-      end
-    end
+    let(:recipes) { create_list(:recipe, 3) }
 
     context 'when query is an empty string' do
       let(:query) { '' }
@@ -80,7 +76,7 @@ RSpec.describe Recipe do
     end
 
     context 'when query does not match case' do
-      let(:recipe) { described_class.create(name: 'Birria Tacos') }
+      let(:recipe) { create(:recipe, name: 'Birria Tacos') }
       let(:query) { 'taco' }
 
       it { is_expected.to include recipe }
@@ -95,10 +91,10 @@ RSpec.describe Recipe do
     let!(:italian) { Category.create!(name: 'Italian') }
     let!(:japanese) { Category.create!(name: 'Japanese') }
 
-    let!(:tacos) { described_class.create!(name: 'Tacos', categories: [mexican]) }
-    let!(:pasta) { described_class.create!(name: 'Pasta', categories: [italian]) }
-    let!(:sushi) { described_class.create!(name: 'Sushi', categories: [japanese]) }
-    let!(:fusion) { described_class.create!(name: 'Fusion Dish', categories: [mexican, japanese]) }
+    let!(:tacos) { create(:recipe, name: 'Tacos', categories: [mexican]) }
+    let!(:pasta) { create(:recipe, name: 'Pasta', categories: [italian]) }
+    let!(:sushi) { create(:recipe, name: 'Sushi', categories: [japanese]) }
+    let!(:fusion) { create(:recipe, name: 'Fusion Dish', categories: [mexican, japanese]) }
 
     context 'when category_names is empty' do
       let(:category_names) { '' }
