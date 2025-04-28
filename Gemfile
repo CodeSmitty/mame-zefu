@@ -53,6 +53,9 @@ gem "clearance"
 # Pundit user authorization
 gem "pundit", "~> 2.5"
 
+# Down image download
+gem "down", "~> 5.0"
+
 # Use Sass to process CSS
 # gem "sassc-rails"
 
