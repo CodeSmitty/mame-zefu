@@ -39,18 +39,11 @@ module Recipes
           .join("\n\n")
       end
 
-      def recipe_image
-        image_url = document
+      def recipe_image_url
+        document
           .css('div.photo-dialog__page div#photo-dialog__item_1-0 img')
-          .map{ |e| e.attr('src')}
-          .join("")
-
-        return nil unless image_url.present?
-
-        tempfile = Down.download(image_url)
-
-        puts "===============#{tempfile}"
-
+          .map { |e| e.attr('src').freeze }
+          .join('')
       end
 
       private

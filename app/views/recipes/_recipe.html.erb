@@ -67,6 +67,10 @@
     <% end %>
   <% end %>
 
+  <% if @recipe.image.attached? %>
+    <%= image_tag @recipe.image, class: "preview-image" %>
+  <% end %>
+
   <p class="my-5">
     <strong class="block font-small mb-1">Directions</strong>
   </p>

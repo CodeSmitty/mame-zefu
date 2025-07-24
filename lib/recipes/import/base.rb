@@ -5,7 +5,7 @@ module Recipes
         @document = document
       end
 
-      IMPORT_FIELDS = %w[name yield prep_time cook_time description ingredients directions notes image].freeze
+      IMPORT_FIELDS = %w[name yield prep_time cook_time description ingredients directions notes image_url image].freeze
 
       def recipe
         Recipe.new.tap do |recipe|
