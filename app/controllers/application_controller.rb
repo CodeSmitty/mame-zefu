@@ -39,7 +39,7 @@ class ApplicationController < ActionController::Base
   end
 
   def healthy?
-    updated_at.present? && Time.zone.parse(updated_at) < started_at
+    updated_at.blank? || Time.zone.parse(updated_at) < started_at
   end
 
   def status
