@@ -32,7 +32,10 @@ class ApplicationController < ActionController::Base
     uri = URI(tag_url)
     res = get_tag(uri)
 
-    return unless res.is_a?(Net::HTTPSuccess)
+    unless res.is_a?(Net::HTTPSuccess)
+      Rails.logger.error("Health check: failed to fetch tag from #{uri} with status #{res.code}")
+      return
+    end
 
     JSON.parse(res.body)
   end
