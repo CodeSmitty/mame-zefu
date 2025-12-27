@@ -54,8 +54,8 @@ Rails.application.configure do
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
-  # Log to STDOUT by default
-  config.logger = ActiveSupport::Logger.new(STDOUT)
+  log = TCPSocket.new(ENV.fetch("LOG_HOST", "127.0.0.1"), ENV.fetch("LOG_PORT", 9000))
+  config.logger = ActiveSupport::Logger.new(log)
     .tap  { |logger| logger.formatter = ::Logger::Formatter.new }
     .then { |logger| ActiveSupport::TaggedLogging.new(logger) }
 
