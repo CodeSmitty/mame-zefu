@@ -122,6 +122,8 @@ GEM
       irb (~> 1.10)
       reline (>= 0.3.8)
     diff-lcs (1.6.0)
+    down (5.4.2)
+      addressable (~> 2.8)
     drb (2.2.1)
     email_validator (2.2.4)
       activemodel
@@ -367,6 +369,7 @@ DEPENDENCIES
   capybara
   clearance
   debug
+  down (~> 5.0)
   erb_lint
   factory_bot_rails
   importmap-rails

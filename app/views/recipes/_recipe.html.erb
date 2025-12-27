@@ -40,6 +40,10 @@
     </div>
   </div>
 
+  <% if @recipe.image.attached? %>
+    <%= image_tag @recipe.image, class: "preview-image" %>
+  <% end %>
+
   <div class="flex flex-row flex-nowrap justify-start">
     <% @recipe.categories.each do |c| %>
       <div class="py-1">

@@ -2,6 +2,10 @@ class Recipe < ApplicationRecord
   validates :name, presence: true
   has_and_belongs_to_many :categories
   belongs_to :user
+  has_one_attached :image
+  attr_accessor :image_url
+
+  before_save :attach_image_from_url, if: -> { image_url.present? && !image.attached? }
 
   def category_names
     categories.pluck(:name)
@@ -31,4 +35,17 @@ class Recipe < ApplicationRecord
   }
 
   scope :sorted, -> { order(name: :asc) }
+
+  private
+
+  def attach_image_from_url
+    downloaded_file = Down.download(image_url, max_size: 5.megabytes)
+    image.attach(
+      io: downloaded_file,
+      filename: File.basename(image_url)
+    )
+  rescue Down::Error => e
+    errors.add(:image, "couldn't be downloaded: #{e.message}")
+    throw :abort
+  end
 end
