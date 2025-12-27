@@ -7,6 +7,8 @@ class ApplicationController < ActionController::Base
   include Pundit::Authorization
   after_action :verify_pundit_authorization, except: %i[health_check]
 
+  TAG_TIMEOUT = 5
+
   def health_check
     render json: { started_at:, updated_at:, ok: healthy? }, status:
   end
@@ -19,7 +21,7 @@ class ApplicationController < ActionController::Base
 
   def updated_at
     @updated_at ||=
-      Rails.cache.fetch(cache_key, skip_nil: true, expires_in: 5.minutes) do
+      Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
         tag&.dig('last_updated')
       end
   end
@@ -28,10 +30,23 @@ class ApplicationController < ActionController::Base
     return if tag_url.blank?
 
     uri = URI(tag_url)
-    res = Net::HTTP.get_response(uri)
-    return unless res.is_a?(Net::HTTPSuccess)
+    res = get_tag(uri)
+
+    unless res.is_a?(Net::HTTPSuccess)
+      Rails.logger.error("Health check: failed to fetch tag from #{uri} with status #{res.code}")
+      return
+    end
 
     JSON.parse(res.body)
+  end
+
+  def get_tag(uri)
+    Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https', read_timeout: TAG_TIMEOUT) do |http|
+      req = Net::HTTP::Get.new(uri)
+      http.request(req)
+    end
+  rescue Net::ReadTimeout
+    Rails.logger.warn("Health check: timed out fetching tag from #{uri}")
   end
 
   def tag_url
@@ -39,7 +54,7 @@ class ApplicationController < ActionController::Base
   end
 
   def healthy?
-    updated_at.present? && Time.zone.parse(updated_at) < started_at
+    updated_at.blank? || Time.zone.parse(updated_at) < started_at
   end
 
   def status
