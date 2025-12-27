@@ -72,7 +72,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_27_174603) do
     t.text "notes"
     t.string "source"
     t.bigint "user_id", null: false
-    t.string "image"
     t.index ["user_id"], name: "index_recipes_on_user_id"
   end
 

@@ -7,7 +7,6 @@ class RecipesController < ApplicationController
 
   def web_result
     @recipe = Recipes::Import.from_url(params[:url])
-    @recipe.image = nil
   rescue Recipes::Import::UnknownHostError => e
     @recipe =
       Recipe.new.tap do |r|
@@ -84,6 +83,6 @@ class RecipesController < ApplicationController
   # Only allow a list of trusted parameters through.
   def recipe_params
     params.require(:recipe).permit(:name, :ingredients, :directions, :yield, :prep_time, :cook_time, :description,
-                                   :rating, :is_favorite, :notes, :source, :image_url, :image, category_names: [])
+                                   :rating, :is_favorite, :notes, :source, :image_url, category_names: [])
   end
 end

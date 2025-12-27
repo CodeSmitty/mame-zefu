@@ -4,7 +4,7 @@ class Recipe < ApplicationRecord
   belongs_to :user
   has_one_attached :image
   attr_accessor :image_url
-  
+
   before_save :attach_image_from_url, if: -> { image_url.present? && !image.attached? }
 
   def category_names

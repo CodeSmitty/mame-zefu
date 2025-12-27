@@ -43,7 +43,7 @@ module Recipes
         document
           .css('div.photo-dialog__page div#photo-dialog__item_1-0 img')
           .map { |e| e.attr('src').freeze }
-          .join('')
+          .join
       end
 
       private
