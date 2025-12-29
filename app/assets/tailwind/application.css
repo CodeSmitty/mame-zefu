@@ -1,0 +1,73 @@
+@import 'tailwindcss';
+
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/aspect-ratio';
+@plugin '@tailwindcss/typography';
+
+@theme {
+  --color-primary: rgb(18 18 18);
+  --color-secondary: #eeb14a;
+  --color-tertiary: rgb(165 68 29);
+  --color-input-label: rgb(238 177 74 / 73%);
+  --color-nav-backdrop: rgb(45 45 45);
+  --color-nav-link-bg: rgba(0, 0, 0, 0.4);
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+.ts-control {
+  @apply block! rounded-lg! px-2.5! pb-2.5! pt-2.5! bg-gray-50!;
+}
+
+.ts-wrapper.plugin-remove_button .item {
+  @apply rounded-md! bg-white! text-secondary! border! border-secondary! m-1!;
+}
+
+.ts-wrapper.plugin-remove_button .item .remove {
+  @apply border-none! text-lg! leading-none! py-1! rounded-r-lg!;
+}
+
+.ts-dropdown {
+  @apply z-20!;
+}
+
+.gsc-input-box {
+  @apply rounded-lg! bg-gray-50! border-gray-500!;
+}
+
+input.gsc-input {
+  @apply shadow-none! focus:ring-0! bg-gray-50!;
+}
+
+span.gscb_a {
+  @apply text-gray-900!;
+}
+
+.gsc-search-button-v2 {
+  @apply inline-flex! items-center! rounded-lg! py-2! px-3! bg-input-label! hover:bg-secondary! text-secondary! hover:text-white! border! border-secondary! inline-block! font-medium! cursor-pointer!;
+}
+
+.gsc-adBlock {
+  @apply hidden!;
+}
+
+.gsc-results img,
+.gsc-results svg {
+  @apply inline!;
+}
