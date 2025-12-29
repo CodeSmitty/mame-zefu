@@ -10,10 +10,18 @@ class ApplicationController < ActionController::Base
   TAG_TIMEOUT = 5
 
   def health_check
-    render json: { started_at:, updated_at:, ok: healthy? }, status:
+    params[:q] == 'ready' ? ready_response : live_response
   end
 
   private
+
+  def ready_response
+    head :ok
+  end
+
+  def live_response
+    render json: { started_at:, updated_at:, ok: healthy? }, status:
+  end
 
   def started_at
     Uptime::STARTED_AT
