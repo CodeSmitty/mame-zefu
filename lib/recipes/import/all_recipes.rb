@@ -21,10 +21,6 @@ module Recipes
         recipe_details['cook_time']
       end
 
-      def recipe_total_time
-        recipe_details['total_time']
-      end
-
       def recipe_ingredients
         document
           .css('ul.mm-recipes-structured-ingredients__list li.mm-recipes-structured-ingredients__list-item')

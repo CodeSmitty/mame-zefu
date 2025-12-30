@@ -15,7 +15,7 @@ module Recipes
         recipe_details['prep_time']
       end
 
-      def recipe_total_time
+      def recipe_cook_time
         recipe_details['total_time']
       end
 
@@ -38,11 +38,11 @@ module Recipes
       def recipe_details
         @recipe_details ||=
           document
-          .css('div.recipe-body dl dt')
+          .css('div.recipe-body div')
           .map { |e| e.text.parameterize.underscore }
           .zip(
             document
-            .css('div.recipe-body dl dd')
+            .css('div.recipe-body div div')
             .map { |e| e.css('span').text.strip }
           ).to_h
       end
