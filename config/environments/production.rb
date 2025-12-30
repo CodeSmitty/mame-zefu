@@ -70,6 +70,9 @@ Rails.application.configure do
   # want to log everything, set the level to "debug".
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
 
+  config.lograge.enabled = true
+  config.lograge.ignore_actions = ['ApplicationController#health_check']
+
   # Use a different cache store in production.
   config.cache_store = :memory_store
 

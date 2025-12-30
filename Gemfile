@@ -10,8 +10,6 @@ gem "rails", "~> 7.2.0"
 gem "sprockets-rails"
 
 # Use pg as the database for Active Record
-# gem "pg", "~> 1.4"
-
 gem "pg", "~> 1.1"
 
 # Use the Puma web server [https://github.com/puma/puma]
@@ -27,7 +25,7 @@ gem "turbo-rails"
 gem "stimulus-rails"
 
 # Use Tailwind CSS [https://github.com/rails/tailwindcss-rails]
-gem "tailwindcss-rails", "~> 4.0" 
+gem "tailwindcss-rails", "~> 4.0"
 
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
@@ -55,6 +53,9 @@ gem "pundit", "~> 2.5"
 
 # Down image download
 gem "down", "~> 5.0"
+
+# Production logging
+gem "lograge"
 
 # Use Sass to process CSS
 # gem "sassc-rails"
