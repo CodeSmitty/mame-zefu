@@ -27,7 +27,7 @@ gem "turbo-rails"
 gem "stimulus-rails"
 
 # Use Tailwind CSS [https://github.com/rails/tailwindcss-rails]
-gem "tailwindcss-rails", "~> 4.0" 
+gem "tailwindcss-rails", "~> 4.0"
 
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
@@ -55,6 +55,10 @@ gem "pundit", "~> 2.5"
 
 # Down image download
 gem "down", "~> 5.0"
+
+# Production Logging
+gem "net_tcp_client"
+gem "rails_semantic_logger"
 
 # Use Sass to process CSS
 # gem "sassc-rails"

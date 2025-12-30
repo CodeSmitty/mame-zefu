@@ -54,16 +54,28 @@ Rails.application.configure do
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
-  log = STDOUT
-  if ENV["LOG_HOST"].present?
-    log = TCPSocket.new(ENV["LOG_HOST"], ENV.fetch("LOG_PORT", 9000))
-  end
-  config.logger = ActiveSupport::Logger.new(log)
-    .tap  { |logger| logger.formatter = ::Logger::Formatter.new }
-    .then { |logger| ActiveSupport::TaggedLogging.new(logger) }
+  # Disable default file logging
+  config.rails_semantic_logger.add_file_appender = false
 
-  # Prepend all log lines with the following tags.
-  config.log_tags = [ :request_id ]
+  # Log to STDOUT
+  $stdout.sync = true
+  config.semantic_logger.add_appender(io: $stdout, formatter: config.rails_semantic_logger.format)
+
+  # Log to remote log server, except health checks
+  if ENV["LOG_HOST"].present?
+    config.semantic_logger.add_appender(
+      appender: :tcp,
+      server: "#{ENV['LOG_HOST']}:#{ENV.fetch('LOG_PORT', 9000)}",
+      formatter: :json,
+      filter:   Proc.new { |log| log.message !~ /(health_check)/ }
+    )
+  end
+
+  # Named tags
+  config.log_tags = {
+    request_id: :request_id,
+    ip:         :remote_ip
+  }
 
   # "info" includes generic and useful information about system operation, but avoids logging too much
   # information to avoid inadvertent exposure of personally identifiable information (PII). If you
