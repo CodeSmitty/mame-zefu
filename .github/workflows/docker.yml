@@ -2,7 +2,7 @@ name: Publish Docker image
 
 on:
   push:
-    branches: [ "main", "staging" ]
+    branches: [ "**" ]
   workflow_dispatch:
 
 env:
@@ -39,7 +39,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          push: true
+          push: ${{ fromJSON(env.is_main_branch) || fromJSON(env.is_staging_branch) }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
