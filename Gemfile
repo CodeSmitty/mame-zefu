@@ -56,6 +56,10 @@ gem "pundit", "~> 2.5"
 # Down image download
 gem "down", "~> 5.0"
 
+# Production Logging
+gem "net_tcp_client"
+gem "rails_semantic_logger"
+
 # Use Sass to process CSS
 # gem "sassc-rails"
 
