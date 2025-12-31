@@ -32,6 +32,12 @@
     </div>
   </h1>
 
+  <% if @recipe.image.attached? %>
+    <div class="relative">
+      <div class="preview-image-container my-5 w-full lg:w-1/2"><%= image_tag @recipe.image, class: "preview-image object-contain w-full" %></div>
+    </div>
+  <% end %>
+
   <div class="flex flex-row flex-wrap justify-between w-100 py-2">
     <div class="flex flex-row flex-nowrap justify-between w-100">
       <% %w[yield prep_time cook_time].each do |field| %>
@@ -39,10 +45,6 @@
       <% end %>
     </div>
   </div>
-
-  <% if @recipe.image.attached? %>
-    <%= image_tag @recipe.image, class: "preview-image" %>
-  <% end %>
 
   <div class="flex flex-row flex-nowrap justify-start">
     <% @recipe.categories.each do |c| %>
