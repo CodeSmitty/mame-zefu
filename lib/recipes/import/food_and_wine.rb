@@ -11,8 +11,19 @@ module Recipes
         recipe_details['yield']
       end
 
-      def recipe_total_time
+      def recipe_prep_time
+        recipe_details['active_time']
+      end
+
+      def recipe_cook_time
         recipe_details['total_time']
+      end
+
+      def recipe_description
+        document
+          .css('div.mm-recipes-article-header p.article-subheading')
+          .map { |p| p.text.strip }
+          .join
       end
 
       def recipe_ingredients # rubocop:disable Metrics

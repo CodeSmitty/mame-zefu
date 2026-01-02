@@ -13,15 +13,11 @@ module Recipes
       end
 
       def recipe_prep_time
-        recipe_details['prep']
+        recipe_details['prep'].presence || recipe_details['active']
       end
 
       def recipe_cook_time
-        recipe_details['cook']
-      end
-
-      def recipe_total_time
-        recipe_details['total']
+        recipe_details['cook'].presence || recipe_details['total']
       end
 
       def recipe_ingredients # rubocop:disable Metrics
