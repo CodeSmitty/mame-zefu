@@ -9,6 +9,13 @@ module Recipes
           .text
       end
 
+      def recipe_image_url
+        document
+          .css('div.photo-dialog__page div#photo-dialog__item_1-0 img')
+          .map { |e| e.attr('src').freeze }
+          .join
+      end
+
       def recipe_yield
         "Serves #{recipe_details['servings']}"
       end
@@ -37,13 +44,6 @@ module Recipes
           .css('div.mm-recipes-steps__content ol > li > p')
           .map { |e| e.text.strip }
           .join("\n\n")
-      end
-
-      def recipe_image_url
-        document
-          .css('div.photo-dialog__page div#photo-dialog__item_1-0 img')
-          .map { |e| e.attr('src').freeze }
-          .join
       end
 
       private
