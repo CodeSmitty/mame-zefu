@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   resources :recipes do
     get 'web_search', on: :collection
     get 'web_result', on: :collection
+    get 'archive/generate', on: :collection, action: :generate_archive
   end
 
   root 'recipes#index'
