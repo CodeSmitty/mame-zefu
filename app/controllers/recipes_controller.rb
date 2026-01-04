@@ -1,7 +1,7 @@
 class RecipesController < ApplicationController
   before_action :require_login
   before_action :set_recipe, only: %i[show edit update destroy toggle_favorite]
-  skip_after_action :verify_pundit_authorization, only: %i[web_search web_result new create]
+  skip_after_action :verify_pundit_authorization, only: %i[web_search web_result generate_archive new create]
 
   def web_search; end
 
@@ -12,6 +12,19 @@ class RecipesController < ApplicationController
       Recipe.new.tap do |r|
         r.errors.add(:base, e.message)
       end
+  end
+
+  # GET /recipes/archive/generate
+  def generate_archive
+    name = "Recipes_#{Time.current.strftime('%Y%m%d_%H%M%S')}.zip"
+    file = Recipes::Archive.new(current_user).generate
+
+    file_data = File.read(file.path)
+
+    send_data file_data, filename: name, type: 'application/zip'
+  ensure
+    file.close!
+    file.unlink
   end
 
   # GET /recipes or /recipes.json

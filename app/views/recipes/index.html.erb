@@ -16,6 +16,11 @@
           <div>
             <%= select_tag(:category_names, options_from_collection_for_select(Category.all, :name, :name, params[:category_names]), { data: { controller: "tom-select", 'tom-select-create-value': false, action: "change->filter#submit" }, multiple: true, placeholder: "Select Categories" }) %>
           </div>
+          <div class="mt-2 flex justify-end w-full">
+            <%= link_to archive_generate_recipes_path, data: { turbo: false }, class: "inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary font-medium cursor-pointer" do %>
+              <%= render_icon "mini/arrow_down_tray", classes: "me-1" %> Download
+            <% end %>
+          </div>
         </div>
       </div>
     <% end %>

@@ -2,32 +2,13 @@
 
 namespace :recipes do # rubocop:disable Metrics/BlockLength
   task export: :environment do
-    require 'zip'
-
     filename = Rails.root.join "Recipes_#{Time.current.strftime('%Y%m%d_%H%M%S')}.zip"
     user = User.find_by(email: 'admin@example.com')
 
     puts "Exporting recipes to #{filename}..."
 
-    Zip::File.open(filename, create: true) do |zip_file|
-      recipes = []
-      user.recipes.each do |recipe|
-        recipes << recipe.as_json(
-          except: %i[id user_id created_at updated_at],
-          include: { image: { only: [], methods: :filename } }
-        )
-
-        next unless recipe.image.attached?
-
-        zip_file.get_output_stream("images/#{recipe.image.filename}") do |f|
-          f.write recipe.image.download
-        end
-      end
-
-      zip_file.get_output_stream('recipes.json') do |f|
-        f.write JSON.pretty_generate(recipes)
-      end
-    end
+    file = Recipes::Archive.new(user).generate
+    FileUtils.mv(file.path, filename)
   end
 
   task :import, [:file] => :environment do |_, args| # rubocop:disable Metrics/BlockLength
