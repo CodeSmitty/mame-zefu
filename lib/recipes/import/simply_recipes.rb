@@ -9,9 +9,9 @@ module Recipes
 
       def recipe_image_url
         document
-          .css('div.primary-image__media > div > img')
-          .map { |e| e.attr('src').freeze }
-          .join
+          .css('div.primary-image__media > div >img')
+          .first
+          &.attr('src')
       end
 
       def recipe_yield

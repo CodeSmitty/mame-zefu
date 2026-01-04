@@ -10,8 +10,8 @@ module Recipes
       def recipe_image_url
         document
           .css('div.content-lead-image > div > picture > img')
-          .map { |e| e.attr('src').freeze }
-          .join
+          .first
+          &.attr('src')
       end
 
       def recipe_yield

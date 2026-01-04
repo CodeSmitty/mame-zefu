@@ -11,9 +11,9 @@ module Recipes
       def recipe_image_url
         document
           .css('section.o-RecipeLead img')
-          .map { |e| e.attr('src').freeze }
-          .join
-          .gsub(%r{\A//}, 'https://')
+          .first
+          &.attr('src')
+          &.then { |src| src.insert(0, 'https://')}
       end
 
       def recipe_yield

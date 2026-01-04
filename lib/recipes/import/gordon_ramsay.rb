@@ -9,10 +9,10 @@ module Recipes
 
       def recipe_image_url
         document
-          .css('div.hero-image-recipe > div:first-child img')
-          .map { |e| e.attr('src').freeze }
-          .join
-          .insert(0, 'https://gordonramsay.com')
+          .css('div.hero-image-recipe > div:first-child > img')
+          .first
+          &.attr('src')
+          &.then { |src| src.insert(0, 'https://gordonramsay.com')}
       end
 
       def recipe_yield
