@@ -12,7 +12,7 @@ module Recipes
           .css('div.hero-image-recipe > div:first-child > img')
           .first
           &.attr('src')
-          &.then { |src| src.insert(0, 'https://gordonramsay.com')}
+          &.then { |src| src.insert(0, 'https://gordonramsay.com') }
       end
 
       def recipe_yield
