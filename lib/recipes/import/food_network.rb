@@ -8,6 +8,14 @@ module Recipes
           .strip
       end
 
+      def recipe_image_url
+        document
+          .css('section.o-RecipeLead img')
+          .first
+          &.attr('src')
+          &.then { |src| src.insert(0, 'https://') }
+      end
+
       def recipe_yield
         recipe_details['yield']
       end

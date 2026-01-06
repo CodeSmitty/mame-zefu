@@ -7,6 +7,13 @@ module Recipes
           .text
       end
 
+      def recipe_image_url
+        document
+          .css('div.pch-featured-image figure.wp-caption > div.pch-overlay-icon-wrap img')
+          .first
+          &.attr('src')
+      end
+
       def recipe_yield
         document
           .css('span.meta-wrap span')

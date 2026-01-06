@@ -7,6 +7,13 @@ module Recipes
           .text
       end
 
+      def recipe_image_url
+        document
+          .css('div.content-lead-image > div > picture > img')
+          .first
+          &.attr('src')
+      end
+
       def recipe_yield
         recipe_details['yields']
       end

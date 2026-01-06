@@ -7,6 +7,14 @@ module Recipes
           .text
       end
 
+      def recipe_image_url
+        document
+          .css('div.hero-image-recipe > div:first-child > img')
+          .first
+          &.attr('src')
+          &.then { |src| src.insert(0, 'https://gordonramsay.com') }
+      end
+
       def recipe_yield
         document
           .css('article.recipe-instructions')
