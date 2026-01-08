@@ -137,4 +137,104 @@ RSpec.describe 'Recipes' do
       end
     end
   end
+
+  describe 'GET /recipes/archive/download' do
+    let(:tmpfile) do
+      Tempfile.new('recipes-archive').tap do |tempfile|
+        tempfile.write('zipdata')
+        tempfile.rewind
+      end
+    end
+    let(:archive_double) { instance_double(Recipes::Archive, generate: tmpfile) }
+
+    before do
+      allow(Recipes::Archive).to receive(:new).with(user).and_return(archive_double)
+    end
+
+    it 'redirects when unauthenticated' do
+      get '/recipes/archive/download'
+      expect(response).to redirect_to(sign_in_path)
+    end
+
+    it 'sends zip file when authenticated' do
+      get archive_download_recipes_path(as: user)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to eq('zipdata')
+      expect(response.headers['Content-Type']).to include('application/zip')
+      expect(response.headers['Content-Disposition']).to match(/filename="Recipes_.*\.zip"/)
+    end
+  end
+
+  describe 'GET /recipes/archive/upload' do
+    it 'redirects when unauthenticated' do
+      get '/recipes/archive/upload'
+      expect(response).to redirect_to(sign_in_path)
+    end
+
+    it 'returns 200 when authenticated' do
+      get archive_upload_recipes_path(as: user)
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
+  describe 'POST /recipes/archive/upload' do
+    let(:tempfile) do
+      Tempfile.new('import').tap do |tempfile|
+        tempfile.write('data')
+        tempfile.rewind
+      end
+    end
+    let(:uploaded_file) { Rack::Test::UploadedFile.new(tempfile.path, 'application/zip') }
+    let(:archive_double) { instance_double(Recipes::Archive, restore: results) }
+    let(:results) { { created: 1, skipped: 2 } }
+
+    before do
+      allow(Recipes::Archive).to receive(:new).with(user).and_return(archive_double)
+    end
+
+    it 'redirects when unauthenticated' do
+      post '/recipes/archive/upload'
+      expect(response).to redirect_to(sign_in_path)
+    end
+
+    it 'imports file and shows notice' do
+      post archive_upload_recipes_path(as: user), params: { file: uploaded_file }
+
+      expect(flash[:notice]).to eq('Imported 1 recipes (2 skipped)')
+      expect(response).to redirect_to(recipes_path)
+    ensure
+      tempfile.close!
+    end
+
+    context 'when restore raises Recipes::Archive::Error' do
+      before do
+        allow(archive_double).to receive(:restore).and_raise(Recipes::Archive::Error.new('bad archive'))
+      end
+
+      it 'shows archive error message' do
+        post archive_upload_recipes_path(as: user), params: { file: uploaded_file }
+
+        expect(flash[:alert]).to eq('bad archive')
+        expect(response).to redirect_to(recipes_path)
+      ensure
+        tempfile.close!
+      end
+    end
+
+    context 'when restore raises StandardError' do
+      before do
+        allow(archive_double).to receive(:restore).and_raise(StandardError.new('boom'))
+      end
+
+      it 'shows generic error when StandardError occurs' do
+        post archive_upload_recipes_path(as: user), params: { file: uploaded_file }
+
+        expect(flash[:alert]).to eq('An unknown error occurred during import')
+        expect(response).to redirect_to(recipes_path)
+      ensure
+        tempfile.close!
+      end
+    end
+  end
 end

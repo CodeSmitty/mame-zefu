@@ -7,7 +7,7 @@ module Recipes
           .text
       end
 
-      def recipe_image_url
+      def recipe_image_src
         document
           .css('div.content-lead-image > div > picture > img')
           .first

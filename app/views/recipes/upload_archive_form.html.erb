@@ -1,0 +1,13 @@
+<div class="mx-auto md:w-4/5 w-full form-container lg:px-20 p-5">
+  <h1 class="font-bold text-2xl lg:text-4xl text-secondary text-start">Upload Recipes</h1>
+
+  <%= form_with url: archive_upload_recipes_path, local: true, multipart: true do |f| %>
+    <div class="my-5 relative">
+      <%= f.file_field :file, required: true, accept: '.zip', class: "file:mr-4 file:py-2 file:px-4 file:rounded-l-lg file:border-0 file:bg-gray-200 block rounded-lg w-full text-sm text-gray-900 bg-gray-50 border-transparent appearance-none focus:outline-hidden focus:ring-0 focus:border-secondary peer" %>
+    </div>
+
+    <%= button_tag(class: "inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer") do %>
+      <%= render_icon "micro/arrow_up_tray", classes: "me-1" %> Upload
+    <% end %>
+  <% end %>
+</div>
