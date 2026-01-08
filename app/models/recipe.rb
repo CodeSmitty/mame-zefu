@@ -5,9 +5,11 @@ class Recipe < ApplicationRecord
   has_and_belongs_to_many :categories
   belongs_to :user
   has_one_attached :image
-  attr_accessor :image_src
+  attr_accessor :image_src, :remove_image
 
   before_save :attach_image_from_url, if: -> { image_src.present? && !image.attached? }
+  before_save :delete_image, if: -> { ActiveModel::Type::Boolean.new.cast(remove_image) }
+  before_save :purge_if_replacing
 
   def category_names
     categories.pluck(:name)
@@ -39,6 +41,16 @@ class Recipe < ApplicationRecord
   scope :sorted, -> { order(name: :asc) }
 
   private
+
+  def delete_image
+    image.purge if image.attached?
+  end
+
+  def purge_if_replacing
+    return unless ActiveModel::Type::Boolean.new.cast(remove_image) && image.attached?
+    image.purge if image.attached?
+  end
+  
 
   def attach_image_from_url
     return unless url?(image_src)

@@ -1,5 +1,5 @@
 
-<%= form_with(model: recipe, class: "contents") do |form| %>
+<%= form_with(model: recipe, class: "contents", local: true) do |form| %>
   <% if recipe.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
       <h2><%= pluralize(recipe.errors.count, "error") %> prohibited this recipe from being saved:</h2>
@@ -22,6 +22,23 @@
     <% elsif @recipe.image_src.present? %>
       <%= image_tag @recipe.image_src, class: "preview-image" %>
       <%= form.hidden_field :image_src, value: @recipe.image_src %>
+    <% end %>
+    <% if controller_name == "recipes" && @recipe.image.attached? %>
+      <div class="flex flex-row flex-nowrap justify-between">
+        <div class="flex-basis-auto">
+          <button type="button"
+            class="inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer"
+            onclick="this.showreplaceImageButton = !this.showreplaceImageButton;
+                     document.querySelector('.replace-image-button').classList.toggle('hidden');">
+            Replace Image
+          </button>
+        </div>
+        <div class="flex flex-row flex-nowrap items-center">
+          <%= form.check_box :remove_image, {}, true, false %>
+          <%= form.label "Delete Image", class: "m-auto ml-2 font-semibold text-lg text-secondary text-start" %>
+        </div>
+      </div>
+      <%= form.file_field :image, accepts: "image/*", class: "replace-image-button hidden" %>
     <% end %>
   </div>
 
