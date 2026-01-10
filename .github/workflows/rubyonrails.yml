@@ -30,6 +30,10 @@ jobs:
         run: SECRET_KEY_BASE=DUMMY bin/rails assets:precompile
       - name: Run tests
         run: bundle exec rspec --format documentation
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
   lint:
     runs-on: ubuntu-latest
     steps:
