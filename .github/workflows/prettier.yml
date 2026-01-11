@@ -1,6 +1,8 @@
 name: Prettier JavaScript
 
 on:
+  push:
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
