@@ -46,6 +46,6 @@ jobs:
         with:
           bundler-cache: true
       - name: Rubocop
-        run: bundle exec rubocop --parallel
+        run: bundle exec rubocop --parallel --format github
       - name: ERB Lint
-        run: bundle exec erblint --lint-all
+        run: bundle exec erb_lint --lint-all
