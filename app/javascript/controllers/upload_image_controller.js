@@ -11,6 +11,31 @@ export default class extends Controller {
     })
   }
 
+  replaceFileInput(inputId) {
+    const oldInput = document.getElementById(inputId)
+
+    if (!oldInput) return
+
+    const newInput = document.createElement("input")
+    newInput.type = "file"
+    newInput.id = oldInput.id
+    newInput.name = oldInput.name
+    newInput.className = oldInput.className
+    newInput.accept = oldInput.accept
+    newInput.dataset.controller = oldInput.dataset.controller
+    newInput.dataset.action = oldInput.dataset.action
+
+    Array.from(oldInput.attributes).forEach((attr) => {
+      if (attr.name.startsWith("data-")) {
+        newInput.setAttribute(attr.name, attr.value)
+      }
+    })
+
+    oldInput.parentNode.replaceChild(newInput, oldInput)
+
+    return newInput
+  }
+
   previewImage(event) {
     const file = event.target.files && event.target.files[0]
     if (!file || !file.type.startsWith("image/")) return
@@ -44,13 +69,11 @@ export default class extends Controller {
     const replaceInput = document.getElementById("replace-image-input")
 
     if (uploadInput?.files.length) {
-      const clonedInput = uploadInput.cloneNode(true)
-      uploadInput.parentNode.replaceChild(clonedInput, uploadInput)
+      this.replaceFileInput("upload-image-input")
     }
 
     if (replaceInput?.files.length) {
-      const clonedInput = replaceInput.cloneNode(true)
-      replaceInput.parentNode.replaceChild(clonedInput, replaceInput)
+      this.replaceFileInput("replace-image-input")
     }
 
     if (previewContainer) {
