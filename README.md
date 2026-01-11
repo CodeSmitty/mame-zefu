@@ -1,6 +1,6 @@
 # Mame Zefu
 
-[![forthebadge](/badges/gluten-free.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/badges/gluten-free.svg)](https://forthebadge.com)
 
 [![Better Stack Badge](https://uptime.betterstack.com/status-badges/v1/monitor/2c31f.svg)](https://uptime.betterstack.com/?utm_source=status_badge)
 ![GitHub branch check runs](https://img.shields.io/github/check-runs/CodeSmitty/mame-zefu/main?logo=github)
