@@ -1,24 +1,4 @@
-# README
+# Mame Zefu
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+[![codecov.io](https://codecov.io/github/CodeSmitty/mame-zefu/coverage.svg?branch=main)]
+(https://codecov.io/github/CodeSmitty/mame-zefu?branch=main)
