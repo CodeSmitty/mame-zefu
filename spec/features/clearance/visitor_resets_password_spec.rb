@@ -46,7 +46,7 @@ RSpec.feature 'Visitor resets password' do
     expect(page).to have_content I18n.t('passwords.create.description')
   end
 
-  def expect_mailer_to_have_delivery(recipient, subject, body) # rubocop:disable Metrics/AbcSize
+  def expect_mailer_to_have_delivery(recipient, subject, body)
     expect(ActionMailer::Base.deliveries).not_to be_empty
 
     message = ActionMailer::Base.deliveries.any? do |email|

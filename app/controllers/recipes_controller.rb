@@ -82,7 +82,7 @@ class RecipesController < ApplicationController
   end
 
   # PATCH/PUT /recipes/1 or /recipes/1.json
-  def update
+  def update # rubocop:disable Metrics/MethodLength
     uploaded = recipe_params[:image]
     @recipe.image.purge if uploaded.present? && @recipe.image.attached?
 
