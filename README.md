@@ -1,4 +1,5 @@
 # Mame Zefu
 
-[![codecov.io](https://codecov.io/gh/CodeSmitty/mame-zefu/graph/badge.svg)]
-(https://codecov.io/gh/CodeSmitty/mame-zefu)
+[![codecov](https://codecov.io/github/CodeSmitty/mame-zefu/graph/badge.svg?token=6INPK88U1V)](https://codecov.io/github/CodeSmitty/mame-zefu)
+
+![Mame Zefu](app/assets/images/Mamezefu-02.png)
