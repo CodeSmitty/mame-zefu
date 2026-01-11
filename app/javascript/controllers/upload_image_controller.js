@@ -30,7 +30,6 @@ export default class extends Controller {
 
     clearPreview(event) {
         event.preventDefault()
-        console.log(event)
         const previewContainer = this.element.querySelector('#image-preview-container') || document.getElementById('image-preview-container')
         const previewImage = this.element.querySelector('#image-preview') || document.getElementById('image-preview')
         const uploadInput = document.getElementById('upload-image-input')
