@@ -48,9 +48,9 @@ class Recipe < ApplicationRecord
 
   def purge_if_replacing
     return unless ActiveModel::Type::Boolean.new.cast(remove_image) && image.attached?
+    
     image.purge if image.attached?
   end
-  
 
   def attach_image_from_url
     return unless url?(image_src)

@@ -84,9 +84,8 @@ class RecipesController < ApplicationController
   # PATCH/PUT /recipes/1 or /recipes/1.json
   def update
     uploaded = recipe_params[:image]
-    # Purge old image before updating if a new one is being uploaded
     @recipe.image.purge if uploaded.present? && @recipe.image.attached?
-    
+
     respond_to do |format|
       if @recipe.update(recipe_params)
         format.html { redirect_to recipe_url(@recipe), notice: 'Recipe was successfully updated.' }
@@ -123,6 +122,7 @@ class RecipesController < ApplicationController
   # Only allow a list of trusted parameters through.
   def recipe_params
     params.require(:recipe).permit(:name, :ingredients, :directions, :yield, :prep_time, :cook_time, :description,
-                                   :rating, :is_favorite, :notes, :source, :image, :image_src, :remove_image, category_names: [])
+                                   :rating, :is_favorite, :notes, :source, :image, :image_src,
+                                   :remove_image, category_names: [])
   end
 end

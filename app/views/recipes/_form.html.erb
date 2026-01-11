@@ -1,5 +1,5 @@
 
-<%= form_with(model: recipe, class: "contents", local: true) do |form| %>
+<%= form_with(model: recipe, class: "contents", local: true, data: { controller: "upload-image" }) do |form| %>
   <% if recipe.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
       <h2><%= pluralize(recipe.errors.count, "error") %> prohibited this recipe from being saved:</h2>
@@ -18,27 +18,37 @@
 
   <div class="my-5 lg:my-2 basis-full relative w-full lg:w-1/2">
     <% if @recipe.image.attached? %>
-      <%= image_tag @recipe.image, class: "preview-image" %>
+      <%= image_tag @recipe.image, class: "preview-image", id: "preview-image" %>
     <% elsif @recipe.image_src.present? %>
-      <%= image_tag @recipe.image_src, class: "preview-image" %>
+      <%= image_tag @recipe.image_src, class: "preview-image", id: "preview-image" %>
       <%= form.hidden_field :image_src, value: @recipe.image_src %>
     <% end %>
+    <div id="image-preview-container" class="hidden mb-4">
+      <img id="image-preview" src="" alt="Image preview" class="preview-image" />
+      <button type="button" id="clear-preview-button" data-controller="upload-image#clearPreview" data-action="click->upload-image#clearPreview"><%= render "icons/micro/trash", classes: "me-1" %></button>
+    </div>
     <% if controller_name == "recipes" && @recipe.image.attached? %>
       <div class="flex flex-row flex-nowrap justify-between">
         <div class="flex-basis-auto">
           <button type="button"
             class="inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer"
-            onclick="this.showreplaceImageButton = !this.showreplaceImageButton;
-                     document.querySelector('.replace-image-button').classList.toggle('hidden');">
-            Replace Image
+            onclick="document.getElementById('replace-image-input').click();">
+            <span class="me-2"><%= render "icons/mini/attachment" %></span> Replace Image
           </button>
         </div>
         <div class="flex flex-row flex-nowrap items-center">
           <%= form.check_box :remove_image, {}, true, false %>
-          <%= form.label "Delete Image", class: "m-auto ml-2 font-semibold text-lg text-secondary text-start" %>
+          <%= form.label :remove_image, "Delete Image", class: "m-auto ml-2 font-semibold text-lg text-secondary text-start" %>
         </div>
       </div>
-      <%= form.file_field :image, accepts: "image/*", class: "replace-image-button hidden" %>
+      <%= form.file_field :image, accepts: "image/*", class: "hidden", id: "replace-image-input", data: { 'upload-image-target': "image-input" } %>
+    <% else %>
+      <button type="button"
+        class="inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer"
+        onclick="document.getElementById('upload-image-input').click();">
+        <span class="me-2"><%= render "icons/mini/attachment" %></span> Upload Image
+      </button>
+      <%= form.file_field :image, accepts: "image/*", class: "hidden", id: "upload-image-input", data: { 'upload-image-target': "image-input" } %> 
     <% end %>
   </div>
 
