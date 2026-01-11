@@ -1,5 +1,12 @@
 <div class="mx-auto md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl text-secondary">Import Recipe</h1>
+  <div class="flex flex-row justify-between items-center">
+    <h1 class="font-bold text-4xl text-secondary">Import Recipe</h1>
+    <% if @recipe.source.present? %>
+      <%= link_to URI(@recipe.source).to_s, target: "_blank", rel: "noopener" do %>
+        <%= render_icon "mini/link" %>
+      <% end %>
+    <% end %>
+  </div>
 
   <%= render "form", recipe: @recipe %>
 
