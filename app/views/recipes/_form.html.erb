@@ -24,7 +24,7 @@
       <%= form.hidden_field :image_src, value: @recipe.image_src %>
     <% end %>
     <div id="image-preview-container" class="hidden mb-4">
-      <img id="image-preview" src="" alt="Image preview" class="preview-image" />
+      <img id="image-preview" src="" alt="Image preview" class="preview-image">
       <button type="button" id="clear-preview-button" data-controller="upload-image#clearPreview" data-action="click->upload-image#clearPreview"><%= render "icons/micro/trash", classes: "me-1" %></button>
     </div>
     <% if controller_name == "recipes" && @recipe.image.attached? %>
@@ -48,7 +48,7 @@
         onclick="document.getElementById('upload-image-input').click();">
         <span class="me-2"><%= render "icons/mini/attachment" %></span> Upload Image
       </button>
-      <%= form.file_field :image, accepts: "image/*", class: "hidden", id: "upload-image-input", data: { 'upload-image-target': "image-input" } %> 
+      <%= form.file_field :image, accepts: "image/*", class: "hidden", id: "upload-image-input", data: { 'upload-image-target': "image-input" } %>
     <% end %>
   </div>
 
