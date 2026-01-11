@@ -55,7 +55,7 @@ module Recipes
           .to_s
       end
 
-      def recipe_is_favorite
+      def recipe_is_favorite # rubocop:disable Naming/PredicateMethod
         document
           .css('[itemprop="recipeIsFavourite"]')
           .attribute('content')
