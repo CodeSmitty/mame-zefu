@@ -11,6 +11,8 @@ class Recipe < ApplicationRecord
   before_save :delete_image, if: -> { ActiveModel::Type::Boolean.new.cast(remove_image) }
   before_save :purge_if_replacing
 
+  before_destroy :log_destruction
+
   def category_names
     categories.pluck(:name)
   end
@@ -41,6 +43,11 @@ class Recipe < ApplicationRecord
   scope :sorted, -> { order(name: :asc) }
 
   private
+
+  def log_destruction
+    Rails.logger.error "=== RECIPE #{id} IS BEING DESTROYED! ==="
+    Rails.logger.error caller.join("\n")
+  end
 
   def delete_image
     image.purge if image.attached?

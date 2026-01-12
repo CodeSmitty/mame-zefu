@@ -15,6 +15,10 @@ class RecipePolicy < ApplicationPolicy
     owner?
   end
 
+  def delete_image?
+    owner?
+  end
+
   class Scope
     def initialize(user, scope)
       @user = user
