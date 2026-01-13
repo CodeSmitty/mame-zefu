@@ -12,7 +12,6 @@ export default class extends Controller {
 
   async deleteImage(event) {
     event.preventDefault()
-    console.log(this.urlValue)
 
     const token = document
       .querySelector('meta[name="csrf-token"]')

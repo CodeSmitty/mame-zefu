@@ -36,10 +36,6 @@
             <span class="me-2"><%= render "icons/mini/attachment" %></span> Replace Image
           </button>
         </div>
-        <div class="flex flex-row flex-nowrap items-center">
-          <%= form.check_box :remove_image, {}, true, false %>
-          <%= form.label :remove_image, "Delete Image", class: "m-auto ml-2 font-semibold text-lg text-secondary text-start" %>
-        </div>
       </div>
       <%= form.file_field :image, accepts: "image/*", class: "hidden", id: "replace-image-input", data: { 'upload-image-target': "image-input" } %>
     <% else %>

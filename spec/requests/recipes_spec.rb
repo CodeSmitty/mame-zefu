@@ -8,6 +8,15 @@ RSpec.describe 'Recipes' do
   let!(:recipe) { create(:recipe, user: user) }
   let(:other_user) { create(:user) }
   let(:other_recipe) { create(:recipe, user: other_user) }
+  let(:image_path) { Rails.root.join('spec/fixtures/files/test.png') }
+let(:uploaded_image) do
+  fixture_file_upload(
+    Rails.root.join('spec/fixtures/files/test.png'),
+    'image/png'
+  )
+end
+
+  let(:recipe_with_image) { attributes_for(:recipe, image: uploaded_image) }
 
   describe 'GET /recipes' do
     it 'returns a 200' do
@@ -62,6 +71,21 @@ RSpec.describe 'Recipes' do
         expect(response).to have_http_status(:ok)
       end
     end
+
+      it 'creates recipe then attaches image (two-step like UI)' do
+        expect {
+          post recipes_path(params: { recipe: attributes_for(:recipe) }, as: user)
+        }.to change(Recipe, :count).by(1)
+        
+        recipe = Recipe.last
+        expect {
+          recipe.image.attach(
+            io: File.open(Rails.root.join('spec/fixtures/files/test.png')),
+            filename: 'test.png',
+            content_type: 'image/png'
+          )
+        }.to change(ActiveStorage::Attachment, :count).by(1)
+      end
   end
 
   describe 'PUT /recipes/:id' do
@@ -134,6 +158,14 @@ RSpec.describe 'Recipes' do
 
       it 'does not delete delete recipe of another user.' do
         expect { delete recipe_path(recipe, as: other_user) }.to raise_error(Pundit::NotAuthorizedError)
+      end
+
+      it 'deletes attached image when recipe is deleted' do
+        recipe.image.attach(uploaded_image)
+
+        expect {
+          delete recipe_path(recipe, as: user)
+        }.to change(ActiveStorage::Attachment, :count).by(-1)
       end
     end
   end
