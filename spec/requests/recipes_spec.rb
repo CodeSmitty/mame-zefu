@@ -9,12 +9,12 @@ RSpec.describe 'Recipes' do
   let(:other_user) { create(:user) }
   let(:other_recipe) { create(:recipe, user: other_user) }
   let(:image_path) { Rails.root.join('spec/fixtures/files/test.png') }
-let(:uploaded_image) do
-  fixture_file_upload(
-    Rails.root.join('spec/fixtures/files/test.png'),
-    'image/png'
-  )
-end
+  let(:uploaded_image) do
+    fixture_file_upload(
+      Rails.root.join('spec/fixtures/files/test.png'),
+      'image/png'
+    )
+  end
 
   let(:recipe_with_image) { attributes_for(:recipe, image: uploaded_image) }
 
@@ -65,7 +65,7 @@ end
     context 'when user is authenticated' do
       it 'creates recipe for user.' do
         expect { post recipes_path(params: { recipe: attributes_for(:recipe) }, as: user) }
-          .to change(Recipe, :count).by(1)
+        .to change(Recipe, :count).by(1)
 
         follow_redirect!
         expect(response).to have_http_status(:ok)
@@ -76,10 +76,9 @@ end
         expect {
           post recipes_path(params: { recipe: attributes_for(:recipe) }, as: user)
         }.to change(Recipe, :count).by(1)
-        
+
         recipe = Recipe.last
-        expect {
-          recipe.image.attach(
+        expect { recipe.image.attach(
             io: File.open(Rails.root.join('spec/fixtures/files/test.png')),
             filename: 'test.png',
             content_type: 'image/png'
@@ -167,7 +166,30 @@ end
           delete recipe_path(recipe, as: user)
         }.to change(ActiveStorage::Attachment, :count).by(-1)
       end
+
+      it 'calls delete_image action' do
+        recipe.image.attach(uploaded_image)
+        
+        expect {
+          delete delete_image_recipe_path(recipe, as: user)
+        }.to change(ActiveStorage::Attachment, :count).by(-1)
+      end
     end
+  end
+
+  describe 'DELETE #delete_image' do
+    let(:recipe) { create(:recipe, user: user) }
+    
+    before do
+      recipe.image.attach(uploaded_image)
+    end
+
+    it 'delete the image attachment' do
+      expect {
+        delete delete_image_recipe_path(recipe, as: user)
+      }.to change(ActiveStorage::Attachment, :count).by(-1)
+    end
+
   end
 
   describe 'GET /recipes/archive/download' do
