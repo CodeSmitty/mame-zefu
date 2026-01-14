@@ -24,7 +24,7 @@ Rails.application.routes.draw do
   resources :recipes do
     member do
       post :toggle_favorite
-      delete :delete_image
+      delete :image, action: :delete_image
     end
   end
 end

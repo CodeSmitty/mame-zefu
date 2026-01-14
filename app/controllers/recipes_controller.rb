@@ -4,7 +4,7 @@ class RecipesController < ApplicationController
   skip_after_action :verify_pundit_authorization, only: %i[
     web_search web_result
     download_archive upload_archive_form upload_archive
-    new create delete_image
+    new create
   ]
 
   def web_search; end
@@ -82,10 +82,7 @@ class RecipesController < ApplicationController
   end
 
   # PATCH/PUT /recipes/1 or /recipes/1.json
-  def update # rubocop:disable Metrics/MethodLength
-    uploaded = recipe_params[:image]
-    @recipe.image.purge if uploaded.present? && @recipe.image.attached?
-
+  def update
     respond_to do |format|
       if @recipe.update(recipe_params)
         format.html { redirect_to recipe_url(@recipe), notice: 'Recipe was successfully updated.' }
@@ -112,7 +109,6 @@ class RecipesController < ApplicationController
   end
 
   def delete_image
-    @recipe = Recipe.find(params[:id])
     @recipe.image.purge if @recipe.image.attached?
     respond_to do |format|
       format.json { render json: { success: true } }
@@ -129,7 +125,6 @@ class RecipesController < ApplicationController
   # Only allow a list of trusted parameters through.
   def recipe_params
     params.require(:recipe).permit(:name, :ingredients, :directions, :yield, :prep_time, :cook_time, :description,
-                                   :rating, :is_favorite, :notes, :source, :image, :image_src,
-                                   :remove_image, :delete_image, category_names: [])
+                                   :rating, :is_favorite, :notes, :source, :image, :image_src, category_names: [])
   end
 end

@@ -27,9 +27,6 @@ export default class extends Controller {
         },
       })
 
-      console.log("Response status:", response.status)
-      console.log("Response headers:", response.headers)
-
       if (!response.ok) throw new Error("Failed to delete image")
 
       // Optionally, you can handle UI updates here after successful deletion
