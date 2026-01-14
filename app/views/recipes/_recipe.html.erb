@@ -95,7 +95,7 @@
               class="inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer"
               data-controller="delete-image"
               data-delete-image-target="button"
-              data-delete-image-url-value="<%= delete_image_recipe_path(recipe) %>"
+              data-delete-image-url-value="<%= image_recipe_path(recipe) %>"
               data-action="click->delete-image#deleteImage"
               data-delete-image-recipe-id-value="<%= recipe.id %>">
               <span class="me-2"><%= render "icons/micro/trash", classes: "me-1" %></span> Delete Image
