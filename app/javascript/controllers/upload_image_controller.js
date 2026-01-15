@@ -54,7 +54,9 @@ export default class extends Controller {
       previewImage.src = e.target.result
       if (previewContainer) {
         if (event.target.id === "replace-image-input") {
-          document.getElementById("display-image-container").classList.add("hidden")
+          document
+            .getElementById("display-image-container")
+            .classList.add("hidden")
           document.getElementById("delete-image-button").classList.add("hidden")
         }
         previewContainer.classList.remove("hidden")
@@ -84,7 +86,9 @@ export default class extends Controller {
 
     if (previewContainer) {
       previewContainer.classList.add("hidden")
-      document.getElementById("display-image-container")?.classList.remove("hidden")
+      document
+        .getElementById("display-image-container")
+        ?.classList.remove("hidden")
       document.getElementById("delete-image-button").classList.remove("hidden")
     }
     if (previewImage) {
