@@ -8,15 +8,7 @@ RSpec.describe 'Recipes' do
   let!(:recipe) { create(:recipe, user: user) }
   let(:other_user) { create(:user) }
   let(:other_recipe) { create(:recipe, user: other_user) }
-  let(:image_path) { Rails.root.join('spec/fixtures/files/test.png') }
-  let(:uploaded_image) do
-    fixture_file_upload(
-      Rails.root.join('spec/fixtures/files/test.png'),
-      'image/png'
-    )
-  end
-
-  let(:recipe_with_image) { attributes_for(:recipe, image: uploaded_image) }
+  let(:uploaded_image) { fixture_file_upload('test.png', 'image/png') }
 
   describe 'GET /recipes' do
     it 'returns a 200' do
@@ -70,17 +62,6 @@ RSpec.describe 'Recipes' do
         follow_redirect!
         expect(response).to have_http_status(:ok)
       end
-    end
-
-    it 'creates recipe then attaches image' do # rubocop:disable RSpec/ExampleLength
-      expect { post recipes_path(params: { recipe: attributes_for(:recipe) }, as: user) }
-        .to change(Recipe, :count).by(1)
-      recipe = Recipe.last
-      expect do
-        recipe.image.attach(io: Rails.root.join('spec/fixtures/files/test.png').open,
-                            filename: 'test.png',
-                            content_type: 'image/png')
-      end.to change(ActiveStorage::Attachment, :count).by(1)
     end
   end
 
@@ -163,28 +144,29 @@ RSpec.describe 'Recipes' do
           delete recipe_path(recipe, as: user)
         end.to change(ActiveStorage::Attachment, :count).by(-1)
       end
+    end
+  end
 
-      it 'calls delete image action' do
-        recipe.image.attach(uploaded_image)
+  describe 'DELETE /recipes/:id/image' do
+    let(:recipe) { create(:recipe, user: user, image: uploaded_image) }
 
+    context 'when authenticated' do
+      it 'delete the image attachment' do
         expect do
           delete image_recipe_path(recipe, as: user)
         end.to change(ActiveStorage::Attachment, :count).by(-1)
       end
-    end
-  end
 
-  describe 'DELETE #delete_image' do
-    let(:recipe) { create(:recipe, user: user) }
-
-    before do
-      recipe.image.attach(uploaded_image)
+      it 'does not delete image of another user.' do
+        expect { delete image_recipe_path(recipe, as: other_user) }.to raise_error(Pundit::NotAuthorizedError)
+      end
     end
 
-    it 'delete the image attachment' do
-      expect do
-        delete image_recipe_path(recipe, as: user)
-      end.to change(ActiveStorage::Attachment, :count).by(-1)
+    context 'when unauthenticated' do
+      it 'redirects to login' do
+        delete image_recipe_path(recipe)
+        expect(response).to redirect_to(sign_in_path)
+      end
     end
   end
 
@@ -228,7 +210,7 @@ RSpec.describe 'Recipes' do
     end
   end
 
-  describe 'POST /recipes/archive/upload' do # rubocop:disable RSpec/MultipleMemoizedHelpers
+  describe 'POST /recipes/archive/upload' do
     let(:tempfile) do
       Tempfile.new('import').tap do |tempfile|
         tempfile.write('data')
@@ -257,7 +239,7 @@ RSpec.describe 'Recipes' do
       tempfile.close!
     end
 
-    context 'when restore raises Recipes::Archive::Error' do # rubocop:disable RSpec/MultipleMemoizedHelpers
+    context 'when restore raises Recipes::Archive::Error' do
       before do
         allow(archive_double).to receive(:restore).and_raise(Recipes::Archive::Error.new('bad archive'))
       end
@@ -272,7 +254,7 @@ RSpec.describe 'Recipes' do
       end
     end
 
-    context 'when restore raises StandardError' do # rubocop:disable RSpec/MultipleMemoizedHelpers
+    context 'when restore raises StandardError' do
       before do
         allow(archive_double).to receive(:restore).and_raise(StandardError.new('boom'))
       end

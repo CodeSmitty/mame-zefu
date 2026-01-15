@@ -52,11 +52,17 @@ export default class extends Controller {
     const reader = new FileReader()
     reader.onload = (e) => {
       previewImage.src = e.target.result
-      if (previewContainer) previewContainer.classList.remove("hidden")
+      if (previewContainer) {
+        if (event.target.id === "replace-image-input") {
+          document.getElementById("display-image-container").classList.add("hidden")
+          document.getElementById("delete-image-button").classList.add("hidden")
+        }
+        previewContainer.classList.remove("hidden")
+      }
     }
     reader.readAsDataURL(file)
   }
-
+  // Added Line 56 and Line 84. showing and hiding image preview correctly after clearing the preview.
   clearPreview(event) {
     event.preventDefault()
     const previewContainer =
@@ -78,6 +84,8 @@ export default class extends Controller {
 
     if (previewContainer) {
       previewContainer.classList.add("hidden")
+      document.getElementById("display-image-container")?.classList.remove("hidden")
+      document.getElementById("delete-image-button").classList.remove("hidden")
     }
     if (previewImage) {
       previewImage.src = ""
