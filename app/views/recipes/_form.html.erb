@@ -1,5 +1,5 @@
 
-<%= form_with(model: recipe, class: "contents", local: true, data: { controller: "upload-image" }) do |form| %>
+<%= form_with(model: recipe, class: "contents") do |form| %>
   <% if recipe.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
       <h2><%= pluralize(recipe.errors.count, "error") %> prohibited this recipe from being saved:</h2>
@@ -16,48 +16,32 @@
     <%= form.label :name, class: "absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-gray-50 px-2 peer-focus:bg-gray-50 peer-focus:pb-0 peer-focus:px-2 peer-focus:text-tertiary peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-6 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:rtl:translate-x-1/4 peer-focus:rtl:left-auto start-1" %>
   </div>
 
-  <div class="mx-auto my-5 lg:my-2 basis-full relative w-full lg:w-1/2">
-    <% if @recipe.image.attached? %>
-             <div id="display-image-container" class="relative flex justify-end w-full md:w-10/12 lg:w-10/12 m-auto aspect-square overflow-hidden" data-upload-image-target="previewContainer">
-               <button type="button"
-                id="delete-image-button"
-                class="absolute rounded-lg py-2 px-2 bg-transparent hover:bg-secondary text-secondary hover:text-white font-medium cursor-pointer"
-                data-controller="delete-image"
-                data-delete-image-target="button"
-                data-delete-image-url-value="<%= image_recipe_path(recipe) %>"
-                data-action="click->delete-image#deleteImage"
-                data-delete-image-recipe-id-value="<%= recipe.id %>">
-                <span><%= render "icons/micro/trash", classes: "me-1" %></span>
-                </button>
-                     <%= image_tag @recipe.image, class: "preview-image w-full h-full object-cover object-center-10", id: "preview-image" %>
-             </div>
-    <% elsif @recipe.image_src.present? %>
-      <%= image_tag @recipe.image_src, class: "preview-image", id: "preview-image" %>
-      <%= form.hidden_field :image_src, value: @recipe.image_src %>
-    <% end %>
-    <div id="image-preview-container" class="relative hidden w-full md:w-10/12 lg:w-10/12 m-auto aspect-square overflow-hidden" data-upload-image-target="previewContainer">
-      <img id="image-preview" src="" alt="Image preview" class="preview-image w-full h-full object-cover object-center-10">
-      <button type="button" id="clear-preview-button" class="absolute rounded-lg bottom-1 py-2 px-2 bg-transparent hover:bg-secondary text-secondary hover:text-white font-medium cursor-pointer" data-controller="upload-image#clearPreview" data-action="click->upload-image#clearPreview"><%= render "icons/micro/trash", classes: "me-1" %></button>
-    </div>
-    <% if controller_name == "recipes" && @recipe.image.attached? %>
-      <div class="flex flex-row flex-nowrap justify-between p-5">
-        <div class="flex-basis-auto mx-auto">
-          <button type="button"
-            class="m-auto inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer"
-            onclick="document.getElementById('replace-image-input').click();">
-            <span class="me-2"><%= render "icons/mini/attachment" %></span> Replace Image
-          </button>
-        </div>
-      </div>
-      <%= form.file_field :image, accepts: "image/*", class: "hidden", id: "replace-image-input", data: { 'upload-image-target': "image-input" } %>
-    <% else %>
-      <button type="button"
-        class="inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer"
-        onclick="document.getElementById('upload-image-input').click();">
-        <span class="me-2"><%= render "icons/mini/attachment" %></span> Upload Image
+  <div
+    class="mx-auto my-5 lg:my-2 basis-full relative w-full lg:w-1/2"
+    data-controller="image"
+    data-image-delete-url-value="<%= delete_image_url(recipe) %>"
+    data-image-preview-src-value="<%= preview_image_src(recipe) %>"
+    data-image-persisted-src-value="<%= persisted_image_src(recipe) %>"
+    data-image-default-src-value="<%= default_image_src %>">
+    <div class="relative flex justify-end w-full md:w-10/12 lg:w-10/12 m-auto aspect-square overflow-hidden">
+      <button
+        type="button"
+        class="absolute rounded-lg py-2 px-2 bg-transparent hover:bg-secondary text-secondary hover:text-white font-medium cursor-pointer"
+        data-image-target="deleteButton"
+        data-action="image#deleteButtonClick:prevent">
+        <span><%= render "icons/micro/trash", classes: "me-1" %></span>
       </button>
-      <%= form.file_field :image, accepts: "image/*", class: "hidden", id: "upload-image-input", data: { 'upload-image-target': "image-input" } %>
-    <% end %>
+      <%= image_tag "", data: { 'image-target': 'previewImage' } %>
+    </div>
+    <div class="my-5 relative">
+      <%= form.hidden_field :image_src, value: recipe.image_src %>
+      <%= form.file_field(
+            :image,
+            accepts: 'image/*',
+            class: "file:mr-4 file:py-2 file:px-4 file:rounded-l-lg file:border-0 file:bg-gray-200 block rounded-lg w-full text-sm text-gray-900 bg-gray-50 border-transparent appearance-none focus:outline-hidden focus:ring-0 focus:border-secondary peer",
+            data: { 'image-target': 'fileField', action: 'change->image#fileFieldChange' }
+          ) %>
+    </div>
   </div>
 
   <div class="my-2 lg:my-10 w-full flex flex-row flex-wrap justify-start">
