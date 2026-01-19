@@ -1,6 +1,26 @@
 # frozen_string_literal: true
 
 namespace :recipes do # rubocop:disable Metrics/BlockLength
+  task :get_json_schema, [:url] => :environment do |_, args|
+    fields = %w[
+      name
+      image
+      recipeYield
+      cookTime performTime prepTime totalTime timeRequired
+      recipeCategory recipeCuisine cookingMethod suitableForDiet keywords
+      description
+      recipeIngredient
+      recipeInstructions
+    ]
+
+    args
+      .then { |args| Recipes::Import.from_url(args.url, force_json_schema: true) }
+      .then { |importer| importer.send(:recipe_class_instance) }
+      .then { |json_schema| json_schema.send(:recipe_json) }
+      .then { |json| json.slice(*fields) }
+      .then { |sliced_json| puts JSON.pretty_generate(sliced_json) }
+  end
+
   task export: :environment do
     filename = Rails.root.join "Recipes_#{Time.current.strftime('%Y%m%d_%H%M%S')}.zip"
     user = User.find_by(email: 'admin@example.com')

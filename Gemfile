@@ -61,6 +61,9 @@ gem "down", "~> 5.0"
 gem "net_tcp_client"
 gem "rails_semantic_logger"
 
+# Fractional numbers support
+gem "fractional"
+
 # Use Sass to process CSS
 # gem "sassc-rails"
 
