@@ -47,6 +47,7 @@ class ApplicationController < ActionController::Base
 
     uri = URI(tag_url)
     res = get_tag(uri)
+    return if res.blank?
 
     unless res.is_a?(Net::HTTPSuccess)
       Rails.logger.error("Health check: failed to fetch tag from #{uri} with status #{res.code}")
@@ -61,8 +62,10 @@ class ApplicationController < ActionController::Base
       req = Net::HTTP::Get.new(uri)
       http.request(req)
     end
-  rescue Net::ReadTimeout
+  rescue Net::ReadTimeout, Net::OpenTimeout
     Rails.logger.warn("Health check: timed out fetching tag from #{uri}")
+
+    nil
   end
 
   def tag_url
