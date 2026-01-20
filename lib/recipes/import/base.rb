@@ -1,8 +1,9 @@
 module Recipes
   class Import
     class Base
-      def initialize(document)
+      def initialize(document, source = nil)
         @document = document
+        @source = source
       end
 
       IMPORT_FIELDS = %w[
@@ -23,17 +24,23 @@ module Recipes
 
       def recipe
         Recipe.new.tap do |recipe|
-          IMPORT_FIELDS.each do |field|
-            setter = "#{field}="
-            getter = "recipe_#{field}"
-            recipe.send(setter, send(getter)) if respond_to?(getter)
-          end
+          recipe.source = source
+          IMPORT_FIELDS.each { |field| set_recipe_field(recipe, field) }
         end
       end
 
       private
 
-      attr_reader :document
+      def set_recipe_field(recipe, field)
+        setter = "#{field}="
+        getter = "recipe_#{field}"
+
+        recipe.send(setter, send(getter)) if respond_to?(getter)
+      rescue StandardError => e
+        Rails.logger.error "Error setting #{field} in #{self.class}: #{e.class} - #{e.message}. Source: #{source}"
+      end
+
+      attr_reader :document, :source
     end
   end
 end

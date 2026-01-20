@@ -10,12 +10,13 @@ class RecipesController < ApplicationController
   def web_search; end
 
   def web_result
-    @recipe = Recipes::Import.from_url(params[:url])
-  rescue Recipes::Import::UnknownHostError => e
-    @recipe =
-      Recipe.new.tap do |r|
-        r.errors.add(:base, e.message)
-      end
+    @recipe = Recipes::Import.new(uri: uri_from_params, force_json_schema: force_json).recipe
+  rescue StandardError => e
+    @recipe = Recipe.new(source: uri_from_params)
+
+    flash.now[:alert] = 'Unable to import recipe.'
+
+    Rails.logger.error("Recipe import error: #{e.class} - #{e.message}. Source: #{uri_from_params}")
   end
 
   # GET /recipes/archive/download
@@ -120,6 +121,14 @@ class RecipesController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_recipe
     @recipe = authorize Recipe.find(params[:id])
+  end
+
+  def uri_from_params
+    @uri_from_params ||= URI(params.require(:url))
+  end
+
+  def force_json
+    ActiveModel::Type::Boolean.new.cast(params[:force_json])
   end
 
   # Only allow a list of trusted parameters through.
