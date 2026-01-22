@@ -3,15 +3,22 @@
 require 'net/http'
 
 class ApplicationController < ActionController::Base
+  rescue_from ActionController::RoutingError, with: :not_found
+  rescue_from ActiveRecord::RecordNotFound, with: :not_found
+
   include Clearance::Controller
   include Pundit::Authorization
 
-  after_action :verify_pundit_authorization, except: %i[health_check]
+  after_action :verify_pundit_authorization, except: %i[health_check not_found]
 
   TAG_TIMEOUT = 5
 
   def health_check
     params[:q] == 'ready' ? ready_response : live_response
+  end
+
+  def not_found
+    render file: Rails.root.join(Rails.public_path, '404.html'), status: :not_found, layout: false
   end
 
   private
