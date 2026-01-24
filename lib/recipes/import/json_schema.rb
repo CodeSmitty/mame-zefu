@@ -12,8 +12,18 @@ module Recipes
       end
 
       def recipe_image_src
-        image = Array.wrap(recipe_json['image']).first
-        image.is_a?(Hash) ? image['url'] : image
+        return if recipe_json['image'].blank?
+
+        image_uri =
+          recipe_json['image']
+          .then { Array.wrap(_1) }
+          .first
+          .then { |image| image.is_a?(Hash) ? image['url'] : image }
+          .then { |url| URI(url) }
+
+        return unless image_uri.is_a?(URI::HTTP) || image_uri.is_a?(URI::HTTPS)
+
+        image_uri.to_s
       end
 
       def recipe_yield
@@ -37,6 +47,8 @@ module Recipes
       end
 
       def recipe_description
+        return if recipe_json['description'].blank?
+
         CGI.unescapeHTML(recipe_json['description'])
       end
 

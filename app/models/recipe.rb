@@ -49,8 +49,7 @@ class Recipe < ApplicationRecord
       filename: File.basename(image_src)
     )
   rescue Down::Error => e
-    errors.add(:image, "couldn't be downloaded: #{e.message}")
-    throw :abort
+    Rails.logger.error("Failed to download image from #{image_src}: #{e.message}")
   end
 
   def url?(string)
