@@ -16,6 +16,18 @@ RSpec.describe Recipes::Import::JsonSchema do
     HTML
   end
 
+  context 'when no recipe data is present' do
+    let(:html) do
+      <<~HTML
+        <html><head></head><body></body></html>
+      HTML
+    end
+
+    it 'raises NotFoundError' do
+      expect { import }.to raise_error(Recipes::Import::JsonSchema::NotFoundError)
+    end
+  end
+
   describe '#recipe_name' do
     let(:field_json) do
       <<~JSON
@@ -46,6 +58,20 @@ RSpec.describe Recipes::Import::JsonSchema do
 
     it 'extracts the recipe image src' do
       expect(import.recipe_image_src).to eq(recipe_image_src)
+    end
+
+    context 'when image is not a full url' do
+      let(:field_json) do
+        <<~JSON
+          "image": [
+            "/images/cake.jpg"
+          ]
+        JSON
+      end
+
+      it 'returns nil' do
+        expect(import.recipe_image_src).to be_nil
+      end
     end
   end
 
@@ -124,6 +150,18 @@ RSpec.describe Recipes::Import::JsonSchema do
     it 'extracts the recipe description' do
       expect(import.recipe_description).to eq(recipe_description)
     end
+
+    context 'when no description present' do
+      let(:field_json) do
+        <<~JSON
+          "foo": "bar"
+        JSON
+      end
+
+      it 'returns nil' do
+        expect(import.recipe_description).to be_nil
+      end
+    end
   end
 
   describe '#recipe_ingredients' do
@@ -159,6 +197,52 @@ RSpec.describe Recipes::Import::JsonSchema do
 
     it 'extracts and trims the recipe directions' do
       expect(import.recipe_directions).to eq("Mix ingredients.\n\nBake at 350F.")
+    end
+
+    context 'with sections' do
+      let(:field_json) do
+        <<~JSON
+          "recipeInstructions": [
+            {
+              "@type": "HowToSection",
+              "name": "Dough",
+              "itemListElement": [
+                {
+                  "@type": "HowToStep",
+                  "text": "Mix flour and water."
+                }
+              ]
+            },
+            {
+              "@type": "HowToSection",
+              "name": "Baking",
+              "itemListElement": [
+                {
+                  "@type": "HowToStep",
+                  "text": "Bake at 400F."
+                }
+              ]
+            }
+          ]
+        JSON
+      end
+
+      it 'extracts sections in the recipe directions' do
+        expect(import.recipe_directions).to eq("DOUGH\nMix flour and water.\n\nBAKING\nBake at 400F.")
+      end
+    end
+
+    context 'when instructions are plain text' do
+      let(:field_json) do
+        <<~JSON
+          "recipeInstructions": "#{recipe_instructions}"
+        JSON
+      end
+      let(:recipe_instructions) { 'Just mix everything and bake.' }
+
+      it 'handles plain text instructions' do
+        expect(import.recipe_directions).to eq(recipe_instructions)
+      end
     end
   end
 end

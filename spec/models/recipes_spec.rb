@@ -126,4 +126,76 @@ RSpec.describe Recipe do
       it { is_expected.to contain_exactly fusion }
     end
   end
+
+  describe '#attach_image_from_url' do
+    let!(:stub) { stub_request(:get, image_url).to_return(body: downloaded_file, status: 200) }
+    let(:image_url) { 'https://example.com/test.png' }
+    let(:downloaded_file) { file_fixture('test.png').read }
+    let(:recipe) { build(:recipe, image_src: image_url) }
+
+    context 'when image_src is a valid URL and no image is attached' do
+      it 'downloads the image and attaches it' do
+        recipe.save
+
+        expect(stub).to have_been_requested
+        expect(recipe.image).to be_attached
+      end
+    end
+
+    context 'when image_src is not a valid URL' do
+      let(:image_url) { 'invalid url' }
+
+      it 'does not download or attach' do
+        recipe.save
+
+        expect(stub).not_to have_been_requested
+        expect(recipe.image).not_to be_attached
+      end
+    end
+
+    context 'when image is already attached' do
+      let(:recipe) { create(:recipe, image_src: image_url, image: file_fixture('test.png')) }
+
+      before do
+        allow(recipe).to receive(:attach_image_from_url).and_call_original
+      end
+
+      it 'method is not called' do
+        recipe.save
+
+        expect(recipe).not_to have_received(:attach_image_from_url)
+      end
+    end
+
+    context 'when image_src is blank' do
+      let(:recipe) { create(:recipe, image_src: nil) }
+
+      before do
+        allow(recipe).to receive(:attach_image_from_url).and_call_original
+      end
+
+      it 'method is not called' do
+        recipe.save
+
+        expect(recipe).not_to have_received(:attach_image_from_url)
+      end
+    end
+
+    context 'when download fails' do
+      let!(:stub) { stub_request(:get, image_url).to_return(status: 404) }
+
+      before do
+        allow(Rails.logger).to receive(:error)
+      end
+
+      it 'logs an error and allows recipe to save' do
+        recipe.save
+
+        expect(stub).to have_been_requested
+        expect(Rails.logger).to have_received(:error)
+          .with(/Failed to download image from #{image_url}:/)
+        expect(recipe).to be_persisted
+      end
+    end
+  end
 end

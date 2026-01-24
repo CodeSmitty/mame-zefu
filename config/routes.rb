@@ -27,4 +27,8 @@ Rails.application.routes.draw do
       delete :image, action: :delete_image
     end
   end
+
+  get '*unmatched_route', to: 'application#not_found', constraints: lambda { |req|
+    req.path.exclude? 'rails/active_storage'
+  }
 end

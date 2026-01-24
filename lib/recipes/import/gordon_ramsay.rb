@@ -30,9 +30,9 @@ module Recipes
             next text unless node.element?
 
             if node.name == 'ul'
-              text << node.children.map(&:text).join
+              text << node.children.select(&:element?).map(&:text).join("\n")
             elsif node.name == 'p' && node.text.present?
-              text << "\n" if text.present?
+              text << "\n\n" if text.present?
 
               text << "#{node.text.upcase}\n"
             end
