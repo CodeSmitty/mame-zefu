@@ -19,21 +19,23 @@
   <div
     class="mx-auto my-5 lg:my-2 basis-full relative w-full lg:w-1/2"
     data-controller="image"
-    data-image-delete-url-value="<%= delete_image_url(recipe) %>"
-    data-image-preview-src-value="<%= preview_image_src(recipe) %>"
-    data-image-persisted-src-value="<%= persisted_image_src(recipe) %>"
-    data-image-default-src-value="<%= default_image_src %>">
-    <div class="relative flex justify-end w-full md:w-10/12 lg:w-10/12 m-auto aspect-square overflow-hidden">
-      <button
-        type="button"
-        class="absolute rounded-lg py-2 px-2 bg-transparent hover:bg-secondary text-secondary hover:text-white font-medium cursor-pointer"
-        data-image-target="deleteButton"
-        data-action="image#deleteButtonClick:prevent">
-        <span><%= render "icons/micro/trash", classes: "me-1" %></span>
-      </button>
-      <%= image_tag "", data: { 'image-target': 'previewImage' } %>
+    data-image-delete-url-value="<%= image_recipe_path(recipe) %>"
+    data-image-preview-src-value="<%= recipe.image_src %>"
+    data-image-persisted-src-value="<%= url_for(recipe.image) if recipe.image.attached? %>"
+    data-image-default-src-value="<%= asset_path('placeholder.jpg') %>"
+    data-image-state-value="<%= recipe.image.attached? ? 'persisted' : 'none' %>">
+    <div class="relative mx-auto flex justify-end w-full md:w-10/12 lg:w-10/12 aspect-square overflow-hidden">
+        <button
+          type="button"
+          class="hidden absolute rounded-lg py-2 px-2 bg-transparent hover:bg-secondary text-secondary hover:text-white font-medium cursor-pointer"
+          data-image-target="deleteButton"
+          data-action="image#deleteButtonClick:prevent">
+            <span id="delete-button-icon" class="hidden"><%= render "icons/micro/trash", classes: "me-1" %></span>
+            <span id="cancel-button-icon" class="hidden"><%= render "icons/outline/cancel", classes: "size-4" %></span>
+        </button>
+      <%= image_tag "", data: { 'image-target': 'previewImage' }, class: "w-full object-contain" %>
     </div>
-    <div class="my-5 relative">
+    <div class="my-5 relative flex justify-center">
       <button type="button"
         id="upload-image-button"
         class="inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer"
@@ -55,7 +57,7 @@
           ) %>
     </div>
   </div>
-  <div class="my-2 lg:my-10 w-full flex flex-row flex-wrap justify-start">
+  <div class="my-2 lg:my-10 w-full flex flex-row flex-wrap justify-center">
     <div class="my-5 lg:my-2 basis-full sm:basis-auto relative">
       <%= form.text_field :yield, class: "block rounded-lg px-2.5 pb-2.5 pt-5 w-full sm:w-4/5 text-sm text-gray-900 bg-gray-50 border-transparent appearance-none focus:outline-hidden focus:ring-0 focus:border-secondary peer", placeholder: " " %>
       <%= form.label :yield, class: "absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-gray-50 px-2 peer-focus:bg-gray-50 peer-focus:pb-0 peer-focus:px-2 peer-focus:text-tertiary peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-6 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:rtl:translate-x-1/4 peer-focus:rtl:left-auto start-1" %>

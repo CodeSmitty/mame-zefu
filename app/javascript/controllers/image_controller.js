@@ -7,6 +7,31 @@ export default class extends Controller {
     defaultSrc: String,
     persistedSrc: String,
     previewSrc: String,
+    state: String,
+  }
+
+  connect() {
+    this.updateUi()
+  }
+
+  stateValueChanged() {
+    this.updateUi()
+  }
+
+  updateUi() {
+    this.deleteButtonTarget.classList.toggle(
+      "hidden",
+      this.stateValue === "none",
+    )
+
+    this.deleteButtonTarget.firstElementChild.classList.toggle(
+      "hidden",
+      this.stateValue !== "persisted",
+    )
+    this.deleteButtonTarget.lastElementChild.classList.toggle(
+      "hidden",
+      this.stateValue !== "new",
+    )
   }
 
   previewSrcValueChanged() {
@@ -29,6 +54,7 @@ export default class extends Controller {
       const reader = new FileReader()
       reader.onload = (e) => {
         this.previewSrcValue = e.target.result
+        this.stateValue = "new"
       }
       reader.readAsDataURL(file)
     } else {
@@ -41,7 +67,9 @@ export default class extends Controller {
       this.previewSrcValue = undefined
       const newInput = this.fileFieldTarget.cloneNode(false)
       this.fileFieldTarget.replaceWith(newInput)
-      this.fileFieldTarget = newInput
+      this.stateValue = this.persistedSrcValue ? "persisted" : "none"
+      this.updateUi()
+      console.log("state:value", this.stateValue)
     } else if (this.persistedSrcValue) {
       this.deletePersistedImage()
       document.getElementById("upload-image-button").textContent =
@@ -66,6 +94,7 @@ export default class extends Controller {
       if (!response.ok) throw new Error("Failed to delete image")
 
       this.persistedSrcValue = undefined
+      this.stateValue = "none"
     } catch (error) {
       console.error(error)
     }
