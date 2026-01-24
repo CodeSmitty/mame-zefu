@@ -27,5 +27,7 @@ Rails.application.routes.draw do
     end
   end
 
-  get '*unmatched_route', to: 'application#not_found'
+  get '*unmatched_route', to: 'application#not_found', constraints: lambda { |req|
+    req.path.exclude? 'rails/active_storage'
+  }
 end
