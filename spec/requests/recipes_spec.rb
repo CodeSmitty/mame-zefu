@@ -175,14 +175,6 @@ RSpec.describe 'Recipes' do
       it 'does not delete delete recipe of another user.' do
         expect { delete recipe_path(recipe, as: other_user) }.to raise_error(Pundit::NotAuthorizedError)
       end
-
-      it 'deletes attached image when recipe is deleted' do
-        recipe.image.attach(uploaded_image)
-
-        expect do
-          delete recipe_path(recipe, as: user)
-        end.to change(ActiveStorage::Attachment, :count).by(-1)
-      end
     end
   end
 

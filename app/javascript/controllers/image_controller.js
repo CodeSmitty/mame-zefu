@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["previewImage", "deleteButton", "fileField"]
+  static targets = ["previewImage", "deleteButton", "uploadButton", "fileField"]
   static values = {
     deleteUrl: String,
     defaultSrc: String,
@@ -68,13 +68,14 @@ export default class extends Controller {
       const newInput = this.fileFieldTarget.cloneNode(false)
       this.fileFieldTarget.replaceWith(newInput)
       this.stateValue = this.persistedSrcValue ? "persisted" : "none"
-      this.updateUi()
-      console.log("state:value", this.stateValue)
     } else if (this.persistedSrcValue) {
       this.deletePersistedImage()
-      document.getElementById("upload-image-button").textContent =
-        "Upload Image"
+      this.uploadButtonTarget.textContent = "Upload Image"
     }
+  }
+
+  uploadButtonClick() {
+    this.fileFieldTarget.click()
   }
 
   async deletePersistedImage() {
