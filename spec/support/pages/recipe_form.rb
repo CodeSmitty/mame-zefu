@@ -11,26 +11,31 @@ class RecipeForm < SitePrism::Section
   element :rating_container, '#recipe_rating'
   element :save_button, 'button', text: 'Save'
 
-  def fill_form(recipe_data)
-    name_field.set(recipe_data[:name]) if recipe_data[:name]
-    yield_field.set(recipe_data[:yield]) if recipe_data[:yield]
-    prep_time_field.set(recipe_data[:prep_time]) if recipe_data[:prep_time]
-    cook_time_field.set(recipe_data[:cook_time]) if recipe_data[:cook_time]
-    description_field.set(recipe_data[:description]) if recipe_data[:description]
-    ingredients_field.set(recipe_data[:ingredients]) if recipe_data[:ingredients]
-    directions_field.set(recipe_data[:directions]) if recipe_data[:directions]
-    notes_field.set(recipe_data[:notes]) if recipe_data[:notes]
+  TEXT_FIELDS = %i[name yield prep_time cook_time description ingredients directions notes].freeze
 
-    # Select rating if provided
-    Capybara.current_session.choose "recipe_rating_#{recipe_data[:rating]}" if recipe_data[:rating]
+  TEXT_FIELDS.each do |field|
+    define_method("#{field}_value=") do |value|
+      send("#{field}_field").set(value) if value.present?
+    end
+  end
 
-    # Add categories if provided
-    return unless recipe_data[:categories]
+  def rating_value=(value)
+    Capybara.current_session.choose "recipe_rating_#{value}" if value.present?
+  end
 
-    recipe_data[:categories].each do |category|
-      # For tom-select, we need to click to open and then select
+  def categories_value=(categories)
+    return if categories.blank?
+
+    categories.each do |category|
       category_select.click
       find('.ts-dropdown .ts-dropdown-content .option', text: category).click
+    end
+  end
+
+  def fill_form(recipe_data)
+    recipe_data.each do |field, value|
+      setter = "#{field}_value="
+      send(setter, value) if respond_to?(setter)
     end
   end
 
