@@ -29,7 +29,7 @@ RSpec.feature 'User creates a recipe with line breaks in directions' do
 
     # Verify we're on the recipe show page
     recipe = Recipe.last
-    expect(current_path).to eq(recipe_path(recipe))
+    expect(page).to have_current_path(recipe_path(recipe), ignore_query: true)
 
     # Verify the directions in the database contain the expected line breaks
     expect(recipe.reload.directions).to eq("Foo\n\nBar\n\nBaz")

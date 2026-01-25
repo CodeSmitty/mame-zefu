@@ -31,9 +31,9 @@ class RecipeShowPage < BasePage
 
   def has_notes?(notes)
     has_css?('.my-5 p strong', text: 'Notes') &&
-    notes.split("\n\n").all? do |note|
-      has_css?('.my-5 p', text: note.strip)
-    end
+      notes.split("\n\n").all? do |note|
+        has_css?('.my-5 p', text: note.strip)
+      end
   end
 
   def has_rating?(rating)
@@ -52,6 +52,6 @@ class RecipeShowPage < BasePage
   end
 
   def has_directions_with_line_breaks?
-    directions_text.include?("Foo") && directions_text.include?("Bar") && directions_text.include?("Baz")
+    directions_text.include?('Foo') && directions_text.include?('Bar') && directions_text.include?('Baz')
   end
 end

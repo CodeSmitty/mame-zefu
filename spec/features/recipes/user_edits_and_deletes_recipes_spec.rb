@@ -24,7 +24,7 @@ RSpec.feature 'User edits and deletes recipes' do
     recipe_show_page.edit_button.click
 
     # Verify we're on the edit page
-    expect(current_path).to eq(edit_recipe_path(recipe))
+    expect(page).to have_current_path(edit_recipe_path(recipe), ignore_query: true)
 
     # Update the recipe
     updated_data = {
@@ -37,7 +37,7 @@ RSpec.feature 'User edits and deletes recipes' do
     edit_recipe_page.recipe_form.submit_form
 
     # Verify we're back on the show page
-    expect(current_path).to eq(recipe_path(recipe))
+    expect(page).to have_current_path(recipe_path(recipe), ignore_query: true)
 
     # Verify the recipe was updated
     recipe.reload
@@ -62,7 +62,7 @@ RSpec.feature 'User edits and deletes recipes' do
     edit_recipe_page.cancel_button.click
 
     # Verify we're back on the show page
-    expect(current_path).to eq(recipe_path(recipe))
+    expect(page).to have_current_path(recipe_path(recipe), ignore_query: true)
 
     # Verify the recipe was not changed
     recipe.reload
@@ -77,7 +77,7 @@ RSpec.feature 'User edits and deletes recipes' do
     recipe_show_page.delete_button.click
 
     # Verify we're redirected to recipes index
-    expect(current_path).to eq(recipes_path)
+    expect(page).to have_current_path(recipes_path, ignore_query: true)
 
     # Verify the recipe was deleted
     expect(Recipe.exists?(recipe.id)).to be false

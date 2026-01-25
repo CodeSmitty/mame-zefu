@@ -22,17 +22,15 @@ class RecipeForm < SitePrism::Section
     notes_field.set(recipe_data[:notes]) if recipe_data[:notes]
 
     # Select rating if provided
-    if recipe_data[:rating]
-      Capybara.current_session.choose "recipe_rating_#{recipe_data[:rating]}"
-    end
+    Capybara.current_session.choose "recipe_rating_#{recipe_data[:rating]}" if recipe_data[:rating]
 
     # Add categories if provided
-    if recipe_data[:categories]
-      recipe_data[:categories].each do |category|
-        # For tom-select, we need to click to open and then select
-        category_select.click
-        find('.ts-dropdown .ts-dropdown-content .option', text: category).click
-      end
+    return unless recipe_data[:categories]
+
+    recipe_data[:categories].each do |category|
+      # For tom-select, we need to click to open and then select
+      category_select.click
+      find('.ts-dropdown .ts-dropdown-content .option', text: category).click
     end
   end
 
