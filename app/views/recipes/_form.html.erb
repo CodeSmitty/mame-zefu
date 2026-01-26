@@ -16,16 +16,43 @@
     <%= form.label :name, class: "absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-gray-50 px-2 peer-focus:bg-gray-50 peer-focus:pb-0 peer-focus:px-2 peer-focus:text-tertiary peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-6 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:rtl:translate-x-1/4 peer-focus:rtl:left-auto start-1" %>
   </div>
 
-  <div class="my-5 lg:my-2 basis-full relative w-full lg:w-1/2">
-    <% if @recipe.image.attached? %>
-      <%= image_tag @recipe.image, class: "preview-image" %>
-    <% elsif @recipe.image_src.present? %>
-      <%= image_tag @recipe.image_src, class: "preview-image" %>
-      <%= form.hidden_field :image_src, value: @recipe.image_src %>
-    <% end %>
+  <div
+    class="mx-auto my-5 lg:my-2 basis-full relative w-full lg:w-1/2 items-center"
+    data-controller="image"
+    data-image-delete-url-value="<%= image_recipe_path(recipe) if recipe.image.persisted? %>"
+    data-image-preview-src-value="<%= recipe.image_src %>"
+    data-image-persisted-src-value="<%= url_for(recipe.image) if recipe.image.persisted? %>"
+    data-image-default-src-value="<%= asset_path('placeholder.jpg') %>"
+    data-image-delete-icon-value='<%= render "icons/micro/trash", classes: "me-1" %>'
+    data-image-cancel-icon-value='<%= render "icons/outline/cancel", classes: "size-4" %>'
+    data-image-upload-icon-value='<%= render "icons/mini/attachment", classes: "me-2" %>'>
+    <div class="relative flex flex-col-reverse justify-center w-full md:w-10/12 lg:w-full shadow-lg ">
+        <button
+          type="button"
+          class="hidden top-0 flex justify-center py-2 px-2 bg-transparent hover:bg-secondary text-secondary hover:text-white font-medium cursor-pointer"
+          data-image-target="deleteButton"
+          data-action="image#deleteButtonClick:prevent">
+        </button>
+      <%= image_tag "", data: { 'image-target': 'previewImage' }, class: "w-full max-w-full max-h-full object-cover" %>
+    </div>
+    <div class="my-5 relative flex">
+      <button type="button"
+        id="upload-image-button"
+        class="inline-flex mx-auto rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer"
+        data-action="image#uploadButtonClick:prevent"
+        data-image-target="uploadButton">
+      </button>
+      <%= form.hidden_field :image_src, value: recipe.image_src %>
+      <%= form.file_field(
+            :image,
+            accepts: 'image/*',
+            id: "upload-image-input",
+            class: "hidden file:mr-4 file:py-2 file:px-4 file:rounded-l-lg file:border-0 file:bg-gray-200 block rounded-lg w-full text-sm text-gray-900 bg-gray-50 border-transparent appearance-none focus:outline-hidden focus:ring-0 focus:border-secondary peer",
+            data: { 'image-target': 'fileField', action: 'change->image#fileFieldChange' }
+          ) %>
+    </div>
   </div>
-
-  <div class="my-2 lg:my-10 w-full flex flex-row flex-wrap justify-start">
+  <div class="my-2 lg:my-10 w-full flex flex-row flex-wrap justify-center">
     <div class="my-5 lg:my-2 basis-full sm:basis-auto relative">
       <%= form.text_field :yield, class: "block rounded-lg px-2.5 pb-2.5 pt-5 w-full sm:w-4/5 text-sm text-gray-900 bg-gray-50 border-transparent appearance-none focus:outline-hidden focus:ring-0 focus:border-secondary peer", placeholder: " " %>
       <%= form.label :yield, class: "absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-gray-50 px-2 peer-focus:bg-gray-50 peer-focus:pb-0 peer-focus:px-2 peer-focus:text-tertiary peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-6 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:rtl:translate-x-1/4 peer-focus:rtl:left-auto start-1" %>

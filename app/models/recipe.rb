@@ -8,6 +8,7 @@ class Recipe < ApplicationRecord
   attr_accessor :image_src
 
   before_save :attach_image_from_url, if: -> { image_src.present? && !image.attached? }
+  before_save :normalize_line_endings
 
   def category_names
     categories.pluck(:name)
@@ -57,5 +58,12 @@ class Recipe < ApplicationRecord
     uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)
   rescue URI::InvalidURIError
     false
+  end
+
+  def normalize_line_endings
+    %w[directions ingredients notes].each do |field|
+      text = send(field)
+      self[field] = text&.gsub("\r\n", "\n")&.gsub("\r", "\n") if text.present?
+    end
   end
 end

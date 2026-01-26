@@ -8,7 +8,7 @@ RSpec.describe RecipePolicy do
   let!(:other_user) { create(:user) }
   let!(:other_user_recipe) { create(:recipe, user: other_user) }
 
-  permissions :show?, :update?, :destroy?, :toggle_favorite? do
+  permissions :show?, :update?, :destroy?, :toggle_favorite?, :delete_image? do
     it 'grants access to the owner' do
       expect(policy).to permit(user, user_recipe)
     end

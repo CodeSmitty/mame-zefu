@@ -1,6 +1,6 @@
 class RecipesController < ApplicationController
   before_action :require_login
-  before_action :set_recipe, only: %i[show edit update destroy toggle_favorite]
+  before_action :set_recipe, only: %i[show edit update destroy toggle_favorite delete_image]
   skip_after_action :verify_pundit_authorization, only: %i[
     web_search web_result
     download_archive upload_archive_form upload_archive
@@ -98,7 +98,6 @@ class RecipesController < ApplicationController
   # DELETE /recipes/1 or /recipes/1.json
   def destroy
     @recipe.destroy
-    @recipe.image.purge
     respond_to do |format|
       format.html { redirect_to recipes_url, notice: 'Recipe was successfully destroyed.' }
       format.json { head :no_content }
@@ -108,6 +107,13 @@ class RecipesController < ApplicationController
   def toggle_favorite
     @recipe.toggle!(:is_favorite) # rubocop:disable Rails/SkipsModelValidations
     render json: { is_favorite: @recipe.is_favorite }
+  end
+
+  def delete_image
+    @recipe.image.purge if @recipe.image.attached?
+    respond_to do |format|
+      format.json { render json: { success: true } }
+    end
   end
 
   private
@@ -128,6 +134,6 @@ class RecipesController < ApplicationController
   # Only allow a list of trusted parameters through.
   def recipe_params
     params.require(:recipe).permit(:name, :ingredients, :directions, :yield, :prep_time, :cook_time, :description,
-                                   :rating, :is_favorite, :notes, :source, :image_src, category_names: [])
+                                   :rating, :is_favorite, :notes, :source, :image, :image_src, category_names: [])
   end
 end

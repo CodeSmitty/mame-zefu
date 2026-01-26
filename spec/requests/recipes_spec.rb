@@ -8,6 +8,7 @@ RSpec.describe 'Recipes' do
   let!(:recipe) { create(:recipe, user: user) }
   let(:other_user) { create(:user) }
   let(:other_recipe) { create(:recipe, user: other_user) }
+  let(:uploaded_image) { fixture_file_upload('test.png', 'image/png') }
 
   describe 'GET /recipes' do
     it 'returns a 200' do
@@ -173,6 +174,29 @@ RSpec.describe 'Recipes' do
 
       it 'does not delete delete recipe of another user.' do
         expect { delete recipe_path(recipe, as: other_user) }.to raise_error(Pundit::NotAuthorizedError)
+      end
+    end
+  end
+
+  describe 'DELETE /recipes/:id/image' do
+    let(:recipe) { create(:recipe, user: user, image: uploaded_image) }
+
+    context 'when authenticated' do
+      it 'delete the image attachment' do
+        expect do
+          delete image_recipe_path(recipe, as: user)
+        end.to change(ActiveStorage::Attachment, :count).by(-1)
+      end
+
+      it 'does not delete image of another user.' do
+        expect { delete image_recipe_path(recipe, as: other_user) }.to raise_error(Pundit::NotAuthorizedError)
+      end
+    end
+
+    context 'when unauthenticated' do
+      it 'redirects to login' do
+        delete image_recipe_path(recipe)
+        expect(response).to redirect_to(sign_in_path)
       end
     end
   end
