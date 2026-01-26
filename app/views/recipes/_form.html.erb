@@ -23,15 +23,15 @@
     data-image-preview-src-value="<%= recipe.image_src %>"
     data-image-persisted-src-value="<%= url_for(recipe.image) if recipe.image.attached? %>"
     data-image-default-src-value="<%= asset_path('placeholder.jpg') %>"
-    data-image-state-value="<%= recipe.image.persisted? ? 'persisted' : 'none' %>">
+    data-image-delete-icon-value='<%= render "icons/micro/trash", classes: "me-1" %>'
+    data-image-cancel-icon-value='<%= render "icons/outline/cancel", classes: "size-4" %>'
+    data-image-upload-icon-value='<%= render "icons/mini/attachment", classes: "me-2" %>'>
     <div class="relative flex justify-center w-full md:w-10/12 lg:w-full aspect-square overflow-hidden">
         <button
           type="button"
           class="hidden absolute top-0 right-10 rounded-lg py-2 px-2 bg-transparent hover:bg-secondary text-secondary hover:text-white font-medium cursor-pointer"
           data-image-target="deleteButton"
           data-action="image#deleteButtonClick:prevent">
-            <span id="delete-button-icon" class="hidden"><%= render "icons/micro/trash", classes: "me-1" %></span>
-            <span id="cancel-button-icon" class="hidden"><%= render "icons/outline/cancel", classes: "size-4" %></span>
         </button>
       <%= image_tag "", data: { 'image-target': 'previewImage' }, class: "object-contain" %>
     </div>
@@ -41,12 +41,6 @@
         class="inline-flex mx-auto rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer"
         data-action="image#uploadButtonClick:prevent"
         data-image-target="uploadButton">
-        <span class="me-2"><%= render "icons/mini/attachment" %></span>
-        <% if recipe.image.persisted? %>
-          Replace Image
-        <% else %>
-          Upload Image
-        <% end %>
       </button>
       <%= form.hidden_field :image_src, value: recipe.image_src %>
       <%= form.file_field(
