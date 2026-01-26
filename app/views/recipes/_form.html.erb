@@ -17,23 +17,23 @@
   </div>
 
   <div
-    class="mx-auto my-5 lg:my-2 basis-full relative w-full lg:w-1/2"
+    class="mx-auto my-5 lg:my-2 basis-full relative w-full lg:w-1/2 items-center"
     data-controller="image"
     data-image-delete-url-value="<%= image_recipe_path(recipe) if recipe.image.persisted? %>"
     data-image-preview-src-value="<%= recipe.image_src %>"
-    data-image-persisted-src-value="<%= url_for(recipe.image) if recipe.image.attached? %>"
+    data-image-persisted-src-value="<%= url_for(recipe.image) if recipe.image.persisted? %>"
     data-image-default-src-value="<%= asset_path('placeholder.jpg') %>"
     data-image-delete-icon-value='<%= render "icons/micro/trash", classes: "me-1" %>'
     data-image-cancel-icon-value='<%= render "icons/outline/cancel", classes: "size-4" %>'
     data-image-upload-icon-value='<%= render "icons/mini/attachment", classes: "me-2" %>'>
-    <div class="relative flex justify-center w-full md:w-10/12 lg:w-full aspect-square overflow-hidden">
+    <div class="relative flex flex-col-reverse justify-center w-full md:w-10/12 lg:w-full shadow-lg ">
         <button
           type="button"
-          class="hidden absolute top-0 right-10 rounded-lg py-2 px-2 bg-transparent hover:bg-secondary text-secondary hover:text-white font-medium cursor-pointer"
+          class="hidden top-0 flex justify-center py-2 px-2 bg-transparent hover:bg-secondary text-secondary hover:text-white font-medium cursor-pointer"
           data-image-target="deleteButton"
           data-action="image#deleteButtonClick:prevent">
         </button>
-      <%= image_tag "", data: { 'image-target': 'previewImage' }, class: "object-contain" %>
+      <%= image_tag "", data: { 'image-target': 'previewImage' }, class: "w-full max-w-full max-h-full object-cover" %>
     </div>
     <div class="my-5 relative flex">
       <button type="button"
