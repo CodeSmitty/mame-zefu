@@ -16,6 +16,24 @@ RSpec.describe Recipes::Import::JsonSchema do
     HTML
   end
 
+  context 'when recipe is nested' do
+    let(:html) do
+      <<~HTML
+        <script type="application/ld+json">{
+          "@context": "https://schema.org",
+          "@graph": [
+            {"@type": "Article"},
+            {"@type": "Recipe"}
+          ]
+        }</script>
+      HTML
+    end
+
+    it 'does not raise error' do
+      expect { import }.not_to raise_error
+    end
+  end
+
   context 'when no recipe data is present' do
     let(:html) do
       <<~HTML

@@ -103,13 +103,24 @@ module Recipes
       end
 
       def find_recipe_json
-        document.css('script[type="application/ld+json"]').each do |script|
-          Array.wrap(JSON.parse(script.text)).each do |data|
-            return data if Array.wrap(data['@type']).include?('Recipe')
-          end
-        end
+        recipe = document.css('script[type="application/ld+json"]').lazy.map do |script|
+          deep_find_recipe(JSON.parse(script.text))
+        end.find(&:present?)
+
+        return recipe if recipe.present?
 
         raise NotFoundError, 'No JSON-LD recipe data found on the page'
+      end
+
+      def deep_find_recipe(object)
+        case object
+        when Hash
+          return object if Array.wrap(object['@type']).include?('Recipe')
+
+          object.values.find { |v| deep_find_recipe(v) }
+        when Array
+          object.find { |item| deep_find_recipe(item) }
+        end
       end
 
       class NotFoundError < StandardError; end
