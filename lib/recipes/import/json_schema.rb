@@ -27,7 +27,9 @@ module Recipes
       end
 
       def recipe_yield
-        recipe_json['recipeYield']
+        return if recipe_json['recipeYield'].blank?
+
+        Array.wrap(recipe_json['recipeYield']).first
       end
 
       def recipe_prep_time

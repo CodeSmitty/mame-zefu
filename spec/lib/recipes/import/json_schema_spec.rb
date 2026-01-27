@@ -108,6 +108,21 @@ RSpec.describe Recipes::Import::JsonSchema do
     it 'extracts the recipe yield' do
       expect(import.recipe_yield).to eq(recipe_yield)
     end
+
+    context 'when yield is an array' do
+      let(:field_json) do
+        <<~JSON
+          "recipeYield": [
+            "6 servings",
+            "12 pieces"
+          ]
+        JSON
+      end
+
+      it 'extracts the first yield value' do
+        expect(import.recipe_yield).to eq('6 servings')
+      end
+    end
   end
 
   describe '#recipe_prep_time' do
