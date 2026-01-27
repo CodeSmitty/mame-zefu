@@ -7,6 +7,7 @@ class Recipe < ApplicationRecord
   has_one_attached :image
   attr_accessor :image_src
 
+  before_save :normalize_line_endings
   before_save :attach_image_from_url, if: -> { image_src.present? && !image.attached? }
   before_save :normalize_line_endings
 
@@ -40,6 +41,13 @@ class Recipe < ApplicationRecord
   scope :sorted, -> { order(name: :asc) }
 
   private
+
+  def normalize_line_endings
+    %w[directions ingredients notes].each do |field|
+      text = send(field)
+      self[field] = text&.gsub("\r\n", "\n")&.gsub("\r", "\n") if text.present?
+    end
+  end
 
   def attach_image_from_url
     return unless url?(image_src)
