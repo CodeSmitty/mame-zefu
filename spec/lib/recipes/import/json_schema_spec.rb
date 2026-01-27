@@ -32,6 +32,10 @@ RSpec.describe Recipes::Import::JsonSchema do
     it 'does not raise error' do
       expect { import }.not_to raise_error
     end
+
+    it 'finds the recipe data' do
+      expect(import.send(:recipe_json)).to eq({ '@type' => 'Recipe' })
+    end
   end
 
   context 'when no recipe data is present' do

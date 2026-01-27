@@ -117,10 +117,14 @@ module Recipes
         when Hash
           return object if Array.wrap(object['@type']).include?('Recipe')
 
-          object.values.find { |v| deep_find_recipe(v) }
+          find_recipe_in_enumerable(object.values)
         when Array
-          object.find { |item| deep_find_recipe(item) }
+          find_recipe_in_enumerable(object)
         end
+      end
+
+      def find_recipe_in_enumerable(enum)
+        enum.lazy.map { |item| deep_find_recipe(item) }.find(&:present?)
       end
 
       class NotFoundError < StandardError; end
