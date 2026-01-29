@@ -62,6 +62,13 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  # Auto-load page objects only for feature tests
+  config.before(:suite) do
+    if RSpec.configuration.files_to_run.any? { |f| f.include?('spec/features') }
+      Rails.root.glob('spec/support/pages/**/*.rb').sort.each { |f| require f }
+    end
+  end
 end
 
 Shoulda::Matchers.configure do |config|

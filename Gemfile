@@ -50,5 +50,6 @@ group :test do
   gem "selenium-webdriver"
   gem "simplecov", require: false
   gem "simplecov-cobertura", require: false
+  gem "site_prism"
   gem "webmock"
 end
