@@ -1,16 +1,12 @@
-<div class="w-full form-container mt-10 lg:px-20 flex lg:flex-row flex-col justify-center">
-  <div class="lg:mx-auto">
-
-    <%= render @recipe %>
-
-    <%= link_to edit_recipe_path(@recipe), class: "inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer" do %>
-      <%= render_icon "micro/pencil_square", classes: "me-1" %> Edit
-    <% end %>
-
-    <div class="inline-block ml-2">
-      <%= button_to recipe_path(@recipe), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer" do %>
-        <%= render_icon "micro/trash", classes: "me-1" %> Delete
-      <% end %>
+<div class="w-full form-container flex flex-col md:flex-row-reverse lg:flex-row-reverse relative">
+      <%= render @recipe %>
+      <div class="relative lg:fixed right-0 lg:right-67 flex flex-row lg:flex-col gap-4  lg:mt-0">
+          <%= link_to edit_recipe_path(@recipe), class: "inline-flex items-center bg-white hover:bg-secondary py-2 px-3 text-secondary hover:text-white inline-block font-medium cursor-pointer" do %>
+            <%= render_icon "micro/pencil_square", classes: "me-1" %>
+          <% end %>
+            <%= button_to recipe_path(@recipe), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "inline-flex items-center py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white inline-block font-medium cursor-pointer" do %>
+              <%= render_icon "micro/trash", classes: "me-1" %>
+            <% end %>
+      </div>
     </div>
-  </div>
 </div>
