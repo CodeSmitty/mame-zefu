@@ -97,9 +97,9 @@
     <div class="mr-0 sm:mr-10">
       <%= form.label :rating, 'Rate your recipe', class: "text-gray-500 text-sm text-right" %>
     </div>
-    <div class="rating py-1 justify-center sm:justify-start">
+    <div id="recipe_rating" class="rating py-1 justify-center sm:justify-start">
       <%= form.collection_radio_buttons(:rating, [[5], [4], [3], [2], [1]], :first, :last) do |star| %>
-        <%= star.radio_button %>
+        <%= star.radio_button(id: "recipe_rating_#{star.object.first}") %>
         <%= star.label(class: "text-secondary") %>
       <% end %>
     </div>
