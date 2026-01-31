@@ -1,21 +1,20 @@
 <div id="<%= dom_id recipe %>">
-    <% if recipe.rating.present? %>
-      <div class="mb-2 flex flex-row flex-nowrap justify-between w-1/5">
-        <div class="flex flex-row">
-          <% recipe.rating.to_i.times do %>
-            <%= render_icon "mini/star", classes: "text-yellow-300" %>
-          <% end %>
+    <div class="flex flex-col shadow-lg lg:min-w-min lg:w-3/5 justify-center overflow-hidden mx-auto p-2 lg:p-8">
+      <% if recipe.rating.present? %>
+        <div class="mb-2 flex mx-auto flex-row flex-nowrap justify-between w-1/5">
+          <div class="flex flex-row">
+            <% recipe.rating.to_i.times do %>
+              <%= render_icon "mini/star", classes: "text-yellow-300" %>
+            <% end %>
+          </div>
         </div>
-      </div>
-    <% end %>
-
-    <div class="flex flex-col shadow-lg w-full lg:w-3/5 justify-center overflow-hidden mx-auto p-2 lg:p-8">
+      <% end %>
       <div class="flex flex-col lg:flex-row gap-6 mx-auto w-full">
         <div class="w-full lg:w-3/5">
           <% if recipe.image.attached? %>
             <div class="relative w-full mx-auto">
               <div class="preview-image-container my-5">
-                <%= image_tag recipe.image, class: "preview-image object-cover w-full", id: "preview-image" %>
+                <%= image_tag recipe.image, class: "preview-image object-contain max-h-100 w-full", id: "preview-image" %>
               </div>
             </div>
           <% end %>
@@ -76,7 +75,7 @@
           <% end %>
         </div>
       </div>
-        <div class="w-full flex flex-col mx-0 lg:mx-auto p-2 lg:p-4">
+        <div class="w-full lg:w-3/4 flex flex-col mx-0 lg:mx-auto p-2 lg:p-4">
           <p class="my-5">
             <strong class="block font-small mb-1">Directions</strong>
           </p>
