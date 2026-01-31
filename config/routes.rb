@@ -1,4 +1,11 @@
 Rails.application.routes.draw do
+  namespace :admin do
+      resources :categories
+      resources :recipes
+      resources :users
+
+      root to: "categories#index"
+    end
   resources :passwords, only: [:create, :new]
   resource :session, only: [:create]
 
