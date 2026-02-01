@@ -1,10 +1,10 @@
-<div class="form-container flex flex-row-reverse md:flex-row-reverse lg:flex-row mx-auto">
+<div class="form-containerlg:w-auto flex flex-row-reverse md:flex-row-reverse lg:flex-row mx-auto mt-20">
   <%= render @recipe %>
-  <div class="flex flex-col gap-4 fixed right-0 lg:right-[calc(max(2rem,(100vw-min(100vw,54rem))/2))]">
-        <%= link_to edit_recipe_path(@recipe), class: "inline-flex items-center bg-transparent lg:bg-white hover:bg-secondary py-2 px-3 text-secondary hover:text-white inline-block font-medium cursor-pointer" do %>
+  <div class="flex flex-col gap-4 fixed right-0 md:right-0 lg:right-[calc(max(2rem,(100vw-min(100vw,53rem))/2))] xl:right-[calc(max(2rem,(100vw-min(100vw,65rem))/2))] xl:right-[calc(max(2rem,(100vw-min(100vw,77rem))/2))]">
+        <%= link_to edit_recipe_path(@recipe), class: "inline-flex items-center hover:bg-secondary py-2 px-3 text-secondary hover:text-white inline-block font-medium cursor-pointer" do %>
           <%= render_icon "micro/pencil_square", classes: "me-1" %>
         <% end %>
-        <%= button_to recipe_path(@recipe), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "inline-flex items-center py-2 px-3 bg-transparent lg:bg-white hover:bg-secondary text-secondary hover:text-white inline-block font-medium cursor-pointer" do %>
+        <%= button_to recipe_path(@recipe), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "inline-flex items-center py-2 px-3 hover:bg-secondary text-secondary hover:text-white inline-block font-medium cursor-pointer" do %>
           <%= render_icon "micro/trash", classes: "me-1" %>
         <% end %>
   </div>

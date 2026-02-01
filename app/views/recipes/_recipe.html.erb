@@ -1,28 +1,33 @@
 <div id="<%= dom_id recipe %>">
-    <div class="flex flex-col shadow-lg lg:min-w-min lg:w-3/5 justify-center overflow-hidden mx-auto p-2 lg:p-8">
-      <% if recipe.rating.present? %>
-        <div class="mb-2 flex mx-auto flex-row flex-nowrap justify-between w-1/5">
-          <div class="flex flex-row">
-            <% recipe.rating.to_i.times do %>
-              <%= render_icon "mini/star", classes: "text-yellow-300" %>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
+    <div class="flex flex-col shadow-none lg:shadow-lg lg:min-w-min lg:w-9/12 justify-center overflow-hidden mx-auto p-2 lg:p-8">
       <div class="flex flex-col lg:flex-row gap-6 mx-auto w-full">
-        <div class="w-full lg:w-3/5">
+        <div
+         class="w-full overflow-hidden">
           <% if recipe.image.attached? %>
             <div class="relative w-full mx-auto">
               <div class="preview-image-container my-5">
-                <%= image_tag recipe.image, class: "preview-image object-contain max-h-100 w-full", id: "preview-image" %>
+                <%= image_tag recipe.image, class: "preview-image object-contain lg:object-cover max-h-100 w-full", id: "preview-image" %>
               </div>
             </div>
+          <% else %>
+              <div class="preview-image-container my-5">
+                <%= image_tag asset_path('placeholder.jpg'), class: "preview-image object-contain max-h-100 w-full", id: "preview-image" %>
+              </div>
           <% end %>
         </div>
         <div class="w-full lg:3/5">
-          <h1 class="flex flex-row flex-nowrap gap-x-1">
-            <strong class="text-3xl font-small"><%= recipe.name %></strong>
-            <div>
+          <% if recipe.rating.present? %>
+            <div class="mb-2 flex flex-row flex-nowrap">
+              <div class="flex flex-row">
+                <% recipe.rating.to_i.times do %>
+                  <%= render_icon "mini/star", classes: "text-yellow-300" %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+          <h1 class="flex flex-row flex-nowrap">
+            <strong class="text-2xl font-small"><%= recipe.name %></strong>
+            <div class="mr-0 md:mr-10">
               <button
                 type="button"
                 class="btn btn-xs text-black"
@@ -34,7 +39,7 @@
                 data-toggle-favorite-empty-heart-value='<%= render_icon "mini/empty_heart", classes: "text-rose-600" %>'>
               </button>
             </div>
-            <div class="ml-auto">
+            <div class="ml-5 lg:ml-auto">
               <% if recipe.source.present? %>
                 <%= link_to recipe.source, target: "_blank", rel: "noopener" do %>
                   <%= render_icon "mini/link" %>
@@ -75,7 +80,7 @@
           <% end %>
         </div>
       </div>
-        <div class="w-full lg:w-3/4 flex flex-col mx-0 lg:mx-auto p-2 lg:p-4">
+        <div class="w-full lg:w-3/4 flex flex-col mx-0 p-2 lg:p-4">
           <p class="my-5">
             <strong class="block font-small mb-1">Directions</strong>
           </p>
