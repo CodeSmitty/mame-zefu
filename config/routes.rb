@@ -1,10 +1,10 @@
 Rails.application.routes.draw do
   namespace :admin do
-    resources :categories, only: [:index, :show]
-    resources :recipes, only: [:index, :show]
     resources :users, only: [:index, :show, :edit, :update]
+    resources :recipes, only: [:index, :show]
+    resources :categories, only: [:index, :show]
 
-    root to: 'categories#index'
+    root to: 'users#index'
   end
 
   resources :passwords, only: [:create, :new]
