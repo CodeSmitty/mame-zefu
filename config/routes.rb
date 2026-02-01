@@ -1,4 +1,12 @@
 Rails.application.routes.draw do
+  namespace :admin do
+    resources :users, only: [:index, :show, :edit, :update]
+    resources :recipes, only: [:index, :show]
+    resources :categories, only: [:index, :show]
+
+    root to: 'users#index'
+  end
+
   resources :passwords, only: [:create, :new]
   resource :session, only: [:create]
 
