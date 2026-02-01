@@ -4,6 +4,7 @@ class UserDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     id: Field::Number,
     email: Field::String,
+    is_admin: Field::Boolean,
     recipes: Field::HasMany,
     created_at: Field::DateTime,
     updated_at: Field::DateTime
@@ -12,6 +13,7 @@ class UserDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = %i[
     id
     email
+    is_admin
     recipes
     created_at
   ].freeze
@@ -19,13 +21,14 @@ class UserDashboard < Administrate::BaseDashboard
   SHOW_PAGE_ATTRIBUTES = %i[
     id
     email
+    is_admin
     recipes
     created_at
     updated_at
   ].freeze
 
   FORM_ATTRIBUTES = %i[
-    email
+    is_admin
   ].freeze
 
   COLLECTION_FILTERS = {}.freeze

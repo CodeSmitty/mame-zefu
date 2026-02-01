@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :categories, only: [:index, :show]
     resources :recipes, only: [:index, :show]
-    resources :users, only: [:index, :show]
+    resources :users, only: [:index, :show, :edit, :update]
 
     root to: 'categories#index'
   end
