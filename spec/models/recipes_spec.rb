@@ -87,9 +87,9 @@ RSpec.describe Recipe do
   describe '.in_categories' do
     subject { described_class.in_categories(category_names) }
 
-    let!(:mexican) { Category.create!(name: 'Mexican') }
-    let!(:italian) { Category.create!(name: 'Italian') }
-    let!(:japanese) { Category.create!(name: 'Japanese') }
+    let!(:mexican) { create(:category, name: 'Mexican') }
+    let!(:italian) { create(:category, name: 'Italian') }
+    let!(:japanese) { create(:category, name: 'Japanese') }
 
     let!(:tacos) { create(:recipe, name: 'Tacos', categories: [mexican]) }
     let!(:pasta) { create(:recipe, name: 'Pasta', categories: [italian]) }

@@ -4,7 +4,7 @@ RSpec.describe 'Recipes' do
   let(:user) { create(:user) }
   let(:recipe_name) { 'Spaghetti' }
   let(:category_name) { 'Italian' }
-  let(:category) { Category.create(name: category_name) }
+  let(:category) { create(:category, name: category_name) }
   let!(:recipe) { create(:recipe, user: user) }
   let(:other_user) { create(:user) }
   let(:other_recipe) { create(:recipe, user: other_user) }
