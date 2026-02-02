@@ -2,7 +2,11 @@
     <div class="flex flex-col shadow-none lg:shadow-lg lg:min-w-min lg:w-9/12 justify-center break-words overflow-wrap-break-word mx-auto p-2 lg:p-8">
       <div class="flex flex-col lg:flex-row gap-6 mx-auto w-full break-words overflow-wrap-break">
         <div class="w-full lg:3/5">
-          <div style="<% if recipe.image.attached? %>background-image: url('<%= url_for(recipe.image) %>'); object-fit:cover; background-position: center;<% end %>" class="relative h-100 flex flex-col justify-end mb-4">
+          <% if recipe.image.attached? %>
+            <div style="background-image: url('<%= url_for(recipe.image) %>'); background-size: cover; background-position: center;" class="relative h-100 flex flex-col justify-end mb-4">
+          <% else %>
+            <div style="background-image: url('<%= asset_path('placeholder.jpg') %>'); background-size: cover; background-position: center;" class="relative h-100 flex flex-col justify-end mb-4">
+          <% end %>
             <h1 class="flex flex-row flex-wrap lg:flex-nowrap text-white bg-black/70 py-2">
               <strong class="text-2xl font-small w-full"><%= recipe.name %></strong>
               <span class="mr-0 md:mr-10 w-1/3">
