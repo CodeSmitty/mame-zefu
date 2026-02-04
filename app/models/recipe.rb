@@ -6,16 +6,20 @@ class Recipe < ApplicationRecord
   belongs_to :user
   has_one_attached :image
   attr_accessor :image_src
+  attr_accessor :pending_category_names
 
+  before_save :ensure_pending_categories
   before_save :attach_image_from_url, if: -> { image_src.present? && !image.attached? }
   before_save :normalize_line_endings
 
   def category_names
+    return pending_category_names unless pending_category_names.nil?
+
     categories.pluck(:name)
   end
 
   def category_names=(category_names)
-    self.category_ids = Category.from_names(category_names).pluck(:id)
+    self.pending_category_names = Array(category_names).compact_blank
   end
 
   scope :with_text, lambda { |query|
@@ -65,5 +69,12 @@ class Recipe < ApplicationRecord
       text = send(field)
       self[field] = text&.gsub("\r\n", "\n")&.gsub("\r", "\n") if text.present?
     end
+  end
+
+  def ensure_pending_categories
+    return if pending_category_names.nil?
+
+    self.category_ids = Category.from_names(pending_category_names).pluck(:id)
+    self.pending_category_names = nil
   end
 end

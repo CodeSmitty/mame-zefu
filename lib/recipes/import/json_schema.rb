@@ -45,7 +45,11 @@ module Recipes
       end
 
       def recipe_category_names
-        (Array.wrap(recipe_json['recipeCategory']) + Array.wrap(recipe_json['recipeCuisine'])).compact_blank
+        (Array.wrap(recipe_json['recipeCategory']) + Array.wrap(recipe_json['recipeCuisine']))
+          .map { |name| name.split(',') }
+          .flatten
+          .map { |name| name.strip.titleize }
+          .compact_blank
       end
 
       def recipe_description
