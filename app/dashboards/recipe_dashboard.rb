@@ -23,6 +23,7 @@ class RecipeDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = %i[
     id
     name
+    user
     categories
     created_at
   ].freeze

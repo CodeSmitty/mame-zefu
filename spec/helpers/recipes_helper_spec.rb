@@ -13,7 +13,8 @@ RSpec.describe RecipesHelper do
     end
 
     before do
-      Category.from_names(category_names)
+      recipe.save!
+      Category.from_names(category_names, user: recipe.user)
       recipe.pending_category_names = pending_category_names
     end
 

@@ -74,7 +74,7 @@ class Recipe < ApplicationRecord
   def ensure_pending_categories
     return if pending_category_names.nil?
 
-    self.category_ids = Category.from_names(pending_category_names).pluck(:id)
+    self.category_ids = Category.from_names(pending_category_names, user:).pluck(:id)
     self.pending_category_names = nil
   end
 end

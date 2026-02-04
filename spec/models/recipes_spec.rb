@@ -14,7 +14,7 @@ RSpec.describe Recipe do
     end
 
     context 'when recipe has categories' do
-      before { recipe.categories << Category.from_names(category_names) }
+      before { recipe.categories << Category.from_names(category_names, user: recipe.user) }
 
       it { is_expected.to match_array(category_names) }
     end
@@ -48,7 +48,10 @@ RSpec.describe Recipe do
     context 'when the recipe already has categories' do
       let(:existing_categories) { %w[Main Vegetarian] }
 
-      before { recipe.categories = Category.from_names(existing_categories) }
+      before do
+        recipe.save!
+        recipe.categories = Category.from_names(existing_categories, user: recipe.user)
+      end
 
       it 'does not change categories immediately' do
         expect { set_category_names }
