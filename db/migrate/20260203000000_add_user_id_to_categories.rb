@@ -3,17 +3,17 @@ class AddUserIdToCategories < ActiveRecord::Migration[7.2]
     # Add user_id column to categories
     add_reference :categories, :user, foreign_key: true, null: true
 
-    # Populate user_id for existing categories
-    migrate_existing_categories
-
-    # Make user_id non-nullable after data migration
-    change_column_null :categories, :user_id, false
-
     # Remove the old unique index on name
     remove_index :categories, :name
 
     # Add a composite unique index on user_id and name
     add_index :categories, [:user_id, :name], unique: true
+
+    # Populate user_id for existing categories
+    migrate_existing_categories
+
+    # Make user_id non-nullable after data migration
+    change_column_null :categories, :user_id, false
   end
 
   def down
@@ -68,9 +68,9 @@ class AddUserIdToCategories < ActiveRecord::Migration[7.2]
               AND categories_recipes.category_id = $3
           SQL
           ActiveRecord::Base.connection.exec_query(sql, 'SQL', [
-            [nil, new_category.id],
-            [nil, user_id],
-            [nil, category.id]
+            bind_param('new_category_id', new_category.id, ActiveRecord::Type::Integer.new),
+            bind_param('user_id', user_id, ActiveRecord::Type::Integer.new),
+            bind_param('category_id', category.id, ActiveRecord::Type::Integer.new)
           ])
         end
       end
@@ -89,12 +89,16 @@ class AddUserIdToCategories < ActiveRecord::Migration[7.2]
           WHERE category_id = $2
         SQL
         ActiveRecord::Base.connection.exec_query(sql, 'SQL', [
-          [nil, canonical.id],
-          [nil, duplicate.id]
+          bind_param('canonical_id', canonical.id, ActiveRecord::Type::Integer.new),
+          bind_param('duplicate_id', duplicate.id, ActiveRecord::Type::Integer.new)
         ])
 
         duplicate.destroy!
       end
     end
+  end
+
+  def bind_param(name, value, type)
+    ActiveRecord::Relation::QueryAttribute.new(name, value, type)
   end
 end
