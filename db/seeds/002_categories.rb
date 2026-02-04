@@ -1,4 +1,8 @@
 # db/seeds.rb
+exit unless Rails.env.development?
+
+user = User.find_by(email: 'admin@example.com')
+
 categories_data = [
   { name: 'Appetizer' },
   { name: 'Beef' },
@@ -22,7 +26,7 @@ categories_data = [
 
 
 categories_data.each do |category_data|
-  Category.find_or_create_by(name: category_data[:name])
+  user.categories.find_or_create_by(name: category_data[:name])
 end
 
 puts 'Seed data for categories created successfully!'

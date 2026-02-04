@@ -4,6 +4,7 @@ class CategoryDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     id: Field::Number,
     name: Field::String,
+    user: Field::BelongsTo,
     recipes: Field::HasMany,
     created_at: Field::DateTime,
     updated_at: Field::DateTime
@@ -12,6 +13,7 @@ class CategoryDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = %i[
     id
     name
+    user
     recipes
     created_at
   ].freeze
@@ -19,6 +21,7 @@ class CategoryDashboard < Administrate::BaseDashboard
   SHOW_PAGE_ATTRIBUTES = %i[
     id
     name
+    user
     recipes
     created_at
     updated_at
