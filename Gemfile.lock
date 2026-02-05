@@ -76,6 +76,11 @@ GEM
       tzinfo (~> 2.0, >= 2.0.5)
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
+    administrate (1.0.0)
+      actionpack (>= 6.0, < 9.0)
+      actionview (>= 6.0, < 9.0)
+      activerecord (>= 6.0, < 9.0)
+      kaminari (~> 1.2.2)
     argon2 (2.3.2)
       ffi (~> 1.15)
       ffi-compiler (~> 1.0)
@@ -165,6 +170,18 @@ GEM
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
     json (2.18.0)
+    kaminari (1.2.2)
+      activesupport (>= 4.1.0)
+      kaminari-actionview (= 1.2.2)
+      kaminari-activerecord (= 1.2.2)
+      kaminari-core (= 1.2.2)
+    kaminari-actionview (1.2.2)
+      actionview
+      kaminari-core (= 1.2.2)
+    kaminari-activerecord (1.2.2)
+      activerecord
+      kaminari-core (= 1.2.2)
+    kaminari-core (1.2.2)
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
     logger (1.7.0)
@@ -176,8 +193,10 @@ GEM
       net-imap
       net-pop
       net-smtp
-    marcel (1.0.4)
-    matrix (0.4.2)
+    marcel (1.1.0)
+    matrix (0.4.3)
+    measured (3.2.1)
+      activesupport (>= 5.2)
     method_source (1.1.0)
     mini_mime (1.1.5)
     minitest (6.0.1)
@@ -392,6 +411,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  administrate
   bootsnap
   bundler-audit
   capybara
@@ -402,6 +422,7 @@ DEPENDENCIES
   factory_bot_rails
   importmap-rails
   jbuilder
+  measured
   net_tcp_client
   parser (~> 3.3.7.0)
   pg (~> 1.1)
