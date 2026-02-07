@@ -17,8 +17,21 @@ WORKDIR /rails
 # Install base packages
 # Replace libpq-dev with sqlite3 if using SQLite, or libmysqlclient-dev if using MySQL
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 libvips libpq-dev && \
+    apt-get install --no-install-recommends -y \
+        curl \
+        libjemalloc2 \
+        libvips \
+        libpq-dev \
+        python3 \
+        python3-venv \
+        python3-pip && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+COPY requirements.txt /rails/requirements.txt
+RUN python3 -m venv /opt/venv && \
+    /opt/venv/bin/pip install --no-cache-dir -r /rails/requirements.txt
+
+ENV PATH="/opt/venv/bin:$PATH"
 
 # Set production environment
 ENV RAILS_ENV="production" \

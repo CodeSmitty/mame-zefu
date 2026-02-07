@@ -23,7 +23,7 @@ RSpec.describe Recipes::Import do
 
     let!(:stub) { stub_request(:get, uri.to_s).to_return(body: html_body) }
     let(:html_body) { '<html><body>Recipe content</body></html>' }
-    let(:recipe_class) { Recipes::Import::JsonSchema }
+    let(:recipe_class) { Recipes::Import::RecipeScrapers }
     let(:recipe_instance) { instance_double(recipe_class) }
     let(:recipe) { build(:recipe) }
 
@@ -52,12 +52,13 @@ RSpec.describe Recipes::Import do
 
     let(:force_json_schema) { false }
     let(:json_schema_class) { Recipes::Import::JsonSchema }
+    let(:recipe_scrapers_class) { Recipes::Import::RecipeScrapers }
 
     context 'when host is not in RECIPE_CLASSES' do
       let(:url) { 'https://unknownsite.com/recipe' }
 
-      it 'returns JsonSchema' do
-        expect(import.send(:recipe_class)).to eq(json_schema_class)
+      it 'returns RecipeScrapers' do
+        expect(import.send(:recipe_class)).to eq(recipe_scrapers_class)
       end
     end
 
