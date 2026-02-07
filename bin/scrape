@@ -1,0 +1,41 @@
+#!/usr/bin/env python3
+
+import argparse
+import json
+import sys
+
+from recipe_scrapers import scrape_html, scrape_me
+
+
+def parse_args() -> argparse.Namespace:
+	parser = argparse.ArgumentParser(description="Scrape a recipe URL to JSON.")
+	parser.add_argument("url", help="Recipe URL to scrape")
+	parser.add_argument(
+		"--pretty",
+		action="store_true",
+		help="Pretty-print JSON output",
+	)
+	return parser.parse_args()
+
+
+def main() -> None:
+	args = parse_args()
+
+	html = None
+	if not sys.stdin.isatty():
+		html = sys.stdin.read()
+		if html.strip() == "":
+			html = None
+
+	if html is not None:
+		recipe = scrape_html(html, org_url=args.url).to_json()
+	else:
+		recipe = scrape_me(args.url).to_json()
+
+	if args.pretty:
+		print(json.dumps(recipe, indent=2))
+	else:
+		print(json.dumps(recipe))
+
+if __name__ == "__main__":
+	main()
