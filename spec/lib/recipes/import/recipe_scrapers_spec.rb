@@ -23,8 +23,10 @@ RSpec.describe Recipes::Import::RecipeScrapers do
 
   describe '.supported_host?' do
     let(:host) { 'example.com' }
+    let(:cache_key) { "recipe_scrapers/supported_host/#{host}" }
 
     before do
+      Rails.cache.clear
       allow(described_class).to receive(:system)
         .with(scrape_path, '--check-host', host.to_s, out: File::NULL, err: File::NULL)
         .and_return(system_status)
@@ -36,6 +38,19 @@ RSpec.describe Recipes::Import::RecipeScrapers do
       it 'returns true' do
         expect(described_class.supported_host?(host)).to be(true)
       end
+
+      it 'caches the result' do
+        allow(Rails.cache).to receive(:fetch).with(cache_key, expires_in: 1.hour).and_call_original
+        described_class.supported_host?(host)
+        expect(Rails.cache).to have_received(:fetch).with(cache_key, expires_in: 1.hour)
+      end
+
+      it 'does not call system on subsequent calls' do
+        described_class.supported_host?(host)
+        allow(described_class).to receive(:system)
+        described_class.supported_host?(host)
+        expect(described_class).not_to have_received(:system)
+      end
     end
 
     context 'when the scrape command fails' do
@@ -43,6 +58,12 @@ RSpec.describe Recipes::Import::RecipeScrapers do
 
       it 'returns false' do
         expect(described_class.supported_host?(host)).to be(false)
+      end
+
+      it 'caches the result' do
+        allow(Rails.cache).to receive(:fetch).with(cache_key, expires_in: 1.hour).and_call_original
+        described_class.supported_host?(host)
+        expect(Rails.cache).to have_received(:fetch).with(cache_key, expires_in: 1.hour)
       end
     end
   end

@@ -6,13 +6,15 @@ module Recipes
       SCRAPER_PATH = Rails.root.join('bin/scrape').to_s.freeze
 
       def self.supported_host?(host)
-        system(
-          SCRAPER_PATH,
-          '--check-host',
-          host.to_s,
-          out: File::NULL,
-          err: File::NULL
-        )
+        Rails.cache.fetch("recipe_scrapers/supported_host/#{host}", expires_in: 1.hour) do
+          system(
+            SCRAPER_PATH,
+            '--check-host',
+            host.to_s,
+            out: File::NULL,
+            err: File::NULL
+          )
+        end
       end
 
       def initialize(document, source = nil)
