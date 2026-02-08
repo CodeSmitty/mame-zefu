@@ -3,6 +3,18 @@ require 'open3'
 module Recipes
   class Import
     class RecipeScrapers < Base
+      SCRAPER_PATH = Rails.root.join('bin/scrape').to_s.freeze
+
+      def self.supported_host?(host)
+        system(
+          SCRAPER_PATH,
+          '--check-host',
+          host.to_s,
+          out: File::NULL,
+          err: File::NULL
+        )
+      end
+
       def initialize(document, source = nil)
         super
 
@@ -52,15 +64,17 @@ module Recipes
       end
 
       def recipe_ingredients
+        return recipe_json['ingredients'].join("\n") if recipe_json['ingredient_groups'].blank?
+
         recipe_json['ingredient_groups']
-          .reduce('') do |text, group|
-            text << "#{group['purpose'].upcase}\n" if group['purpose'].present?
-            text << group['ingredients'].join("\n")
-            text << "\n\n"
-          end
+          .map do |group|
+            format_ingredient_group(group)
+          end.join("\n\n")
       end
 
       def recipe_directions
+        return recipe_json['instructions'] if recipe_json['instructions_list'].blank?
+
         recipe_json['instructions_list'].join("\n\n")
       end
 
@@ -75,10 +89,15 @@ module Recipes
         "#{duration} minutes"
       end
 
+      def format_ingredient_group(group)
+        text = ''
+        text << "#{group['purpose'].upcase}\n" if group['purpose'].present?
+        text << group['ingredients'].join("\n")
+      end
+
       def scrape_recipe
-        scrape_path = Rails.root.join('bin/scrape')
         stdout, stderr, status = Open3.capture3(
-          scrape_path.to_s,
+          SCRAPER_PATH,
           source.to_s,
           stdin_data: document.to_html
         )
