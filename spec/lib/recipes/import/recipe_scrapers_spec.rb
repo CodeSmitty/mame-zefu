@@ -50,12 +50,9 @@ RSpec.describe Recipes::Import::RecipeScrapers do
         expect(described_class.supported_host?(host)).to be(true)
         expect(described_class).to have_received(:system).once
 
-        # Reset the spy to track new calls
-        allow(described_class).to receive(:system).and_call_original
-
         # Second call should use cache and not invoke system again
         expect(described_class.supported_host?(host)).to be(true)
-        expect(described_class).not_to have_received(:system)
+        expect(described_class).to have_received(:system).once
       end
     end
 
