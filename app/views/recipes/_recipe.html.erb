@@ -9,8 +9,8 @@
         </div>
       </div>
     <% end %>
-    <h1 class="flex flex-row flex-nowrap gap-x-1">
-      <strong class="text-3xl font-small"><%= recipe.name %></strong>
+    <h1 class="flex flex-wrap items-center gap-x-2 gap-y-2">
+      <strong class="text-3xl font-small break-words flex-1 min-w-0"><%= recipe.name %></strong>
       <div>
         <button
           type="button"
@@ -23,7 +23,7 @@
           data-toggle-favorite-empty-heart-value='<%= render_icon "mini/empty_heart", classes: "text-rose-600" %>'>
         </button>
       </div>
-      <div class="ml-auto">
+      <div class="sm:ml-auto">
         <% if recipe.source.present? %>
           <%= link_to recipe.source, target: "_blank", rel: "noopener" do %>
             <%= render_icon "mini/link" %>
@@ -31,14 +31,14 @@
         <% end %>
       </div>
     </h1>
-    <div class="flex flex-row flex-wrap justify-between w-100 py-2">
-      <div class="flex flex-row flex-nowrap justify-between w-100">
+    <div class="flex flex-row flex-wrap justify-between w-full py-2">
+      <div class="flex flex-row flex-wrap justify-between w-full">
         <% %w[yield prep_time cook_time].each do |field| %>
           <%= render partial: "recipes/helpers/prep", locals: { value: recipe.send(field), label: field.titleize }, class: "text-center" %>
         <% end %>
       </div>
     </div>
-    <div class="flex flex-row flex-nowrap justify-start">
+    <div class="flex flex-row flex-wrap justify-start">
       <% recipe.categories.each do |c| %>
         <div class="py-1">
           <p class="bg-yellow-50 text-input-label text-xs font-semibold me-2 px-2.5 py-0.5 rounded-full border border-input-label"><%= c.name %></p>
