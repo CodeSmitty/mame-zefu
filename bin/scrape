@@ -3,8 +3,9 @@
 import argparse
 import json
 import sys
+import urllib.parse
 
-from recipe_scrapers import scrape_html, scrape_me
+from recipe_scrapers import SCRAPERS, scrape_html, scrape_me
 
 
 def parse_args() -> argparse.Namespace:
@@ -15,11 +16,45 @@ def parse_args() -> argparse.Namespace:
 		action="store_true",
 		help="Pretty-print JSON output",
 	)
+	parser.add_argument(
+		"--check-host",
+		action="store_true",
+		help="Check if the URL host is supported and exit",
+	)
 	return parser.parse_args()
+
+
+def extract_host(url: str) -> str:
+	parsed = urllib.parse.urlparse(url)
+	if parsed.hostname:
+		return parsed.hostname
+	parsed = urllib.parse.urlparse(f"//{url}")
+	if parsed.hostname:
+		return parsed.hostname
+	raise ValueError("Unable to determine host from URL")
+
+
+def normalize_host(host: str) -> str:
+	if host.startswith("www."):
+		return host[4:]
+	return host
 
 
 def main() -> None:
 	args = parse_args()
+	indent = 2 if args.pretty else None
+
+	if args.check_host:
+		try:
+			host = normalize_host(extract_host(args.url))
+		except ValueError as exc:
+			print(str(exc), file=sys.stderr)
+			sys.exit(2)
+		supported = host in SCRAPERS
+		print(json.dumps({"host": host, "supported": supported}, indent=indent))
+		if not supported:
+			sys.exit(1)
+		return
 
 	html = None
 	if not sys.stdin.isatty():
@@ -32,10 +67,7 @@ def main() -> None:
 	else:
 		recipe = scrape_me(args.url).to_json()
 
-	if args.pretty:
-		print(json.dumps(recipe, indent=2))
-	else:
-		print(json.dumps(recipe))
+	print(json.dumps(recipe, indent=indent))
 
 if __name__ == "__main__":
 	main()
