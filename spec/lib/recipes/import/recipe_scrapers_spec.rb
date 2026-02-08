@@ -46,10 +46,13 @@ RSpec.describe Recipes::Import::RecipeScrapers do
       end
 
       it 'does not call system on subsequent calls' do
-        described_class.supported_host?(host)
-        allow(described_class).to receive(:system)
-        described_class.supported_host?(host)
-        expect(described_class).not_to have_received(:system)
+        # First call should invoke system
+        expect(described_class.supported_host?(host)).to be(true)
+        expect(described_class).to have_received(:system).once
+
+        # Second call should use cache and not invoke system again
+        expect(described_class.supported_host?(host)).to be(true)
+        expect(described_class).to have_received(:system).once
       end
     end
 
