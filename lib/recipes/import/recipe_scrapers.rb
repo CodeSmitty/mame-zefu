@@ -6,7 +6,8 @@ module Recipes
       SCRAPER_PATH = Rails.root.join('bin/scrape').to_s.freeze
 
       def self.supported_host?(host)
-        Rails.cache.fetch("recipe_scrapers/supported_host/#{host}", expires_in: 1.hour) do
+        cache_key = ['recipe_scrapers', 'supported_host', host.to_s.downcase].join('/')
+        Rails.cache.fetch(cache_key, expires_in: 1.hour) do
           system(
             SCRAPER_PATH,
             '--check-host',

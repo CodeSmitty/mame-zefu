@@ -23,7 +23,7 @@ RSpec.describe Recipes::Import::RecipeScrapers do
 
   describe '.supported_host?' do
     let(:host) { 'example.com' }
-    let(:cache_key) { "recipe_scrapers/supported_host/#{host}" }
+    let(:cache_key) { "recipe_scrapers/supported_host/#{host.downcase}" }
 
     before do
       Rails.cache.clear
@@ -50,9 +50,12 @@ RSpec.describe Recipes::Import::RecipeScrapers do
         expect(described_class.supported_host?(host)).to be(true)
         expect(described_class).to have_received(:system).once
 
+        # Reset the spy to track new calls
+        allow(described_class).to receive(:system).and_call_original
+
         # Second call should use cache and not invoke system again
         expect(described_class.supported_host?(host)).to be(true)
-        expect(described_class).to have_received(:system).once
+        expect(described_class).not_to have_received(:system)
       end
     end
 
