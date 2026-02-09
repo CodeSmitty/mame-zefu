@@ -4,6 +4,8 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby "3.3.7"
 
 gem "administrate"
+gem "fractional"
+gem 'ingreedy'
 gem 'measured'
 gem "parser", "~> 3.3.7.0"
 
