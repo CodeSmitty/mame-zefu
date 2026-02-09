@@ -4,10 +4,11 @@ RSpec.describe 'Recipes' do
   let(:user) { create(:user) }
   let(:recipe_name) { 'Spaghetti' }
   let(:category_name) { 'Italian' }
-  let(:category) { Category.create(name: category_name) }
+  let(:category) { create(:category, name: category_name) }
   let!(:recipe) { create(:recipe, user: user) }
   let(:other_user) { create(:user) }
   let(:other_recipe) { create(:recipe, user: other_user) }
+  let(:uploaded_image) { fixture_file_upload('test.png', 'image/png') }
 
   describe 'GET /recipes' do
     it 'returns a 200' do
@@ -38,9 +39,32 @@ RSpec.describe 'Recipes' do
       end
     end
 
+    context 'when recipe does not exist' do
+      it 'returns 404' do
+        get recipe_path(id: 'nonexistent', as: user)
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
     context 'when athenticated and recipe non owner' do
       it 'does not show recipes for another user.' do
         expect { get recipe_path(recipe, as: other_user) }.to raise_error(Pundit::NotAuthorizedError)
+      end
+    end
+  end
+
+  describe 'GET /recipes/new' do
+    context 'when unauthenticated' do
+      it 'redirects to login' do
+        get new_recipe_path
+        expect(response).to redirect_to(sign_in_path)
+      end
+    end
+
+    context 'when authenticated' do
+      it 'returns a 200' do
+        get new_recipe_path(as: user)
+        expect(response).to have_http_status(:ok)
       end
     end
   end
@@ -60,6 +84,14 @@ RSpec.describe 'Recipes' do
 
         follow_redirect!
         expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context 'when recipe fails validation' do
+      it 'renders new template with errors' do
+        post recipes_path(params: { recipe: attributes_for(:recipe, name: '') }, as: user)
+
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end
@@ -83,6 +115,14 @@ RSpec.describe 'Recipes' do
 
       it 'does not update recipe for other user.' do
         expect { put recipe_path(recipe, as: other_user) }.to raise_error(Pundit::NotAuthorizedError)
+      end
+    end
+
+    context 'when update fails validation' do
+      it 'renders edit template with errors' do
+        put recipe_path(recipe, as: user), params: { recipe: { name: '' } }
+
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end
@@ -134,6 +174,84 @@ RSpec.describe 'Recipes' do
 
       it 'does not delete delete recipe of another user.' do
         expect { delete recipe_path(recipe, as: other_user) }.to raise_error(Pundit::NotAuthorizedError)
+      end
+    end
+  end
+
+  describe 'DELETE /recipes/:id/image' do
+    let(:recipe) { create(:recipe, user: user, image: uploaded_image) }
+
+    context 'when authenticated' do
+      it 'delete the image attachment' do
+        expect do
+          delete image_recipe_path(recipe, as: user)
+        end.to change(ActiveStorage::Attachment, :count).by(-1)
+      end
+
+      it 'does not delete image of another user.' do
+        expect { delete image_recipe_path(recipe, as: other_user) }.to raise_error(Pundit::NotAuthorizedError)
+      end
+    end
+
+    context 'when unauthenticated' do
+      it 'redirects to login' do
+        delete image_recipe_path(recipe)
+        expect(response).to redirect_to(sign_in_path)
+      end
+    end
+  end
+
+  describe 'GET /recipes/web_search' do
+    context 'when unauthenticated' do
+      it 'redirects to login' do
+        get web_search_recipes_path
+        expect(response).to redirect_to(sign_in_path)
+      end
+    end
+
+    context 'when authenticated' do
+      it 'returns a 200' do
+        get web_search_recipes_path(as: user)
+        expect(response).to have_http_status(:ok)
+      end
+    end
+  end
+
+  describe 'GET /recipes/web_result' do
+    let(:url) { 'https://example.com/recipe' }
+    let(:import_service) { instance_double(Recipes::Import) }
+    let(:imported_recipe) { build(:recipe) }
+
+    before do
+      allow(Recipes::Import).to receive(:new).and_return(import_service)
+      allow(import_service).to receive(:recipe).and_return(imported_recipe)
+    end
+
+    context 'when unauthenticated' do
+      it 'redirects to login' do
+        get web_result_recipes_path(url: url)
+        expect(response).to redirect_to(sign_in_path)
+      end
+    end
+
+    context 'when authenticated' do
+      context 'when import is successful' do
+        it 'returns a 200' do
+          get web_result_recipes_path(url: url, as: user)
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context 'when import fails' do
+        before do
+          allow(import_service).to receive(:recipe).and_raise(StandardError.new('Import failed'))
+        end
+
+        it 'returns a 200 and shows an alert' do
+          get web_result_recipes_path(url: url, as: user)
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to include('Unable to import recipe')
+        end
       end
     end
   end

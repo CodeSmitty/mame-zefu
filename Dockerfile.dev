@@ -7,9 +7,27 @@ FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 WORKDIR /rails
 
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 libvips libpq-dev && \
-    apt-get install --no-install-recommends -y build-essential curl git pkg-config libyaml-dev && \
+    apt-get install --no-install-recommends -y \
+        curl \
+        libjemalloc2 \
+        libvips \
+        libpq-dev \
+        python3 \
+        python3-venv \
+        python3-pip && \
+    apt-get install --no-install-recommends -y \
+        build-essential \
+        curl \
+        git \
+        pkg-config \
+        libyaml-dev && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+COPY requirements.txt /rails/requirements.txt
+RUN python3 -m venv /opt/venv && \
+    /opt/venv/bin/pip install --no-cache-dir -r /rails/requirements.txt
+
+ENV PATH="/opt/venv/bin:$PATH"
 
 ENV RAILS_ENV="development" \
     BUNDLE_PATH="/usr/local/bundle"

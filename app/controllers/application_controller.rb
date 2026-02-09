@@ -3,15 +3,22 @@
 require 'net/http'
 
 class ApplicationController < ActionController::Base
+  rescue_from ActionController::RoutingError, with: :not_found
+  rescue_from ActiveRecord::RecordNotFound, with: :not_found
+
   include Clearance::Controller
   include Pundit::Authorization
 
-  after_action :verify_pundit_authorization, except: %i[health_check]
+  after_action :verify_pundit_authorization, except: %i[health_check not_found]
 
   TAG_TIMEOUT = 5
 
   def health_check
     params[:q] == 'ready' ? ready_response : live_response
+  end
+
+  def not_found
+    render file: Rails.root.join(Rails.public_path, '404.html'), status: :not_found, layout: false
   end
 
   private
@@ -40,6 +47,7 @@ class ApplicationController < ActionController::Base
 
     uri = URI(tag_url)
     res = get_tag(uri)
+    return if res.blank?
 
     unless res.is_a?(Net::HTTPSuccess)
       Rails.logger.error("Health check: failed to fetch tag from #{uri} with status #{res.code}")
@@ -54,8 +62,10 @@ class ApplicationController < ActionController::Base
       req = Net::HTTP::Get.new(uri)
       http.request(req)
     end
-  rescue Net::ReadTimeout
+  rescue Net::ReadTimeout, Net::OpenTimeout
     Rails.logger.warn("Health check: timed out fetching tag from #{uri}")
+
+    nil
   end
 
   def tag_url

@@ -1,4 +1,12 @@
 Rails.application.routes.draw do
+  namespace :admin do
+    resources :users, only: [:index, :show, :edit, :update]
+    resources :recipes, only: [:index, :show]
+    resources :categories, only: [:index, :show]
+
+    root to: 'users#index'
+  end
+
   resources :passwords, only: [:create, :new]
   resource :session, only: [:create]
 
@@ -24,6 +32,11 @@ Rails.application.routes.draw do
   resources :recipes do
     member do
       post :toggle_favorite
+      delete :image, action: :delete_image
     end
   end
+
+  get '*unmatched_route', to: 'application#not_found', constraints: lambda { |req|
+    req.path.exclude? 'rails/active_storage'
+  }
 end

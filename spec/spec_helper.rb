@@ -14,6 +14,7 @@
 #
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
+require 'webmock/rspec'
 require 'simplecov'
 SimpleCov.start 'rails' do
   if ENV['CI'] == 'true'
