@@ -7,7 +7,7 @@ RSpec.describe Recipes::Import::RecipeScrapers do
 
   let(:document) { Nokogiri::HTML('<html><body>Test</body></html>') }
   let(:source) { 'https://example.com/recipe' }
-  let(:scrape_path) { Rails.root.join('bin/scrape').to_s }
+  let(:scrape_path) { Recipes::Import::RecipeScrapers::SCRAPER_PATH }
   let(:scrape_status) { instance_double(Process::Status, success?: scrape_success?) }
   let(:scrape_success?) { true }
   let(:scrape_error) { '' }
@@ -19,6 +19,32 @@ RSpec.describe Recipes::Import::RecipeScrapers do
     allow(Open3).to receive(:capture3)
       .with(scrape_path, source.to_s, stdin_data: document.to_html)
       .and_return([scrape_output, scrape_error, scrape_status])
+  end
+
+  describe '.supported_host?' do
+    let(:host) { 'example.com' }
+
+    before do
+      allow(described_class).to receive(:system)
+        .with(scrape_path, '--check-host', host.to_s, out: File::NULL, err: File::NULL)
+        .and_return(system_status)
+    end
+
+    context 'when the scrape command succeeds' do
+      let(:system_status) { true }
+
+      it 'returns true' do
+        expect(described_class.supported_host?(host)).to be(true)
+      end
+    end
+
+    context 'when the scrape command fails' do
+      let(:system_status) { false }
+
+      it 'returns false' do
+        expect(described_class.supported_host?(host)).to be(false)
+      end
+    end
   end
 
   context 'when scrape fails' do
@@ -138,7 +164,7 @@ RSpec.describe Recipes::Import::RecipeScrapers do
     end
 
     it 'extracts the recipe ingredients' do
-      expect(import.recipe_ingredients).to eq("CAKE\n2c flour\n1c sugar\n\n")
+      expect(import.recipe_ingredients).to eq("CAKE\n2c flour\n1c sugar")
     end
 
     context 'when the group has no purpose' do
@@ -154,7 +180,15 @@ RSpec.describe Recipes::Import::RecipeScrapers do
       end
 
       it 'omits the group header' do
-        expect(import.recipe_ingredients).to eq("2c flour\n1c sugar\n\n")
+        expect(import.recipe_ingredients).to eq("2c flour\n1c sugar")
+      end
+    end
+
+    context 'when there are no ingredient groups' do
+      let(:recipe_hash) { { ingredients: ['2c flour', '1c sugar'] } }
+
+      it 'joins the ingredients with newlines' do
+        expect(import.recipe_ingredients).to eq("2c flour\n1c sugar")
       end
     end
   end
@@ -164,6 +198,14 @@ RSpec.describe Recipes::Import::RecipeScrapers do
 
     it 'extracts the recipe directions' do
       expect(import.recipe_directions).to eq("Step 1\n\nStep 2")
+    end
+
+    context 'when there are no instruction groups' do
+      let(:recipe_hash) { { instructions: 'Mix and bake.' } }
+
+      it 'returns the instructions as is' do
+        expect(import.recipe_directions).to eq('Mix and bake.')
+      end
     end
   end
 end
