@@ -24,10 +24,10 @@ module Recipes
     private
 
     def should_scale?(ingredient)
-      DO_NOT_SCALE.none? { |skip| ingredient.include?(skip) }
+      DO_NOT_SCALE.none? { |unit| ingredient.include?(unit) }
     end
 
-    def scale_with_logic(parsed, multiplier)
+    def scale_with_logic(parsed, multiplier) # rubocop:disable Metrics/MethodLength
       original_quantity = parsed[:quantity] || 1
       scaled_quantity = original_quantity * multiplier
 
@@ -36,10 +36,10 @@ module Recipes
       Rails.logger.debug { "Scaled quantity: #{scaled_quantity} (#{fraction_quantity.to_f})" }
 
       scaled_description = if parsed[:unit]
-                            "#{scaled_quantity} #{parsed[:unit]} #{parsed[:ingredient]}"
-                          else
-                            "#{scaled_quantity} #{parsed[:ingredient]}"
-                          end.strip
+                             "#{scaled_quantity} #{parsed[:unit]} #{parsed[:ingredient]}"
+                           else
+                             "#{scaled_quantity} #{parsed[:ingredient]}"
+                           end.strip
 
       parsed.merge(
         scaled_quantity: scaled_quantity,

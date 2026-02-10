@@ -4,8 +4,10 @@ require_relative 'ingredient_constants'
 module Recipes
   class IngredientParser
     include IngredientConstants
-    
+
     attr_accessor :recipe
+
+    FRACTION_PATTERN = Regexp.union(FRACTION_MAP.keys)
 
     def initialize(recipe)
       @recipe = recipe
@@ -22,7 +24,7 @@ module Recipes
 
     private
 
-    def parse_single_ingredient(ingredient)
+    def parse_single_ingredient(ingredient) # rubocop:disable Metrics/MethodLength
       normalized = normalize_fractions(ingredient)
 
       if ingredient.match(/^\d+\s+\(\d+\s*oz\)/i)
@@ -34,14 +36,14 @@ module Recipes
           ingredient: match[2]
         }
       end
-      
+
       begin
         parsed = Ingreedy.parse(normalized)
 
         {
           original: ingredient,
-          quantity: parsed.amount ?  parsed.amount.to_s : nil,
-          unit: parsed.unit ? parsed.unit.to_s : nil,
+          quantity: parsed.amount&.to_s,
+          unit: parsed.unit&.to_s,
           ingredient: parsed.ingredient
         }
       rescue Ingreedy::ParseFailed
@@ -55,11 +57,9 @@ module Recipes
     end
 
     def normalize_fractions(text)
-      normalized = text.dup
-      FRACTION_MAP.each do |unicode, replacement|
-        normalized.gsub!(unicode, replacement)
+      text.gsub(FRACTION_PATTERN) do |match|
+        FRACTION_MAP[match]
       end
-      normalized
     end
   end
 end
