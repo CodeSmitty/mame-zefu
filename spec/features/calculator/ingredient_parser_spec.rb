@@ -1,11 +1,9 @@
 require 'rails_helper'
 
-RSpec.describe 'Ingredient Parsing', type: :feature do
+RSpec.describe 'Ingredient Parser', type: :feature do
   let(:user) { create(:user) }
   let(:recipe) { create(:recipe, user: user, ingredients: ingredients_text) }
-  let(:ingredient_parser) { IngredientParsing.new }
-  let(:ingredient_parser_recipe) { ingredient_parser.recipe = recipe }
-    before { ingredient_parser_recipe }
+  let(:ingredient_parser) { Recipes::IngredientParser.new(recipe) }
 
   describe '#parse_ingredients' do
     subject { ingredient_parser.parse_ingredients }
