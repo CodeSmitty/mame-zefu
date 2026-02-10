@@ -3,7 +3,7 @@ require_relative 'ingredient_constants'
 
 class IngredientParsing
   include IngredientConstants
-  
+
   attr_accessor :recipe
 
   def parse_ingredients
@@ -20,16 +20,25 @@ class IngredientParsing
   def parse_single_ingredient(ingredient)
     normalized = normalize_fractions(ingredient)
 
+    if ingredient.match(/^\d+\s+\(\d+\s*oz\)/i)
+      match = ingredient.match(/^(\d+)\s+(.+)/)
+      return {
+        original: ingredient,
+        quantity: "#{match[1]}/1",
+        unit: nil,
+        ingredient: match[2]
+      }
+    end
+    
     begin
       parsed = Ingreedy.parse(normalized)
-      
+
       {
         original: ingredient,
-        quantity: parsed.amount,
-        unit: parsed.unit,
+        quantity: parsed.amount ?  parsed.amount.to_s : nil,
+        unit: parsed.unit ? parsed.unit.to_s : nil,
         ingredient: parsed.ingredient
       }
-      
     rescue Ingreedy::ParseFailed
       {
         original: ingredient,

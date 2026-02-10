@@ -9,6 +9,7 @@ gem "clearance"
 gem "down", "~> 5.0"
 gem "fractional"
 gem "importmap-rails"
+gem 'ingreedy', '~> 0.1.0'
 gem "jbuilder"
 gem "measured"
 gem "net_tcp_client"
