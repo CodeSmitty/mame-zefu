@@ -14,45 +14,74 @@ RSpec.describe Recipe do
     end
 
     context 'when recipe has categories' do
-      before { recipe.categories << Category.from_names(category_names) }
+      before { recipe.categories << Category.from_names(category_names, user: recipe.user) }
 
       it { is_expected.to match_array(category_names) }
     end
   end
 
   describe '#category_names=' do
-    subject(:described_method) { recipe.category_names = category_names }
+    subject(:set_category_names) { recipe.category_names = category_names }
 
-    let(:recipe) { create(:recipe, name: 'Spaghetti') }
+    let(:recipe) { build(:recipe, name: 'Spaghetti') }
     let(:category_names) { %w[Pasta Italian Main] }
 
     context 'when there are no categories' do
-      it 'creates the categories' do
-        expect { described_method }.to change(Category, :count).by(3)
+      it 'does not create the categories immediately' do
+        expect { set_category_names }.not_to change(Category, :count)
       end
 
-      it 'adds the categories to the recipe' do
-        expect { described_method }.to change { recipe.categories.count }.by(3)
+      it 'creates the categories on save' do
+        set_category_names
+
+        expect { recipe.save! }.to change(Category, :count).by(3)
+      end
+
+      it 'adds the categories to the recipe on save' do
+        set_category_names
+        recipe.save!
+
+        expect(recipe.reload.categories.map(&:name)).to match_array(category_names)
       end
     end
 
     context 'when the recipe already has categories' do
-      before { recipe.categories << Category.from_names(existing_categories) }
-
       let(:existing_categories) { %w[Main Vegetarian] }
 
-      it 'changes the categories to match the names exactly' do
-        expect { described_method }
-          .to change { recipe.categories.map(&:name) }
+      before do
+        recipe.save!
+        recipe.categories = Category.from_names(existing_categories, user: recipe.user)
+      end
+
+      it 'does not change categories immediately' do
+        expect { set_category_names }
+          .not_to change { recipe.categories.map(&:name) }
           .from(match_array(existing_categories))
-          .to match_array(category_names)
+      end
+
+      it 'changes the categories to match the names exactly on save' do
+        expect(recipe.categories.map(&:name)).to match_array(existing_categories)
+
+        set_category_names
+        recipe.save!
+
+        expect(recipe.reload.categories.map(&:name)).to match_array(category_names)
+      end
+
+      it 'only creates missing categories on save' do
+        set_category_names
+
+        expect { recipe.save! }.to change(Category, :count).by(2)
       end
 
       context 'when given an empty array' do
         let(:category_names) { [] }
 
-        it 'removes all categories' do
-          expect { described_method }.to change { recipe.categories.count }.from(2).to(0)
+        it 'removes all categories on save' do
+          set_category_names
+          recipe.save!
+
+          expect(recipe.reload.categories).to be_empty
         end
       end
     end
@@ -87,9 +116,9 @@ RSpec.describe Recipe do
   describe '.in_categories' do
     subject { described_class.in_categories(category_names) }
 
-    let!(:mexican) { Category.create!(name: 'Mexican') }
-    let!(:italian) { Category.create!(name: 'Italian') }
-    let!(:japanese) { Category.create!(name: 'Japanese') }
+    let!(:mexican) { create(:category, name: 'Mexican') }
+    let!(:italian) { create(:category, name: 'Italian') }
+    let!(:japanese) { create(:category, name: 'Japanese') }
 
     let!(:tacos) { create(:recipe, name: 'Tacos', categories: [mexican]) }
     let!(:pasta) { create(:recipe, name: 'Pasta', categories: [italian]) }

@@ -19,7 +19,7 @@ RSpec.describe Recipes::Import do
   end
 
   describe '#recipe' do
-    subject(:import) { described_class.new(uri: uri) }
+    subject(:import) { described_class.new(uri: uri, force_json_schema: true) }
 
     let!(:stub) { stub_request(:get, uri.to_s).to_return(body: html_body) }
     let(:html_body) { '<html><body>Recipe content</body></html>' }
@@ -52,13 +52,14 @@ RSpec.describe Recipes::Import do
 
     let(:force_json_schema) { false }
     let(:json_schema_class) { Recipes::Import::JsonSchema }
+    let(:recipe_scraper_class) { Recipes::Import::RecipeScrapers }
+    let(:recipe_scraper_supported?) { false }
 
-    context 'when host is not in RECIPE_CLASSES' do
-      let(:url) { 'https://unknownsite.com/recipe' }
-
-      it 'returns JsonSchema' do
-        expect(import.send(:recipe_class)).to eq(json_schema_class)
-      end
+    before do
+      allow(recipe_scraper_class)
+        .to receive(:supported_host?)
+        .with(uri.host)
+        .and_return(recipe_scraper_supported?)
     end
 
     context 'when host is in RECIPE_CLASSES' do
@@ -74,6 +75,22 @@ RSpec.describe Recipes::Import do
         it 'returns JsonSchema' do
           expect(import.send(:recipe_class)).to eq(json_schema_class)
         end
+      end
+    end
+
+    context 'when host is supported by RecipeScrapers' do
+      let(:recipe_scraper_supported?) { true }
+
+      it 'returns RecipeScrapers' do
+        expect(import.send(:recipe_class)).to eq(recipe_scraper_class)
+      end
+    end
+
+    context 'when host is not configured or supported' do
+      let(:url) { 'https://unknownsite.com/recipe' }
+
+      it 'returns JsonSchema' do
+        expect(import.send(:recipe_class)).to eq(json_schema_class)
       end
     end
   end

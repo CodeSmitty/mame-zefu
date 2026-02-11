@@ -28,7 +28,10 @@ module Recipes
     def recipe_class
       return JsonSchema if force_json_schema
 
-      RECIPE_CLASSES.fetch(uri.host, JsonSchema)
+      return RECIPE_CLASSES[uri.host] if RECIPE_CLASSES.key?(uri.host)
+      return RecipeScrapers if RecipeScrapers.supported_host?(uri.host)
+
+      JsonSchema
     end
 
     def recipe_class_instance

@@ -3,12 +3,12 @@
     <div class="flex flex-col lg:flex-row gap-6 mx-auto w-full break-words">
       <div class="w-full">
         <% if recipe.image.attached? %>
-          <div style="background-image: url('<%= url_for(recipe.image) %>'); background-size: cover; background-position: center;" class="relative h-100 flex flex-col justify-end mb-4">
+          <div style="background-image: url('<%= url_for(recipe.image) %>'); background-size: cover; background-position: center;" class="relative h-100 flex flex-col justify-end mb-4" itemprop="image">
         <% else %>
           <div style="background-image: url('<%= asset_path('placeholder.jpg') %>'); background-size: cover; background-position: center;" class="relative h-100 flex flex-col justify-end mb-4">
         <% end %>
           <h1 class="flex flex-row flex-wrap lg:flex-nowrap text-white bg-black/70 py-2">
-            <strong class="text-2xl font-small w-full"><%= recipe.name %></strong>
+            <strong class="text-2xl font-small w-full" itemprop="name"><%= recipe.name %></strong>
             <span class="mr-0 md:mr-10 w-1/3">
               <button
                 type="button"
@@ -40,22 +40,22 @@
           </h1>
         </div>
           <div class="flex lg:flex-row flex-col flex-nowrap w-full gap-0 lg:gap-4 text-lg pl-2">
-            <% %w[yield prep_time cook_time].each do |field| %>
-              <%= render partial: "recipes/helpers/prep", locals: { value: recipe.send(field), label: field.titleize }, class: "text-center" %>
-            <% end %>
+            <%= render partial: "recipes/helpers/prep", locals: { itemprop: "recipeYield", label: "Yield", value: recipe.yield } %>
+            <%= render partial: "recipes/helpers/prep", locals: { itemprop: "prepTime", label: "Prep Time", value: recipe.prep_time } %>
+            <%= render partial: "recipes/helpers/prep", locals: { itemprop: "cookTime", label: "Cook Time", value: recipe.cook_time } %>
           </div>
         <div class="flex flex-row flex-wrap justify-start p-4">
-          <% recipe.categories.each do |c| %>
+          <% recipe.category_names.sort_by(&:downcase).each do |category| %>
             <div class="py-1">
-              <p class="bg-yellow-50 text-input-label text-xs font-semibold me-2 px-2.5 py-0.5 rounded-full border border-input-label"><%= c.name %></p>
+              <p class="bg-yellow-50 text-input-label text-xs font-semibold me-2 px-2.5 py-0.5 rounded-full border border-input-label" itemprop="recipeCategory"><%= category %></p>
             </div>
           <% end %>
         </div>
         <% if recipe.description.present? %>
           <div class="p-4 lg:p-2">
-            <p class="my-5">
+            <div class="my-5" itemprop="description">
               <%= simple_format(recipe.description) %>
-            </p>
+            </div>
           </div>
         <% end %>
         <div class="mx-auto">
@@ -67,7 +67,7 @@
               <div class="mb-3 p-4">
                 <ul data-controller="list" class="mb-3">
                   <% list.split("\n").each do |item| %>
-                    <li data-action="click->list#strike" class="break-words w-full lg:w-[40%] min-w-0 my-3"><%= item %></li>
+                    <li data-action="click->list#strike" class="break-words w-full lg:w-[40%] min-w-0 my-3" itemprop="recipeIngredient"><%= item %></li>
                   <% end %>
                 </ul>
               </div>
@@ -82,7 +82,7 @@
         </p>
         <% if recipe.directions.present? %>
           <% recipe.directions.split(/\n{3,}/).each do |list| %>
-            <ol data-controller="list" class="mb-3">
+            <ol data-controller="list" class="mb-3" itemprop="recipeInstructions">
               <% list.split("\n\n").each do |item| %>
                 <li data-list-target="item" data-action="click->list#focus" class="mb-3"><%= item %></li>
               <% end %>
@@ -92,12 +92,14 @@
         <% if recipe.notes.present? %>
           <p class="my-5">
             <strong class="block font-small mb-1">Notes</strong>
+          </p>
+          <div class="mb-3">
             <% recipe.notes.split(/\n{2,}/).each do |note| %>
               <p class="mb-3">
                 <%= note %>
               </p>
             <% end %>
-          </p>
+          </div>
         <% end %>
       </div>
   </div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_04_27_174603) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_03_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -46,7 +46,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_27_174603) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_categories_on_name", unique: true
+    t.bigint "user_id", null: false
+    t.index ["user_id", "name"], name: "index_categories_on_user_id_and_name", unique: true
+    t.index ["user_id"], name: "index_categories_on_user_id"
   end
 
   create_table "categories_recipes", id: false, force: :cascade do |t|
@@ -82,6 +84,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_27_174603) do
     t.string "encrypted_password", limit: 128, null: false
     t.string "confirmation_token", limit: 128
     t.string "remember_token", limit: 128, null: false
+    t.boolean "is_admin"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email"
     t.index ["remember_token"], name: "index_users_on_remember_token", unique: true
@@ -89,5 +92,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_27_174603) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "categories", "users"
   add_foreign_key "recipes", "users"
 end
