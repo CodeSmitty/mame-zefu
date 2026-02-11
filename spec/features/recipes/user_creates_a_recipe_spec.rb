@@ -8,7 +8,7 @@ RSpec.feature 'User creates a recipe' do
 
   given(:recipe_data) do
     {
-      name: 'Chocolate Chip Cookes',
+      name: 'Chocolate Chip Cookies',
       yield: '60',
       prep_time: '25 minutes',
       cook_time: '8 minutes',
