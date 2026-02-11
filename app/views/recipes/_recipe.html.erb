@@ -10,7 +10,7 @@
       </div>
     <% end %>
     <h1 class="flex flex-row flex-nowrap gap-x-1">
-      <strong class="text-3xl font-small"><%= recipe.name %></strong>
+      <strong class="text-3xl font-small" itemprop="name"><%= recipe.name %></strong>
       <div>
         <button
           type="button"
@@ -33,22 +33,22 @@
     </h1>
     <div class="flex flex-row flex-wrap justify-between w-100 py-2">
       <div class="flex flex-row flex-nowrap justify-between w-100">
-        <% %w[yield prep_time cook_time].each do |field| %>
-          <%= render partial: "recipes/helpers/prep", locals: { value: recipe.send(field), label: field.titleize }, class: "text-center" %>
-        <% end %>
+        <%= render partial: "recipes/helpers/prep", locals: { itemprop: "recipeYield", label: "Yield", value: recipe.yield } %>
+        <%= render partial: "recipes/helpers/prep", locals: { itemprop: "prepTime", label: "Prep Time", value: recipe.prep_time } %>
+        <%= render partial: "recipes/helpers/prep", locals: { itemprop: "cookTime", label: "Cook Time", value: recipe.cook_time } %>
       </div>
     </div>
     <div class="flex flex-row flex-nowrap justify-start">
       <% recipe.category_names.sort_by(&:downcase).each do |category| %>
         <div class="py-1">
-          <p class="bg-yellow-50 text-input-label text-xs font-semibold me-2 px-2.5 py-0.5 rounded-full border border-input-label"><%= category %></p>
+          <p class="bg-yellow-50 text-input-label text-xs font-semibold me-2 px-2.5 py-0.5 rounded-full border border-input-label" itemprop="recipeCategory"><%= category %></p>
         </div>
       <% end %>
     </div>
     <% if recipe.description.present? %>
-      <p class="my-5">
+      <div class="my-5" itemprop="description">
         <%= simple_format(recipe.description) %>
-      </p>
+      </div>
     <% end %>
     <p class="my-5">
       <strong class="block font-small mb-1">Ingredients</strong>
@@ -57,7 +57,7 @@
       <% recipe.ingredients.split(/\n{2,}/).each do |list| %>
         <ul data-controller="list" class="mb-3">
           <% list.split("\n").each do |item| %>
-            <li data-action="click->list#strike"><%= item %></li>
+            <li data-action="click->list#strike" itemprop="recipeIngredient"><%= item %></li>
           <% end %>
         </ul>
       <% end %>
@@ -67,7 +67,7 @@
     </p>
     <% if recipe.directions.present? %>
       <% recipe.directions.split(/\n{3,}/).each do |list| %>
-        <ol data-controller="list" class="mb-3">
+        <ol data-controller="list" class="mb-3" itemprop="recipeInstructions">
           <% list.split("\n\n").each do |item| %>
             <li data-list-target="item" data-action="click->list#focus" class="mb-3"><%= item %></li>
           <% end %>
@@ -77,19 +77,21 @@
     <% if recipe.notes.present? %>
       <p class="my-5">
         <strong class="block font-small mb-1">Notes</strong>
+      </p>
+      <div class="mb-3">
         <% recipe.notes.split(/\n{2,}/) do |note| %>
           <p class="mb-3">
             <%= note %>
           </p>
         <% end %>
-      </p>
+      </div>
     <% end %>
   </div>
     <div class="w-full flex justify-center lg:justify-end">
       <% if recipe.image.attached? %>
         <div class="relative w-full md:w-2/3 lg:w-3/5 mx-auto">
           <div class="preview-image-container my-5">
-            <%= image_tag recipe.image, class: "preview-image object-contain w-full", id: "preview-image" %>
+            <%= image_tag recipe.image, class: "preview-image object-contain w-full", id: "preview-image", itemprop: "image" %>
           </div>
         </div>
       <% end %>
