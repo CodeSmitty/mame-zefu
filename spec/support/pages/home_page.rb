@@ -1,5 +1,5 @@
 class HomePage < BasePage
-  set_url '/{recipes}'
+  set_url '/'
 
   elements :recipe_links, 'a.recipe'
 
