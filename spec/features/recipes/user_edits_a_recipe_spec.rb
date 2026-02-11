@@ -9,7 +9,7 @@ RSpec.feature 'User edits a recipe' do
   given!(:recipe) { create(:recipe, user: user) }
   given(:recipe_data) do
     {
-      name: 'Chocolate Chip Cookes'
+      name: 'Chocolate Chip Cookies'
     }
   end
 
