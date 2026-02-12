@@ -1,5 +1,5 @@
 <div id="<%= dom_id recipe %>">
-  <div class="flex flex-col shadow-lg w-full lg:min-w-min lg:w-8/12 mx-auto p-0 lg:p-8">
+  <div class="flex flex-col w-full lg:min-w-min lg:w-8/12 mx-auto p-0 lg:p-8">
     <div class="flex flex-col lg:flex-row gap-6 mx-auto w-full break-words">
       <div class="w-full">
         <% if recipe.image.attached? %>
@@ -12,9 +12,9 @@
             style="background-image: url('<%= asset_path('placeholder.jpg') %>'); background-size: cover; background-position: center;"
             class="relative h-100 flex flex-col justify-end mb-4">
         <% end %>
-          <h1 class="flex flex-row flex-wrap lg:flex-nowrap text-white bg-black/70 py-2">
-            <strong class="text-2xl font-small w-full" itemprop="name"><%= recipe.name %></strong>
-            <span class="mr-0 md:mr-10 w-1/3">
+          <h1 class="flex flex-row flex-wrap lg:flex-nowrap gap-x-4 lg:gap-x-2 text-white bg-black/70 py-2 pl-4">
+            <strong class="text-2xl font-small w-full lg:w-auto whitespace-nowrap" itemprop="name"><%= recipe.name %></strong>
+            <span class="lg:mr-0">
               <button
                 type="button"
                 class="btn btn-xs text-black hover:cursor-pointer"
@@ -26,22 +26,22 @@
                 data-toggle-favorite-empty-heart-value='<%= render_icon "mini/empty_heart", classes: "text-rose-600" %>'>
               </button>
             </span>
-            <span class="w-1/3">
-              <% if recipe.source.present? %>
-                <%= link_to recipe.source, target: "_blank", rel: "noopener" do %>
-                  <%= render_icon "mini/link" %>
-                <% end %>
-              <% end %>
-            </span>
             <% if recipe.rating.present? %>
-              <div class="mb-2 flex flex-row flex-nowrap w-1/3">
-                <div class="flex flex-row">
+              <div class="mb-2 flex flex-row flex-nowrap mx-5">
+                <div class="flex flex-row items-center gap-0.5">
                   <% recipe.rating.to_i.times do %>
                     <%= render_icon "mini/star", classes: "text-yellow-300" %>
                   <% end %>
                 </div>
               </div>
             <% end %>
+            <span class="ml-auto pr-4">
+              <% if recipe.source.present? %>
+                <%= link_to recipe.source, target: "_blank", rel: "noopener" do %>
+                  <%= render_icon "mini/link" %>
+                <% end %>
+              <% end %>
+            </span>
           </h1>
         </div>
         <div class="flex lg:flex-row flex-col flex-nowrap w-full gap-0 lg:gap-4 text-lg pl-2">
@@ -72,11 +72,11 @@
           <% if recipe.ingredients.present? %>
             <% recipe.ingredients.split(/\n{2,}/).each do |list| %>
               <div class="mb-3 p-4">
-                <ul data-controller="list" class="mb-3">
+                <ul data-controller="list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-2 gap-y-1">
                   <% list.split("\n").each do |item| %>
                     <li
                       data-action="click->list#strike"
-                      class="break-words w-full lg:w-[40%] min-w-0 my-3"
+                      class="break-words leading-snug"
                       itemprop="recipeIngredient"><%= item %></li>
                   <% end %>
                 </ul>
