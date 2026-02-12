@@ -1,5 +1,5 @@
 module Recipes
-  module IngredientConstants  
+  module IngredientConstants
     FRACTION_MAP = {
       '½' => '1/2', '⅓' => '1/3', '⅔' => '2/3',
       '¼' => '1/4', '¾' => '3/4',
