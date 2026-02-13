@@ -36,6 +36,7 @@
         <%= render partial: "recipes/helpers/prep", locals: { itemprop: "recipeYield", label: "Yield", value: recipe.yield } %>
         <%= render partial: "recipes/helpers/prep", locals: { itemprop: "prepTime", label: "Prep Time", value: recipe.prep_time } %>
         <%= render partial: "recipes/helpers/prep", locals: { itemprop: "cookTime", label: "Cook Time", value: recipe.cook_time } %>
+        <%= render partial: "recipes/helpers/prep", locals: { itemprop: "totalTime", label: "Total Time", value: recipe.total_time } %>
       </div>
     </div>
     <div class="flex flex-row flex-nowrap justify-start">

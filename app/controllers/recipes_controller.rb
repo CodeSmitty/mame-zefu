@@ -1,4 +1,4 @@
-class RecipesController < ApplicationController
+class RecipesController < ApplicationController # rubocop:disable Metrics/ClassLength
   before_action :require_login
   before_action :set_recipe, only: %i[show edit update destroy toggle_favorite delete_image]
   skip_after_action :verify_pundit_authorization, only: %i[
@@ -133,7 +133,9 @@ class RecipesController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def recipe_params
-    params.require(:recipe).permit(:name, :ingredients, :directions, :yield, :prep_time, :cook_time, :description,
-                                   :rating, :is_favorite, :notes, :source, :image, :image_src, category_names: [])
+    params
+      .require(:recipe)
+      .permit(:name, :ingredients, :directions, :yield, :prep_time, :cook_time, :total_time, :description,
+              :rating, :is_favorite, :notes, :source, :image, :image_src, category_names: [])
   end
 end

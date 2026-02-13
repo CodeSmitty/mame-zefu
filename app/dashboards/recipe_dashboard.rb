@@ -10,6 +10,7 @@ class RecipeDashboard < Administrate::BaseDashboard
     yield: Field::String,
     prep_time: Field::String,
     cook_time: Field::String,
+    total_time: Field::String,
     categories: Field::HasMany,
     description: Field::Text,
     ingredients: Field::Text,
@@ -37,6 +38,7 @@ class RecipeDashboard < Administrate::BaseDashboard
     yield
     prep_time
     cook_time
+    total_time
     categories
     description
     ingredients
@@ -55,6 +57,7 @@ class RecipeDashboard < Administrate::BaseDashboard
     yield
     prep_time
     cook_time
+    total_time
     categories
     description
     ingredients
