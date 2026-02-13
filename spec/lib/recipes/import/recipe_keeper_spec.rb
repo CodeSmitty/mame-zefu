@@ -91,6 +91,28 @@ RSpec.describe Recipes::Import::RecipeKeeper do
     end
   end
 
+  describe '#recipe_total_time' do
+    let(:html) do
+      <<-HTML
+      <table>
+        <tr>
+          <td style="vertical-align:top">
+            <div>
+              Total time: <span>#{recipe_total_time}</span>
+              <meta content="PT40M" itemprop="totalTime">
+            </div>
+          </td>
+        </tr>
+      </table>
+      HTML
+    end
+    let(:recipe_total_time) { '40 mins' }
+
+    it 'extracts the recipe total time' do
+      expect(import.recipe_total_time).to eq(recipe_total_time)
+    end
+  end
+
   describe '#recipe_ingredients' do
     let(:html) do
       <<-HTML
