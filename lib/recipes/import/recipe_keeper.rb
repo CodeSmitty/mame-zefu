@@ -27,6 +27,13 @@ module Recipes
           .text
       end
 
+      def recipe_total_time
+        document
+          .css('[itemprop="totalTime"]')
+          .xpath('preceding-sibling::span')
+          .text
+      end
+
       def recipe_ingredients
         document
           .css('[itemprop="recipeIngredients"]')
