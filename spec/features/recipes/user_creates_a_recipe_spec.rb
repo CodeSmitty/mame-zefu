@@ -12,6 +12,7 @@ RSpec.feature 'User creates a recipe' do
       yield: '60',
       prep_time: '25 minutes',
       cook_time: '8 minutes',
+      total_time: '33 minutes',
       categories: %w[Snack Cookie],
       description: <<~TEXT.chomp,
         A delicious cookie recipe.
@@ -57,7 +58,7 @@ RSpec.feature 'User creates a recipe' do
   end
 
   def user_sees_recipe(recipe_data)
-    %i[name yield prep_time cook_time description].each { |field| expect_simple_text(field) }
+    %i[name yield prep_time cook_time total_time description].each { |field| expect_simple_text(field) }
     %i[ingredients directions].each { |field| expect_complex_text(field) }
     expect(recipe_show_page.recipe_categories.map(&:text)).to eq(recipe_data[:categories].sort_by(&:downcase))
   end

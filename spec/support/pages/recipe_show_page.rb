@@ -5,6 +5,7 @@ class RecipeShowPage < BasePage
   element :recipe_yield, '[itemprop="recipeYield"]'
   element :recipe_prep_time, '[itemprop="prepTime"]'
   element :recipe_cook_time, '[itemprop="cookTime"]'
+  element :recipe_total_time, '[itemprop="totalTime"]'
   elements :recipe_categories, '[itemprop="recipeCategory"]'
   element :recipe_description, '[itemprop="description"]'
   elements :recipe_ingredients, '[itemprop="recipeIngredient"]'
