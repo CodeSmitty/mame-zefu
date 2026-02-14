@@ -1,11 +1,11 @@
 <div class="form-container lg:w-auto flex flex-col-reverse md:flex-row-reverse lg:flex-row lg:mx-auto justify-center mt-20">
   <%= render @recipe %>
-  <div class="edit-delete-container shadow-xl lg:shadow-none fixed top-22 lg:top-40 bg-black lg:bg-transparent w-full lg:w-auto lg:bg-none inset-x-0 mx-auto flex flex-row justify-center gap-2 lg:flex-col lg:left-auto lg:transform-none md:right-0 lg:right-[calc(max(2rem,(100vw-min(100vw,53rem))/2))] xl:right-[calc(max(2rem,(100vw-min(100vw,64rem))/2))]">
-        <%= link_to edit_recipe_path(@recipe), class: "inline-flex items-center rounded-lg bg-transparent lg:bg-white border-none lg:border-1 lg:border-secondary hover:bg-secondary py-1 px-1 text-secondary hover:text-white inline-block font-medium cursor-pointer", aria: { label: "Edit recipe" } do %>
+  <div class="pt-0 lg:pt-4 edit-delete-container shadow-xl lg:shadow-none fixed top-22 lg:top-28 bg-black w-full inset-x-0 mx-auto flex flex-row justify-center gap-2">
+        <%= link_to edit_recipe_path(@recipe), class: "inline-flex items-center rounded-lg bg-transparent border-none hover:bg-secondary py-1 px-1 text-secondary hover:text-white inline-block font-medium cursor-pointer", aria: { label: "Edit recipe" } do %>
           <%= render_icon "micro/pencil_square", classes: "me-0" %>
           <span>Edit</span>
         <% end %>
-        <%= button_to recipe_path(@recipe), method: :delete, data: { turbo_confirm: "Are you sure?" }, aria: { label: "Delete recipe" }, class: "inline-flex rounded-lg bg-transparent lg:bg-white border-none lg:border-1 lg:border-secondary items-center py-1 px-1 hover:bg-secondary text-secondary hover:text-white inline-block font-medium cursor-pointer" do %>
+        <%= button_to recipe_path(@recipe), method: :delete, data: { turbo_confirm: "Are you sure?" }, aria: { label: "Delete recipe" }, class: "inline-flex rounded-lg bg-transparent border-none items-center py-1 px-1 hover:bg-secondary text-secondary hover:text-white inline-block font-medium cursor-pointer" do %>
           <%= render_icon "micro/trash", classes: "me-0" %>
           <span>Delete</span>
         <% end %>
