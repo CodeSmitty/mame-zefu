@@ -1,7 +1,7 @@
 <div id="<%= dom_id recipe %>">
-  <div class="flex flex-col w-full lg:min-w-min lg:w-8/12 mx-auto p-0 lg:p-8">
-    <div class="flex flex-col lg:flex-row gap-6 mx-auto w-full break-words">
-      <div class="w-full">
+  <div class="flex flex-col w-full md:w-9/12 lg:min-w-min lg:w-8/12 mx-auto p-0 lg:p-8 max-w-full overflow-x-hidden">
+    <div class="flex flex-col lg:flex-row break-words">
+      <div>
         <% if recipe.image.attached? %>
           <div
             style="background-image: url('<%= url_for(recipe.image) %>'); background-size: cover; background-position: center;"
@@ -13,7 +13,7 @@
             class="relative h-100 flex flex-col justify-end mb-4">
         <% end %>
           <h1 class="flex flex-row flex-wrap lg:flex-nowrap gap-x-4 lg:gap-x-2 text-white bg-black/70 py-2 pl-4">
-            <strong class="text-2xl font-small w-full lg:w-auto whitespace-nowrap" itemprop="name"><%= recipe.name %></strong>
+            <strong class="text-2xl font-small lg:w-auto" itemprop="name"><%= recipe.name %></strong>
             <span class="lg:mr-0">
               <button
                 type="button"
@@ -44,12 +44,12 @@
             </span>
           </h1>
         </div>
-        <div class="flex lg:flex-row flex-col flex-nowrap w-full gap-0 lg:gap-4 text-lg pl-2">
+        <div class="flex lg:flex-row flex-col flex-nowrap gap-0 lg:gap-4 text-lg pl-2">
           <%= render partial: "recipes/helpers/prep", locals: { itemprop: "recipeYield", label: "Yield", value: recipe.yield } %>
           <%= render partial: "recipes/helpers/prep", locals: { itemprop: "prepTime", label: "Prep Time", value: recipe.prep_time } %>
           <%= render partial: "recipes/helpers/prep", locals: { itemprop: "cookTime", label: "Cook Time", value: recipe.cook_time } %>
         </div>
-        <div class="flex flex-row flex-wrap justify-start p-4">
+        <div class="flex flex-row flex-wrap p-2 lg:p-0">
           <% recipe.category_names.sort_by(&:downcase).each do |category| %>
             <div class="py-1">
               <p
@@ -59,7 +59,7 @@
           <% end %>
         </div>
         <% if recipe.description.present? %>
-          <div class="p-4 lg:p-2">
+          <div class="p-2">
             <div class="my-5" itemprop="description">
               <%= simple_format(recipe.description) %>
             </div>
@@ -71,12 +71,12 @@
           </p>
           <% if recipe.ingredients.present? %>
             <% recipe.ingredients.split(/\n{2,}/).each do |list| %>
-              <div class="mb-3 p-4">
-                <ul data-controller="list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-2 gap-y-1">
+              <div class="mb-3 p-0">
+                <ul data-controller="list" class="columns-1 lg:columns-2 gap-x-2 gap-y-2 px-4">
                   <% list.split("\n").each do |item| %>
                     <li
                       data-action="click->list#strike"
-                      class="break-words leading-snug"
+                      class="break-words leading-snug py-1"
                       itemprop="recipeIngredient"><%= item %></li>
                   <% end %>
                 </ul>
