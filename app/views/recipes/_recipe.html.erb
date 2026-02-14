@@ -44,7 +44,7 @@
             </span>
           </h1>
         </div>
-        <div class="flex lg:flex-row flex-col flex-nowrap gap-0 lg:gap-4 text-lg pl-2">
+        <div class="flex lg:flex-row flex-col flex-nowrap gap-0 lg:gap-4 text-lg">
           <%= render partial: "recipes/helpers/prep", locals: { itemprop: "recipeYield", label: "Yield", value: recipe.yield } %>
           <%= render partial: "recipes/helpers/prep", locals: { itemprop: "prepTime", label: "Prep Time", value: recipe.prep_time } %>
           <%= render partial: "recipes/helpers/prep", locals: { itemprop: "cookTime", label: "Cook Time", value: recipe.cook_time } %>
@@ -59,20 +59,18 @@
           <% end %>
         </div>
         <% if recipe.description.present? %>
-          <div class="p-2">
+          <div class="p-1">
             <div class="my-5" itemprop="description">
               <%= simple_format(recipe.description) %>
             </div>
           </div>
         <% end %>
         <div class="mx-auto">
-          <p class="my-5 p-3">
-            <strong class="block font-small mb-1">Ingredients</strong>
-          </p>
+          <h2 class="text-2xl font-semibold mt-8 mb-2">Ingredients</h2>
           <% if recipe.ingredients.present? %>
             <% recipe.ingredients.split(/\n{2,}/).each do |list| %>
               <div class="mb-3 p-0">
-                <ul data-controller="list" class="columns-1 lg:columns-2 gap-x-2 gap-y-2 px-4">
+                <ul data-controller="list" class="list-inside space-y-1 mb-8 columns-1 lg:columns-2 gap-x-2 gap-y-2 px-4">
                   <% list.split("\n").each do |item| %>
                     <li
                       data-action="click->list#strike"
@@ -86,13 +84,11 @@
         </div>
       </div>
     </div>
-    <div class="w-full lg:w-3/4 flex flex-col text-lg p-5">
-      <p class="my-5">
-        <strong class="block font-small mb-1">Directions</strong>
-      </p>
+    <div class="w-full lg:w-3/4 flex flex-col">
+      <h2 class="text-2xl font-semibold mt-8 mb-2">Directions</h2>
       <% if recipe.directions.present? %>
         <% recipe.directions.split(/\n{3,}/).each do |list| %>
-          <ol data-controller="list" class="mb-3" itemprop="recipeInstructions">
+          <ul data-controller="list" class="list-inside space-y-1 mb-8 px-4" itemprop="recipeInstructions">
             <% list.split("\n\n").each do |item| %>
               <li data-list-target="item" data-action="click->list#focus" class="mb-3"><%= item %></li>
             <% end %>
