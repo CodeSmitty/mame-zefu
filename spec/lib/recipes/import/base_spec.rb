@@ -14,6 +14,7 @@ RSpec.describe Recipes::Import::Base do
       yield: '4 servings',
       prep_time: '30',
       cook_time: '60',
+      total_time: '90',
       category_names: %w[Main Italian],
       description: 'A test recipe',
       ingredients: 'Ingredient 1',

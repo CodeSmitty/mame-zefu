@@ -3,6 +3,7 @@ class RecipeForm < SitePrism::Section
   element :yield_field, '[name="recipe[yield]"]'
   element :prep_time_field, '[name="recipe[prep_time]"]'
   element :cook_time_field, '[name="recipe[cook_time]"]'
+  element :total_time_field, '[name="recipe[total_time]"]'
   element :category_select, '[name="recipe[category_names][]"]'
   element :description_field, '[name="recipe[description]"]'
   element :ingredients_field, '[name="recipe[ingredients]"]'
@@ -11,7 +12,7 @@ class RecipeForm < SitePrism::Section
   element :rating_container, '#recipe_rating'
   element :save_button, 'button', text: 'Save'
 
-  TEXT_FIELDS = %i[name yield prep_time cook_time description ingredients directions notes].freeze
+  TEXT_FIELDS = %i[name yield prep_time cook_time total_time description ingredients directions notes].freeze
 
   TEXT_FIELDS.each do |field|
     define_method("#{field}_value=") do |value|
