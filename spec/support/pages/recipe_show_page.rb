@@ -10,6 +10,6 @@ class RecipeShowPage < BasePage
   element :recipe_description, '[itemprop="description"]'
   elements :recipe_ingredients, '[itemprop="recipeIngredient"]'
   elements :recipe_directions, '[itemprop="recipeInstructions"] li'
-  element :edit_button, :link, 'Edit'
-  element :delete_button, :button, 'Delete'
+  element :edit_button, '[aria-label="Edit recipe"]'
+  element :delete_button, '[aria-label="Delete recipe"]'
 end
