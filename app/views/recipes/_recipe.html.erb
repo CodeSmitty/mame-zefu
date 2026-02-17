@@ -13,11 +13,12 @@
             class="relative h-100 flex flex-col justify-end mb-4">
         <% end %>
           <h1 class="relative flex flex-wrap items-center gap-x-2 gap-y-2 text-white bg-black/70 py-2 pl-4 pr-12">
-            <strong class="text-2xl font-small break-words flex-1 min-w-0" itemprop="name"><%= recipe.name %></strong>
+            <strong class="text-2xl break-words flex-1 min-w-0" itemprop="name"><%= recipe.name %></strong>
             <span class="absolute top-2 right-2 flex items-center gap-2">
               <button
                 type="button"
                 class="btn btn-xs text-black hover:cursor-pointer"
+                aria-label="<%= recipe.is_favorite ? "Remove from favorites" : "Add to favorites" %>"
                 data-controller="toggle-favorite"
                 data-toggle-favorite-target="button"
                 data-toggle-favorite-url-value="<%= toggle_favorite_recipe_path(recipe) %>"
@@ -34,13 +35,13 @@
           </h1>
         </div>
         <% if recipe.rating.present? %>
-          <div class="mb-2 flex flex-row flex-wrap items-center gap-0.5">
+          <div class="mb-2 flex flex-row flex-wrap items-center gap-0.5" aria-label="Rating: <%= recipe.rating %> out of 5">
             <% recipe.rating.to_i.times do %>
               <%= render_icon "mini/star", classes: "text-yellow-300" %>
             <% end %>
           </div>
         <% end %>
-        <div class="flex flex-wrap lg:flex-row flex-col w-full gap-0 lg:gap-4 text-lg">
+        <div class="flex lg:flex-row flex-col w-full gap-0 lg:gap-4 text-lg">
           <%= render partial: "recipes/helpers/prep", locals: { itemprop: "recipeYield", label: "Yield", value: recipe.yield } %>
           <%= render partial: "recipes/helpers/prep", locals: { itemprop: "prepTime", label: "Prep Time", value: recipe.prep_time } %>
           <%= render partial: "recipes/helpers/prep", locals: { itemprop: "cookTime", label: "Cook Time", value: recipe.cook_time } %>
