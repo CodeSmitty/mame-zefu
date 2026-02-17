@@ -12,9 +12,9 @@
             style="background-image: url('<%= asset_path('placeholder.jpg') %>'); background-size: cover; background-position: center;"
             class="relative h-100 flex flex-col justify-end mb-4">
         <% end %>
-          <h1 class="flex flex-row flex-wrap lg:flex-nowrap gap-x-4 lg:gap-x-2 text-white bg-black/70 py-2 pl-4">
-            <strong class="text-2xl font-small lg:w-auto" itemprop="name"><%= recipe.name %></strong>
-            <span class="lg:mr-0">
+          <h1 class="relative flex flex-wrap items-center gap-x-2 gap-y-2 text-white bg-black/70 py-2 pl-4 pr-12">
+            <strong class="text-2xl font-small break-words flex-1 min-w-0" itemprop="name"><%= recipe.name %></strong>
+            <span class="absolute top-2 right-2 flex items-center gap-2">
               <button
                 type="button"
                 class="btn btn-xs text-black hover:cursor-pointer"
@@ -25,17 +25,6 @@
                 data-toggle-favorite-heart-value='<%= render_icon "mini/heart", classes: "text-rose-600" %>'
                 data-toggle-favorite-empty-heart-value='<%= render_icon "mini/empty_heart", classes: "text-rose-600" %>'>
               </button>
-            </span>
-            <% if recipe.rating.present? %>
-              <div class="mb-2 flex flex-row flex-nowrap mx-5">
-                <div class="flex flex-row items-center gap-0.5">
-                  <% recipe.rating.to_i.times do %>
-                    <%= render_icon "mini/star", classes: "text-yellow-300" %>
-                  <% end %>
-                </div>
-              </div>
-            <% end %>
-            <span class="ml-auto pr-4">
               <% if recipe.source.present? %>
                 <%= link_to recipe.source, target: "_blank", rel: "noopener" do %>
                   <%= render_icon "mini/link" %>
@@ -44,7 +33,14 @@
             </span>
           </h1>
         </div>
-        <div class="flex lg:flex-row flex-col flex-nowrap gap-0 lg:gap-4 text-lg">
+        <% if recipe.rating.present? %>
+          <div class="mb-2 flex flex-row flex-wrap items-center gap-0.5">
+            <% recipe.rating.to_i.times do %>
+              <%= render_icon "mini/star", classes: "text-yellow-300" %>
+            <% end %>
+          </div>
+        <% end %>
+        <div class="flex flex-wrap lg:flex-row flex-col w-full gap-0 lg:gap-4 text-lg">
           <%= render partial: "recipes/helpers/prep", locals: { itemprop: "recipeYield", label: "Yield", value: recipe.yield } %>
           <%= render partial: "recipes/helpers/prep", locals: { itemprop: "prepTime", label: "Prep Time", value: recipe.prep_time } %>
           <%= render partial: "recipes/helpers/prep", locals: { itemprop: "cookTime", label: "Cook Time", value: recipe.cook_time } %>
@@ -61,7 +57,7 @@
         </div>
         <% if recipe.description.present? %>
           <div class="p-1">
-            <div class="my-5" itemprop="description">
+            <div class="my-5 italic text-slate-600" itemprop="description">
               <%= simple_format(recipe.description) %>
             </div>
           </div>
@@ -97,10 +93,8 @@
         <% end %>
       <% end %>
       <% if recipe.notes.present? %>
-        <p class="my-5">
-          <strong class="block font-small mb-1">Notes</strong>
-        </p>
-        <div class="mb-3">
+        <h2 class="text-2xl font-semibold mt-8 mb-2">Notes</h2>
+        <div class="mb-3 px-4">
           <% recipe.notes.split(/\n{2,}/).each do |note| %>
             <p class="mb-3">
               <%= note %>
