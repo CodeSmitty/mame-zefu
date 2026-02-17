@@ -73,6 +73,12 @@ textarea,
 }
 
 @media (max-width: 640px) {
+  input,
+  textarea,
+  .ts-control {
+    font-size: 16px;
+  }
+
   .object-center-10 {
     object-position: center 80%;
   }
