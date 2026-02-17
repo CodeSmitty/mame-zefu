@@ -10,7 +10,6 @@ class RecipeForm < SitePrism::Section
   element :directions_field, '[name="recipe[directions]"]'
   element :notes_field, '[name="recipe[notes]"]'
   element :rating_container, '#recipe_rating'
-  element :save_button, 'button', text: 'Save'
 
   TEXT_FIELDS = %i[name yield prep_time cook_time total_time description ingredients directions notes].freeze
 
@@ -37,14 +36,5 @@ class RecipeForm < SitePrism::Section
       setter = "#{field}_value="
       send(setter, value) if respond_to?(setter)
     end
-  end
-
-  def submit_form
-    save_button.click
-  end
-
-  def save_recipe(recipe_data)
-    fill_form(recipe_data)
-    submit_form
   end
 end

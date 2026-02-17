@@ -1,5 +1,5 @@
 
-<%= form_with(model: recipe, class: "contents") do |form| %>
+<%= form_with(model: recipe, class: "contents", id: "recipe_form") do |form| %>
   <% if recipe.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
       <h2><%= pluralize(recipe.errors.count, "error") %> prohibited this recipe from being saved:</h2>
@@ -110,10 +110,5 @@
     </div>
   </div>
 
-  <div class="inline relative">
-    <%= form.hidden_field :source %>
-    <%= button_tag(class: "inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer") do %>
-      <%= render_icon "micro/document_check", classes: "me-1" %> Save
-    <% end %>
-  </div>
+  <%= form.hidden_field :source %>
 <% end %>

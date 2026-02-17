@@ -1,4 +1,4 @@
-<div class="mx-auto md:w-2/3 w-full">
+<div class="mx-auto md:w-2/3 w-full form-container">
   <div class="flex flex-row justify-between items-center">
     <h1 class="font-bold text-4xl text-secondary">Import Recipe</h1>
     <% if @recipe.source.present? %>
@@ -9,8 +9,13 @@
   </div>
 
   <%= render "form", recipe: @recipe %>
+</div>
 
-  <%= link_to 'javascript:history.back()', class: "inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary inline-block font-medium cursor-pointer" do %>
+<div class="pt-0 lg:pt-4 lg:px-8 edit-delete-container shadow-xl lg:shadow-none fixed bottom-0 lg:static bg-black lg:bg-transparent w-screen lg:w-8/12 inset-x-0 lg:inset-auto mx-0 lg:mx-auto flex flex-row justify-center lg:justify-start gap-2 z-50 lg:z-auto">
+  <%= button_tag(form: "recipe_form", class: "inline-flex items-center rounded-lg py-2 px-3 bg-transparent border border-transparent text-white hover:text-secondary font-medium cursor-pointer lg:bg-white lg:border-secondary lg:text-secondary lg:hover:bg-secondary lg:hover:text-white") do %>
+    <%= render_icon "micro/document_check", classes: "me-1" %> Save
+  <% end %>
+  <%= link_to 'javascript:history.back()', class: "inline-flex items-center rounded-lg py-2 px-3 bg-transparent border border-transparent text-white hover:text-secondary font-medium cursor-pointer lg:bg-white lg:border-secondary lg:text-secondary lg:hover:bg-secondary lg:hover:text-white" do %>
     <%= render_icon "micro/arrow_uturn_left", classes: "me-1" %> Back
   <% end %>
 </div>
