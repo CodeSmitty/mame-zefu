@@ -51,7 +51,7 @@ RSpec.feature 'User creates a recipe' do
   scenario 'successfully' do
     home_page.new_recipe_link.click
 
-    new_recipe_page.recipe_form.save_recipe(recipe_data)
+    new_recipe_page.save_recipe(recipe_data)
 
     expect(home_page).to have_content('Recipe was successfully created.')
     user_sees_recipe(recipe_data)
