@@ -21,5 +21,38 @@ module Recipes
       water
       oil
     ].freeze
+
+    VOLUME_UNITS = {
+      'tsp' => 1,
+      'tspn' => 1,
+      'teaspoon' => 1,
+      'teaspoons' => 1,
+      'tbsp' => 3,
+      'tablespoon' => 3,
+      'tablespoons' => 3,
+      'cup' => 48,
+      'cups' => 48,
+      'pint' => 96,
+      'pints' => 96,
+      'quart' => 192,
+      'quarts' => 192,
+      'gallon' => 768,
+      'gallons' => 768
+    }.freeze
+
+    VOLUME_ORDER = %w[tsp tbsp cup pint quart gallon].freeze
+
+    WEIGHT_UNITS = {
+      'gram' => 1,
+      'grams' => 1,
+      'kilogram' => 1000,
+      'kilograms' => 1000,
+      'pound' => 453.59237,
+      'pounds' => 453.59237,
+      'ounce' => 28.3495,
+      'ounces' => 28.3495
+    }.freeze
+
+    WEIGHT_ORDER = %w[gram kilogram ounce pound].freeze
   end
 end

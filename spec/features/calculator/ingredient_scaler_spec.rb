@@ -48,17 +48,18 @@ RSpec.describe 'Ingredient Scaler' do
     let(:parsed_ingredients) do
       [
         { original: '1 cup flour', quantity: Fractional.new('1/1'), unit: 'cup', ingredient: 'flour' },
-        { original: '2 tablespoons butter', quantity: Fractional.new('2/1'), unit: 'tablespoons', ingredient: 'butter' },
+        { original: '2 tablespoons butter', quantity: Fractional.new('2/1'), unit: 'tablespoons',
+          ingredient: 'butter' },
         { original: 'A pinch of salt', quantity: nil, unit: nil, ingredient: 'A pinch of salt' }
       ]
     end
 
     it 'maps through parsed_ingredients and scales each one' do
       results = scaled_results
-      
+
       expect(results).to be_an(Array)
       expect(results.length).to eq(3)
-      
+
       expect(results[0][:scaled_quantity]).to eq('2/1')
       expect(results[0][:scaled_description]).to eq('2/1 cup flour')
       expect(results[0][:scale_applied]).to be true

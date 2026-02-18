@@ -5,7 +5,7 @@ module Recipes
   class IngredientScaler
     include IngredientConstants
 
-    def scale_ingredients(parsed_ingredients, multiplier = 2)
+    def scale_ingredients(parsed_ingredients, multiplier)
       parsed_ingredients.map do |parsed|
         scale_ingredient(parsed, multiplier)
       end
@@ -28,7 +28,7 @@ module Recipes
     end
 
     def scale_with_logic(parsed, multiplier) # rubocop:disable Metrics/MethodLength
-      original_quantity = parsed[:quantity] || 1
+      original_quantity = parsed[:quantity] ? parsed[:quantity].to_r : 1
       scaled_quantity = original_quantity * multiplier
 
       fraction_quantity = Fractional.new(scaled_quantity)
