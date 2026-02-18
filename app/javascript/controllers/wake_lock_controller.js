@@ -57,7 +57,6 @@ export default class extends Controller {
 
       // Save preference
       localStorage.setItem("wakeLock", "true")
-
     } catch (err) {
       console.error(`Failed to acquire wake lock: ${err.name}, ${err.message}`)
       this.checkboxTarget.checked = false
@@ -73,7 +72,9 @@ export default class extends Controller {
         // Clear preference
         localStorage.removeItem("wakeLock")
       } catch (err) {
-        console.error(`Failed to release wake lock: ${err.name}, ${err.message}`)
+        console.error(
+          `Failed to release wake lock: ${err.name}, ${err.message}`,
+        )
       }
     }
   }
