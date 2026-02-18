@@ -23,18 +23,22 @@ export default class extends Controller {
     }
 
     // Re-acquire wake lock when page becomes visible again
+    this.boundHandleVisibilityChange =
+      this.boundHandleVisibilityChange || this.handleVisibilityChange.bind(this)
     document.addEventListener(
       "visibilitychange",
-      this.handleVisibilityChange.bind(this),
+      this.boundHandleVisibilityChange,
     )
   }
 
   disconnect() {
     this.releaseWakeLock()
-    document.removeEventListener(
-      "visibilitychange",
-      this.handleVisibilityChange.bind(this),
-    )
+    if (this.boundHandleVisibilityChange) {
+      document.removeEventListener(
+        "visibilitychange",
+        this.boundHandleVisibilityChange,
+      )
+    }
   }
 
   async toggle() {
@@ -54,28 +58,28 @@ export default class extends Controller {
       // Save preference
       localStorage.setItem("wakeLock", "true")
 
-      // this.wakeLock.addEventListener("release", () => {
-      //   console.log("Wake lock released")
-      // })
-
-      // console.log("Wake lock acquired")
     } catch (err) {
       console.error(`Failed to acquire wake lock: ${err.name}, ${err.message}`)
+      this.checkboxTarget.checked = false
     }
   }
 
-  releaseWakeLock() {
+  async releaseWakeLock() {
     if (this.wakeLock) {
-      this.wakeLock.release()
-      this.wakeLock = null
+      try {
+        await this.wakeLock.release()
+        this.wakeLock = null
 
-      // Clear preference
-      localStorage.removeItem("wakeLock")
+        // Clear preference
+        localStorage.removeItem("wakeLock")
+      } catch (err) {
+        console.error(`Failed to release wake lock: ${err.name}, ${err.message}`)
+      }
     }
   }
 
   handleVisibilityChange() {
-    if (this.wakeLock !== null && document.visibilityState === "visible") {
+    if (this.checkboxTarget.checked && document.visibilityState === "visible") {
       // Re-acquire wake lock when page becomes visible again
       this.requestWakeLock()
     }
