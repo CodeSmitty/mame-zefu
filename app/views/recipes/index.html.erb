@@ -7,11 +7,11 @@
               <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                 <%= image_tag "recipe.png", class: "w-7/12" %>
               </div>
-              <%= text_field_tag :query, params[:query], data: { action: "input->filter#throttledSubmit" }, placeholder: " ", class: "w-full block rounded-lg px-2.5 pb-2.5 ps-10 text-sm text-gray-900 bg-gray-50 border border-gray-50 appearance-none focus:outline-hidden focus:ring-0 focus:border-secondary peer", autocomplete: 'off', autofocus: 'true', type: 'search', onfocus: "this.setSelectionRange(this.value.length,this.value.length);" %>
+              <%= text_field_tag :query, params[:query], data: { action: "input->filter#throttledSubmit" }, placeholder: " ", class: "w-full block rounded-lg px-2.5 pb-2.5 ps-10 text-sm text-gray-900 bg-gray-50 border border-gray-50 appearance-none focus:outline-hidden focus:ring-0 focus:border-secondary peer", autocomplete: 'off', type: 'search', onfocus: "this.setSelectionRange(this.value.length,this.value.length);" %>
               <label class="absolute text-sm ml-2 bg-transparent text-gray-500 duration-300 transform -translate-y-2 -translate-x-1 scale-75 top-2 z-10 origin-[0] bg-gray-50 px-8 peer-focus:bg-gray-50 peer-focus:pb-0 peer-focus:px-2 peer-focus:text-tertiary peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-focus:mx-7 peer-placeholder-shown:top-5 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:rtl:translate-x-2 peer-focus:rtl:left-auto start-1">Search</label>
           </div>
           <div>
-            <%= select_tag(:category_names, options_from_collection_for_select(current_user.categories, :name, :name, params[:category_names]), { data: { controller: "tom-select", 'tom-select-create-value': false, action: "change->filter#submit" }, multiple: true, placeholder: "Select Categories" }) %>
+            <%= select_tag(:category_names, options_for_select(category_filter_options, params[:category_names]), { data: { controller: "tom-select", 'tom-select-create-value': false, action: "change->filter#submit" }, multiple: true, placeholder: "Select Categories" }) %>
           </div>
           <div class="mt-2 flex justify-end w-full">
             <%= link_to archive_download_recipes_path, data: { turbo: false }, class: "inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary font-medium cursor-pointer" do %>

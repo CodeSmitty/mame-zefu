@@ -20,7 +20,7 @@ textarea,
   box-shadow: 1px 2px 4px 1px rgba(206, 205, 205, 0.94) !important;
 }
 
-nav {
+/* nav, .edit-delete-container {
   background: rgb(43, 47, 42);
   background: radial-gradient(
     circle,
@@ -28,7 +28,7 @@ nav {
     rgba(43, 48, 42, 1) 0%,
     rgba(0, 0, 0, 1) 52%
   );
-}
+} */
 
 .object-center-10 {
   object-position: 5% 60%;
@@ -73,6 +73,12 @@ nav {
 }
 
 @media (max-width: 640px) {
+  input,
+  textarea,
+  .ts-control {
+    font-size: 16px;
+  }
+
   .object-center-10 {
     object-position: center 80%;
   }

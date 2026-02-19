@@ -1,8 +1,8 @@
-<nav class="w-full z-20 top-0 fixed">
+<nav class="w-full z-20 top-0 fixed bg-black">
   <div class="max-w-(--breakpoint-xl) flex flex-wrap items-center justify-between mx-auto p-2">
    <div class="flex items-center">
       <%= link_to root_path, class: "group inline-block mx-4 p-[4px] rounded-full flex flex-row flex-nowrap items-center text-gray-300" do %>
-        <div class="size-20 rounded-full bg-transparent flex items-center justify-center">
+        <div class="size-10 lg:size-20 mx-auto rounded-full bg-transparent flex items-center justify-center">
           <%= image_tag "Mamezefu-02.png", class: "h-full w-full object-contain rounded-full rounded-full border-2 border-gray-200 group-hover:border-secondary transform duration-500" %>
         </div>
         <span class="font-semibold relative ml-2 group-hover:text-secondary transform duration-500">MameZefu</span>
@@ -59,6 +59,22 @@
               <span class="absolute bottom-0 left-3 right-3 h-0.5 bg-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
             <% end %>
           </li>
+          <% if current_user&.is_admin? %>
+            <li>
+              <%= link_to admin_root_path, class: "group relative block flex items-center mt-3 px-3 text-gray-200" do %>
+                <span class="flex items-center">
+                  <%= render_icon "mini/key", classes: "mx-1 transition-colors duration-300 group-hover:text-secondary" %>
+                  <span class="relative overflow-hidden">
+                    <span class="block transition-colors duration-300 group-hover:text-transparent">Admin</span>
+                    <span class="absolute inset-0 text-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 flex items-center">
+                      Admin
+                    </span>
+                  </span>
+                </span>
+                <span class="absolute bottom-0 left-3 right-3 h-0.5 bg-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+              <% end %>
+            </li>
+          <% end %>
           <li>
             <%= button_to sign_out_path, method: :delete, class: "group relative inline-flex lg:border-l-2 border-gray-200 text-stroke-3 stroke-gray-200 text-gray-200 items-center mt-3 px-3" do %>
               <span class="relative z-10 flex items-center">

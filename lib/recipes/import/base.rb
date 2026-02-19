@@ -11,6 +11,7 @@ module Recipes
         yield
         prep_time
         cook_time
+        total_time
         category_names
         description
         ingredients

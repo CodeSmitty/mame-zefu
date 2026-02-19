@@ -1,97 +1,108 @@
-<div id="<%= dom_id recipe %>" class="flex flex-col-reverse lg:flex-row">
-  <div class="lg:w-2/3 w-full">
-    <% if recipe.rating.present? %>
-      <div class="mb-2 flex flex-row flex-nowrap justify-between w-1/5">
-        <div class="flex flex-row">
-          <% recipe.rating.to_i.times do %>
-            <%= render_icon "mini/star", classes: "text-yellow-300" %>
-          <% end %>
-        </div>
-      </div>
-    <% end %>
-    <h1 class="flex flex-row flex-nowrap gap-x-1">
-      <strong class="text-3xl font-small"><%= recipe.name %></strong>
+<div id="<%= dom_id recipe %>">
+  <div class="flex flex-col w-full md:w-9/12 lg:min-w-min lg:w-8/12 mx-auto p-0 lg:p-8 max-w-full overflow-x-hidden">
+    <div class="flex flex-col lg:flex-row break-words">
       <div>
-        <button
-          type="button"
-          class="btn btn-xs text-black"
-          data-controller="toggle-favorite"
-          data-toggle-favorite-target="button"
-          data-toggle-favorite-url-value="<%= toggle_favorite_recipe_path(recipe) %>"
-          data-toggle-favorite-is-favorite-value="<%= recipe.is_favorite %>"
-          data-toggle-favorite-heart-value='<%= render_icon "mini/heart", classes: "text-rose-600" %>'
-          data-toggle-favorite-empty-heart-value='<%= render_icon "mini/empty_heart", classes: "text-rose-600" %>'>
-        </button>
-      </div>
-      <div class="ml-auto">
-        <% if recipe.source.present? %>
-          <%= link_to recipe.source, target: "_blank", rel: "noopener" do %>
-            <%= render_icon "mini/link" %>
-          <% end %>
+        <% if recipe.image.attached? %>
+          <div
+            style="background-image: url('<%= url_for(recipe.image) %>'); background-size: cover; background-position: center;"
+            class="relative h-100 flex flex-col justify-end mb-4"
+            itemprop="image">
+        <% else %>
+          <div
+            style="background-image: url('<%= asset_path('placeholder.jpg') %>'); background-size: cover; background-position: center;"
+            class="relative h-100 flex flex-col justify-end mb-4">
         <% end %>
-      </div>
-    </h1>
-    <div class="flex flex-row flex-wrap justify-between w-100 py-2">
-      <div class="flex flex-row flex-nowrap justify-between w-100">
-        <% %w[yield prep_time cook_time].each do |field| %>
-          <%= render partial: "recipes/helpers/prep", locals: { value: recipe.send(field), label: field.titleize }, class: "text-center" %>
-        <% end %>
-      </div>
-    </div>
-    <div class="flex flex-row flex-nowrap justify-start">
-      <% recipe.categories.each do |c| %>
-        <div class="py-1">
-          <p class="bg-yellow-50 text-input-label text-xs font-semibold me-2 px-2.5 py-0.5 rounded-full border border-input-label"><%= c.name %></p>
+          <h1 class="relative flex flex-wrap items-center gap-x-2 gap-y-2 text-white bg-black/70 py-2 pl-4 pr-12">
+            <strong class="text-2xl break-words flex-1 min-w-0" itemprop="name"><%= recipe.name %></strong>
+            <span class="absolute top-2 right-2 flex items-center gap-2">
+              <button
+                type="button"
+                class="btn btn-xs text-black hover:cursor-pointer"
+                aria-label="<%= recipe.is_favorite ? "Remove from favorites" : "Add to favorites" %>"
+                data-controller="toggle-favorite"
+                data-toggle-favorite-target="button"
+                data-toggle-favorite-url-value="<%= toggle_favorite_recipe_path(recipe) %>"
+                data-toggle-favorite-is-favorite-value="<%= recipe.is_favorite %>"
+                data-toggle-favorite-heart-value='<%= render_icon "mini/heart", classes: "text-rose-600" %>'
+                data-toggle-favorite-empty-heart-value='<%= render_icon "mini/empty_heart", classes: "text-rose-600" %>'>
+              </button>
+              <% if recipe.source.present? %>
+                <%= link_to recipe.source, target: "_blank", rel: "noopener" do %>
+                  <%= render_icon "mini/link" %>
+                <% end %>
+              <% end %>
+            </span>
+          </h1>
         </div>
-      <% end %>
-    </div>
-    <% if recipe.description.present? %>
-      <p class="my-5">
-        <%= simple_format(recipe.description) %>
-      </p>
-    <% end %>
-    <p class="my-5">
-      <strong class="block font-small mb-1">Ingredients</strong>
-    </p>
-    <% if recipe.ingredients.present? %>
-      <% recipe.ingredients.split(/\n{2,}/).each do |list| %>
-        <ul data-controller="list" class="mb-3">
-          <% list.split("\n").each do |item| %>
-            <li data-action="click->list#strike"><%= item %></li>
-          <% end %>
-        </ul>
-      <% end %>
-    <% end %>
-    <p class="my-5">
-      <strong class="block font-small mb-1">Directions</strong>
-    </p>
-    <% if recipe.directions.present? %>
-      <% recipe.directions.split(/\n{3,}/).each do |list| %>
-        <ol data-controller="list" class="mb-3">
-          <% list.split("\n\n").each do |item| %>
-            <li data-list-target="item" data-action="click->list#focus" class="mb-3"><%= item %></li>
-          <% end %>
-        </ol>
-      <% end %>
-    <% end %>
-    <% if recipe.notes.present? %>
-      <p class="my-5">
-        <strong class="block font-small mb-1">Notes</strong>
-        <% recipe.notes.split(/\n{2,}/) do |note| %>
-          <p class="mb-3">
-            <%= note %>
-          </p>
-        <% end %>
-      </p>
-    <% end %>
-  </div>
-    <div class="w-full flex justify-center lg:justify-end">
-      <% if recipe.image.attached? %>
-        <div class="relative w-full md:w-2/3 lg:w-3/5 mx-auto">
-          <div class="preview-image-container my-5">
-            <%= image_tag recipe.image, class: "preview-image object-contain w-full", id: "preview-image" %>
+        <% if recipe.rating.present? %>
+          <div class="mb-2 flex flex-row flex-wrap items-center gap-0.5" aria-label="Rating: <%= recipe.rating %> out of 5">
+            <% recipe.rating.to_i.times do %>
+              <%= render_icon "mini/star", classes: "text-yellow-300" %>
+            <% end %>
           </div>
+        <% end %>
+        <div class="flex lg:flex-row flex-col w-full gap-0 lg:gap-4 text-lg">
+          <%= render partial: "recipes/helpers/prep", locals: { itemprop: "recipeYield", label: "Yield", value: recipe.yield } %>
+          <%= render partial: "recipes/helpers/prep", locals: { itemprop: "prepTime", label: "Prep Time", value: recipe.prep_time } %>
+          <%= render partial: "recipes/helpers/prep", locals: { itemprop: "cookTime", label: "Cook Time", value: recipe.cook_time } %>
+          <%= render partial: "recipes/helpers/prep", locals: { itemprop: "totalTime", label: "Total Time", value: recipe.total_time } %>
+        </div>
+        <div class="flex flex-row flex-wrap p-2 lg:p-0">
+          <% recipe.category_names.sort_by(&:downcase).each do |category| %>
+            <div class="py-1">
+              <p
+                class="bg-yellow-50 text-input-label text-xs font-semibold me-2 px-2.5 py-0.5 rounded-full border border-input-label"
+                itemprop="recipeCategory"><%= category %></p>
+            </div>
+          <% end %>
+        </div>
+        <% if recipe.description.present? %>
+          <div class="p-1">
+            <div class="my-5 italic text-slate-600" itemprop="description">
+              <%= simple_format(recipe.description) %>
+            </div>
+          </div>
+        <% end %>
+        <div class="mx-auto">
+          <h2 class="text-2xl font-semibold mt-8 mb-2">Ingredients</h2>
+          <% if recipe.ingredients.present? %>
+            <% recipe.ingredients.split(/\n{2,}/).each do |list| %>
+              <div class="mb-3 p-0">
+                <ul data-controller="list" class="list-inside space-y-1 mb-8 columns-1 lg:columns-2 gap-x-2 gap-y-2 px-4">
+                  <% list.split("\n").each do |item| %>
+                    <li
+                      data-action="click->list#strike"
+                      class="break-words leading-snug py-1"
+                      itemprop="recipeIngredient"><%= item %></li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <div class="w-full lg:w-3/4 flex flex-col">
+      <h2 class="text-2xl font-semibold mt-8 mb-2">Directions</h2>
+      <% if recipe.directions.present? %>
+        <% recipe.directions.split(/\n{3,}/).each do |list| %>
+          <ol data-controller="list" class="list-inside space-y-1 mb-8 px-4" itemprop="recipeInstructions">
+            <% list.split("\n\n").each do |item| %>
+              <li data-list-target="item" data-action="click->list#focus" class="mb-3"><%= item %></li>
+            <% end %>
+          </ol>
+        <% end %>
+      <% end %>
+      <% if recipe.notes.present? %>
+        <h2 class="text-2xl font-semibold mt-8 mb-2">Notes</h2>
+        <div class="mb-3 px-4">
+          <% recipe.notes.split(/\n{2,}/).each do |note| %>
+            <p class="mb-3">
+              <%= note %>
+            </p>
+          <% end %>
         </div>
       <% end %>
     </div>
+  </div>
 </div>
