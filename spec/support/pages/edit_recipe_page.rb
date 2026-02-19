@@ -5,7 +5,7 @@ class EditRecipePage < BasePage
 
   section :recipe_form, RecipeForm, '.form-container'
   element :save_button, 'button', text: 'Save'
-  element :cancel_button, :link, 'Cancel'
+  element :back_button, :link, 'Back'
 
   def submit_form
     save_button.click

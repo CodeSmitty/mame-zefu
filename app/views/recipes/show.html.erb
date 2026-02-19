@@ -1,3 +1,8 @@
+<%= render "draft_notice", storage_key: recipe_draft_key(@recipe) do %>
+  <span>This recipe has unsaved changes.</span>
+  <%= link_to "Review", edit_recipe_path(@recipe), class: "text-secondary hover:underline" %>
+<% end %>
+
 <div class="form-container lg:w-auto flex flex-col-reverse md:flex-row-reverse lg:flex-col lg:mx-auto justify-center">
   <%= render @recipe %>
   <div class="pt-0 lg:pt-4 lg:px-8 edit-delete-container shadow-xl lg:shadow-none fixed bottom-0 lg:static bg-black lg:bg-transparent w-screen lg:w-8/12 inset-x-0 lg:inset-auto mx-0 lg:mx-auto flex flex-row justify-center lg:justify-start gap-2">
