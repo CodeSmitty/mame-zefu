@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 import {
   runRecipeDraftMaintenance,
   storageAvailable,
-} from "./recipe_draft_storage"
+} from "controllers/recipe_draft_storage"
 
 export default class extends Controller {
   connect() {
