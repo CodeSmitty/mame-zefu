@@ -5,7 +5,7 @@ import {
   removeRecipeDraft,
   storageAvailable,
   writeRecipeDraft,
-} from "./recipe_draft_storage"
+} from "controllers/recipe_draft_storage"
 
 export default class extends Controller {
   static values = {
