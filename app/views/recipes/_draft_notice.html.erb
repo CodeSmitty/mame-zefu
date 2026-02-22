@@ -1,0 +1,12 @@
+<div
+  hidden
+  data-controller="recipe-draft-notice"
+  data-recipe-draft-notice-target="notice"
+  data-recipe-draft-notice-storage-key-value="<%= storage_key %>"
+  class="flex justify-center text-xs">
+  <div class="flash border py-2 px-3 m-1 font-medium rounded-lg inline-block bg-gray-50 text-gray-500 border-gray-600">
+    <div class="flex items-center justify-between gap-2">
+      <%= yield %>
+    </div>
+  </div>
+</div>

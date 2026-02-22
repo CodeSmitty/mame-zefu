@@ -11,7 +11,9 @@
     <%= stylesheet_link_tag "application", 'data-turbo-track': "reload" %>
     <%= javascript_importmap_tags %>
   </head>
-  <body class="bg-gray-50">
+  <body
+    class="bg-gray-50"
+    data-controller="recipe-draft-maintenance">
     <header>
       <%= render "layouts/navigation" %>
     </header>
