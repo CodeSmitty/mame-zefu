@@ -81,6 +81,9 @@ GEM
       actionview (>= 6.0, < 9.0)
       activerecord (>= 6.0, < 9.0)
       kaminari (~> 1.2.2)
+    anthropic (1.23.0)
+      cgi
+      connection_pool
     argon2 (2.3.3)
       ffi (~> 1.15)
       ffi-compiler (~> 1.0)
@@ -203,6 +206,8 @@ GEM
     marcel (1.1.0)
     matrix (0.4.3)
     method_source (1.1.0)
+    mini_magick (5.3.1)
+      logger
     mini_mime (1.1.5)
     minitest (6.0.1)
       prism (~> 1.5)
@@ -430,6 +435,7 @@ PLATFORMS
 
 DEPENDENCIES
   administrate
+  anthropic
   bootsnap
   bundler-audit
   capybara
@@ -441,6 +447,7 @@ DEPENDENCIES
   fractional
   importmap-rails
   jbuilder
+  mini_magick
   net_tcp_client
   parser (~> 3.3.7.0)
   pg (~> 1.1)

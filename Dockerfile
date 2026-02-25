@@ -19,6 +19,7 @@ WORKDIR /rails
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
         curl \
+        imagemagick \
         libjemalloc2 \
         libvips \
         libpq-dev \

@@ -12,6 +12,11 @@ export default class extends Controller {
     uploadIcon: String,
   }
 
+  connect() {
+    this.updateUi()
+    this.notifyImageFileState()
+  }
+
   previewSrcValueChanged() {
     this.updateUi()
   }
@@ -55,6 +60,8 @@ export default class extends Controller {
     } else {
       this.previewSrcValue = undefined
     }
+
+    this.notifyImageFileState()
   }
 
   deleteButtonClick() {
@@ -64,6 +71,7 @@ export default class extends Controller {
 
       const newInput = this.fileFieldTarget.cloneNode(false)
       this.fileFieldTarget.replaceWith(newInput)
+      this.notifyImageFileState()
     } else if (this.persistedSrcValue) {
       this.deletePersistedImage()
     }
@@ -93,5 +101,10 @@ export default class extends Controller {
     } catch (error) {
       console.error(error)
     }
+  }
+
+  notifyImageFileState() {
+    const hasFile = this.fileFieldTarget.files.length > 0
+    this.dispatch("file-change", { detail: { hasFile } })
   }
 }
