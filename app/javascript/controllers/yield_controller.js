@@ -6,14 +6,15 @@ export default class extends Controller {
   connect() {
     console.log("yield file connected")
     const currentValue = this.yieldTarget.value
+    console.log(this.yieldTarget.innerHTML)
   }
 
   decrement(e) {
     e.preventDefault()
     let current = this.getCurrentValue()
-
+    console.log('current value: ', current)
     let newValue = current / 2
-
+    console.log('new value: ', newValue)
     let min = this.getOriginalValue()
     if (newValue >= 4) {
       let minValue
@@ -26,10 +27,10 @@ export default class extends Controller {
   increment(e) {
     e.preventDefault()
     let current = this.getCurrentValue()
-
+    console.log('current value: ', current)
     if (current) {
       let newValue = current * 2
-
+      console.log('new value: ', newValue)
       let min = this.getOriginalValue()
 
       if ((newValue <= 100) & (newValue >= min)) {

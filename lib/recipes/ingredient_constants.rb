@@ -43,16 +43,21 @@ module Recipes
     VOLUME_ORDER = %w[tsp tbsp cup pint quart gallon].freeze
 
     WEIGHT_UNITS = {
+      'g' => 1,
       'gram' => 1,
       'grams' => 1,
+      'kg' => 1000,
       'kilogram' => 1000,
       'kilograms' => 1000,
       'pound' => 453.59237,
       'pounds' => 453.59237,
+      'lb' => 453.59237,
+      'lbs' => 453.59237,
       'ounce' => 28.3495,
-      'ounces' => 28.3495
+      'ounces' => 28.3495,
+      'oz' => 28.3495
     }.freeze
 
-    WEIGHT_ORDER = %w[gram kilogram ounce pound].freeze
+    WEIGHT_ORDER = %w[g kg oz pound].freeze
   end
 end

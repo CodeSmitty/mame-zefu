@@ -26,12 +26,8 @@ module Recipes
 
     def parse_single_ingredient(ingredient) # rubocop:disable Metrics/MethodLength
       normalized = normalize_fractions(ingredient)
-      Rails.logger.debug { "Parsing ingredient: '#{ingredient}' -> normalized: '#{normalized}'" }
       if ingredient.match(/^\d+\s+\(\s*\d+\s*(oz|lb)\s*\)/i)
         match = ingredient.match(/^(\d+)\s+(.+)/)
-        Rails.logger.debug { "match: #{match.inspect}" }
-        Rails.logger.debug { "match[1]: #{match[1]}" }
-        Rails.logger.debug { "match: #{match}" }
         return {
           original: ingredient,
           quantity: "#{match[1]}/1",

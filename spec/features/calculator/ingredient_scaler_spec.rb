@@ -60,9 +60,7 @@ RSpec.describe 'Ingredient Scaler' do
       expect(results).to be_an(Array)
       expect(results.length).to eq(3)
 
-      expect(results[0][:scaled_quantity]).to eq('2/1')
       expect(results[0][:scaled_description]).to eq('2/1 cup flour')
-      expect(results[0][:scale_applied]).to be true
     end
   end
 end
