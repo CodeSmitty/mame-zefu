@@ -20,7 +20,7 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
   end
 
   def extract_image
-    recipe = Recipes::Extraction.from_upload(params.require(:image))
+    recipe = Recipes::Extraction.from_file(params.require(:image).tempfile.path)
 
     render json: { recipe: }, status: :ok
   rescue ActionController::ParameterMissing

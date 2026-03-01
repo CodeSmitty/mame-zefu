@@ -79,8 +79,8 @@ module Recipes
         }
       }.freeze
 
-      def initialize(image:)
-        @image = image
+      def initialize(image_file:)
+        @image_file = image_file
       end
 
       def recipe
@@ -97,7 +97,7 @@ module Recipes
 
       private
 
-      attr_reader :image
+      attr_reader :image_file
 
       def with_timeout(&)
         Timeout.timeout(timeout_seconds, &)
@@ -143,7 +143,7 @@ module Recipes
       end
 
       def image_source
-        @image_source ||= Image.new(image:).source
+        @image_source ||= Image.new(image_file:).source
       end
 
       def parse_output(response)
