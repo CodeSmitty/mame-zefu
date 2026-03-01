@@ -256,6 +256,46 @@ RSpec.describe 'Recipes' do
     end
   end
 
+  describe 'POST /recipes/extract_image' do
+    let(:extract_result) do
+      {
+        'name' => 'Toast',
+        'ingredients' => ['Bread'],
+        'directions' => ['Toast bread'],
+        'category_names' => ['Breakfast']
+      }
+    end
+    let(:extract_service) { instance_double(Recipes::Extraction, recipe: extract_result) }
+
+    before do
+      allow(ENV).to receive(:[]).and_call_original
+      allow(ENV).to receive(:[]).with('ANTHROPIC_API_KEY').and_return('test-key')
+      allow(Recipes::Extraction).to receive(:new).and_return(extract_service)
+    end
+
+    context 'when unauthenticated' do
+      it 'redirects to login' do
+        post extract_image_recipes_path
+        expect(response).to redirect_to(sign_in_path)
+      end
+    end
+
+    context 'when authenticated' do
+      it 'returns extracted recipe json' do
+        post extract_image_recipes_path(as: user), params: { image: uploaded_image }
+
+        expect(response).to have_http_status(:ok)
+        expect(response.parsed_body).to eq('recipe' => extract_result)
+      end
+
+      it 'returns unprocessable when image is missing' do
+        post extract_image_recipes_path(as: user)
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+    end
+  end
+
   describe 'GET /recipes/archive/download' do
     let(:tmpfile) do
       Tempfile.new('recipes-archive').tap do |tempfile|

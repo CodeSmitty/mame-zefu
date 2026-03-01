@@ -27,14 +27,17 @@
 
   <div
     class="mx-auto my-5 lg:my-2 basis-full relative w-full lg:w-1/2 items-center"
-    data-controller="image"
+    data-controller="<%= ['image', ('recipe-image-extract' if ENV['ANTHROPIC_API_KEY'].present?)].compact.join(' ') %>"
+    data-action="<%= 'image:file-change->recipe-image-extract#imageFileChange' if ENV['ANTHROPIC_API_KEY'].present? %>"
     data-image-delete-url-value="<%= image_recipe_path(recipe) if recipe.image.persisted? %>"
     data-image-preview-src-value="<%= recipe.image_src %>"
     data-image-persisted-src-value="<%= url_for(recipe.image) if recipe.image.persisted? %>"
     data-image-default-src-value="<%= asset_path('placeholder.jpg') %>"
     data-image-delete-icon-value='<%= render "icons/micro/trash", classes: "me-1" %>'
     data-image-cancel-icon-value='<%= render "icons/outline/cancel", classes: "size-4" %>'
-    data-image-upload-icon-value='<%= render "icons/mini/attachment", classes: "me-2" %>'>
+    data-image-upload-icon-value='<%= render "icons/mini/attachment", classes: "me-2" %>'
+    data-recipe-image-extract-url-value="<%= extract_image_recipes_path if ENV['ANTHROPIC_API_KEY'].present? %>"
+    data-recipe-image-extract-sparkles-icon-value='<%= render "icons/mini/sparkles", classes: "me-2" if ENV['ANTHROPIC_API_KEY'].present? %>'>
     <div class="relative flex flex-col-reverse justify-center w-full md:w-10/12 lg:w-full shadow-lg ">
         <button
           type="button"
@@ -51,13 +54,25 @@
         data-action="image#uploadButtonClick:prevent"
         data-image-target="uploadButton">
       </button>
+      <% if ENV['ANTHROPIC_API_KEY'].present? %>
+        <button type="button"
+          class="inline-flex mx-auto rounded-lg py-2 px-3 bg-white text-secondary border border-secondary inline-block font-medium"
+          data-action="recipe-image-extract#extract"
+          data-recipe-image-extract-target="button"
+          disabled>
+        </button>
+      <% end %>
       <%= form.hidden_field :image_src, value: recipe.image_src %>
       <%= form.file_field(
             :image,
             accepts: 'image/*',
             id: "upload-image-input",
             class: "hidden file:mr-4 file:py-2 file:px-4 file:rounded-l-lg file:border-0 file:bg-gray-200 block rounded-lg w-full text-sm text-gray-900 bg-gray-50 border-transparent appearance-none focus:outline-hidden focus:ring-0 focus:border-secondary peer",
-            data: { 'image-target': 'fileField', action: 'change->image#fileFieldChange' }
+            data: {
+              'image-target': 'fileField',
+              'recipe-image-extract-target': 'fileField',
+              action: 'change->image#fileFieldChange'
+            }
           ) %>
     </div>
   </div>

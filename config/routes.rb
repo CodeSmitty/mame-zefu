@@ -23,6 +23,7 @@ Rails.application.routes.draw do
   resources :recipes do
     get 'web_search', on: :collection
     get 'web_result', on: :collection
+    post 'extract_image', on: :collection
     get 'archive/download', on: :collection, action: :download_archive
     get 'archive/upload', on: :collection, action: :upload_archive_form
     post 'archive/upload', on: :collection, action: :upload_archive

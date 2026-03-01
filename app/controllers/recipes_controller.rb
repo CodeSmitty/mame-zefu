@@ -4,7 +4,7 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
   skip_after_action :verify_pundit_authorization, only: %i[
     web_search web_result
     download_archive upload_archive_form upload_archive
-    new create
+    new create extract_image
   ]
 
   def web_search; end
@@ -17,6 +17,17 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
     flash.now[:alert] = 'Unable to import recipe.'
 
     Rails.logger.error("Recipe import error: #{e.class} - #{e.message}. Source: #{uri_from_params}")
+  end
+
+  def extract_image
+    recipe = Recipes::Extraction.from_file(params.require(:image).tempfile.path)
+
+    render json: { recipe: }, status: :ok
+  rescue ActionController::ParameterMissing
+    render json: { error: 'Image is required.' }, status: :unprocessable_content
+  rescue Recipes::Extraction::Error => e
+    Rails.logger.error("Recipe extraction error: #{e.class} - #{e.message}")
+    render json: { error: e.message }, status: :unprocessable_content
   end
 
   # GET /recipes/archive/download
