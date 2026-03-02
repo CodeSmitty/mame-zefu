@@ -4,12 +4,14 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby "3.3.7"
 
 gem "administrate"
+gem "anthropic"
 gem "bootsnap", require: false
 gem "clearance"
 gem "down", "~> 5.0"
 gem "fractional"
 gem "importmap-rails"
 gem "jbuilder"
+gem "mini_magick"
 gem "net_tcp_client"
 gem "parser", "~> 3.3.7.0"
 gem "pg", "~> 1.1"
