@@ -1,6 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe RecipesHelper do
+  describe '#recipe_extraction_enabled?' do
+    it 'delegates to Recipes::Extraction.enabled?' do
+      allow(Recipes::Extraction).to receive(:enabled?).and_return(true)
+
+      expect(helper.recipe_extraction_enabled?).to be(true)
+      expect(Recipes::Extraction).to have_received(:enabled?)
+    end
+  end
+
   describe '#recipe_draft_key' do
     let(:current_user) { create(:user) }
 

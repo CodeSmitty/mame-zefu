@@ -20,11 +20,11 @@
           <li>
             <%= link_to new_recipe_path, class: "group relative block flex items-center mt-3 px-3 text-gray-200" do %>
               <span class="flex items-center">
-                <%= render_icon "mini/plus", classes: "mx-1 transition-colors duration-300 group-hover:text-secondary" %>
-                <span class="relative overflow-hidden">
-                  <span class="block transition-colors duration-300 group-hover:text-transparent">New Recipe</span>
-                  <span class="absolute inset-0 text-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-400 flex items-center justify-start">
-                    New Recipe
+                <%= render_icon "outline/pencil_square", classes: "h-5 w-5 mx-1 transition-colors duration-300 group-hover:text-secondary" %>
+                <span class="relative overflow-hidden whitespace-nowrap">
+                  <span class="block whitespace-nowrap transition-colors duration-300 group-hover:text-transparent">Create</span>
+                  <span class="absolute inset-0 whitespace-nowrap text-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-400 flex items-center justify-start">
+                    Create
                   </span>
                 </span>
               </span>
@@ -34,10 +34,10 @@
           <li>
             <%= link_to web_search_recipes_path, class: "group relative block flex items-center mt-3 px-3 text-gray-200" do %>
               <span class="flex items-center">
-                <%= render_icon "mini/globe_alt", classes: "mx-1 transition-colors duration-300 group-hover:text-secondary" %>
-                <span class="relative overflow-hidden">
-                  <span class="block transition-colors duration-300 group-hover:text-transparent">Import</span>
-                  <span class="absolute inset-0 text-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 flex items-center">
+                <%= render_icon "outline/globe_alt", classes: "h-5 w-5 mx-1 transition-colors duration-300 group-hover:text-secondary" %>
+                <span class="relative overflow-hidden whitespace-nowrap">
+                  <span class="block whitespace-nowrap transition-colors duration-300 group-hover:text-transparent">Import</span>
+                  <span class="absolute inset-0 whitespace-nowrap text-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 flex items-center">
                     Import
                   </span>
                 </span>
@@ -45,13 +45,29 @@
               <span class="absolute bottom-0 left-3 right-3 h-0.5 bg-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
             <% end %>
           </li>
+          <% if recipe_extraction_enabled? %>
+            <li>
+              <%= link_to extraction_recipes_path, class: "group relative block flex items-center mt-3 px-3 text-gray-200" do %>
+                <span class="flex items-center">
+                  <%= render_icon "outline/sparkle", classes: "h-5 w-5 mx-1 transition-colors duration-300 group-hover:text-secondary" %>
+                  <span class="relative overflow-hidden whitespace-nowrap">
+                    <span class="block whitespace-nowrap transition-colors duration-300 group-hover:text-transparent">Extract</span>
+                    <span class="absolute inset-0 whitespace-nowrap text-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 flex items-center">
+                      Extract
+                    </span>
+                  </span>
+                </span>
+                <span class="absolute bottom-0 left-3 right-3 h-0.5 bg-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+              <% end %>
+            </li>
+          <% end %>
           <li>
             <%= link_to archive_upload_recipes_path, class: "group relative block flex items-center mt-3 px-3 text-gray-200" do %>
               <span class="flex items-center">
-                <%= render_icon "mini/arrow_up_tray", classes: "mx-1 transition-colors duration-300 group-hover:text-secondary" %>
-                <span class="relative overflow-hidden">
-                  <span class="block transition-colors duration-300 group-hover:text-transparent">Upload</span>
-                  <span class="absolute inset-0 text-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 flex items-center">
+                <%= render_icon "outline/arrow_up_tray", classes: "h-5 w-5 mx-1 transition-colors duration-300 group-hover:text-secondary" %>
+                <span class="relative overflow-hidden whitespace-nowrap">
+                  <span class="block whitespace-nowrap transition-colors duration-300 group-hover:text-transparent">Upload</span>
+                  <span class="absolute inset-0 whitespace-nowrap text-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 flex items-center">
                     Upload
                   </span>
                 </span>
@@ -63,10 +79,10 @@
             <li>
               <%= link_to admin_root_path, class: "group relative block flex items-center mt-3 px-3 text-gray-200" do %>
                 <span class="flex items-center">
-                  <%= render_icon "mini/key", classes: "mx-1 transition-colors duration-300 group-hover:text-secondary" %>
-                  <span class="relative overflow-hidden">
-                    <span class="block transition-colors duration-300 group-hover:text-transparent">Admin</span>
-                    <span class="absolute inset-0 text-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 flex items-center">
+                  <%= render_icon "outline/key", classes: "h-5 w-5 mx-1 transition-colors duration-300 group-hover:text-secondary" %>
+                  <span class="relative overflow-hidden whitespace-nowrap">
+                    <span class="block whitespace-nowrap transition-colors duration-300 group-hover:text-transparent">Admin</span>
+                    <span class="absolute inset-0 whitespace-nowrap text-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 flex items-center">
                       Admin
                     </span>
                   </span>
@@ -79,11 +95,11 @@
             <%= button_to sign_out_path, method: :delete, class: "group relative inline-flex lg:border-l-2 border-gray-200 text-stroke-3 stroke-gray-200 text-gray-200 items-center mt-3 px-3" do %>
               <span class="relative z-10 flex items-center">
                 <span class="mr-1 transition-all duration-300 group-hover:text-secondary group-hover:stroke-secondary group-hover:scale-110">
-                  <%= render_icon "mini/sign_out", classes: "w-4 h-4" %>
+                  <%= render_icon "outline/arrow_right_start_on_rectangle", classes: "h-5 w-5" %>
                 </span>
-                <span class="relative overflow-hidden">
-                  <span class="block transition-colors duration-300 group-hover:text-transparent">Sign out</span>
-                  <span class="absolute inset-0 text-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 flex items-center">
+                <span class="relative overflow-hidden whitespace-nowrap">
+                  <span class="block whitespace-nowrap transition-colors duration-300 group-hover:text-transparent">Sign out</span>
+                  <span class="absolute inset-0 whitespace-nowrap text-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 flex items-center">
                     Sign out
                   </span>
                 </span>
@@ -93,8 +109,8 @@
         <% else %>
           <li>
             <%= link_to sign_in_path, class: "group relative inline-flex border-l-2 border-gray-200 text-stroke-3 stroke-gray-200 text-gray-200 items-center mt-3 px-3 transform duration-300 hover:text-secondary" do %>
-              <span class="relative z-10 flex items-center transition-colors duration-300 group-hover:text-seoncdary hover:stroke-secondary">
-                <%= render_icon "mini/sign_in", classes: "mr-1 w-4 h-4" %>
+              <span class="relative z-10 flex items-center whitespace-nowrap transition-colors duration-300 group-hover:text-secondary hover:stroke-secondary">
+                <%= render_icon "outline/arrow_right_end_on_rectangle", classes: "h-5 w-5 mr-1" %>
                 Sign In
               </span>
               <span class="absolute bottom-0 left-3 right-3 h-0.5 bg-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>

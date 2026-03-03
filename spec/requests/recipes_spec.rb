@@ -66,6 +66,99 @@ RSpec.describe 'Recipes' do
     end
   end
 
+  describe 'GET /recipes/extraction' do
+    before do
+      allow(Recipes::Extraction).to receive(:enabled?).and_return(true)
+    end
+
+    it 'redirects when unauthenticated' do
+      get extraction_recipes_path
+      expect(response).to redirect_to(sign_in_path)
+    end
+
+    it 'returns 200 when authenticated' do
+      get extraction_recipes_path(as: user)
+      expect(response).to have_http_status(:ok)
+    end
+
+    context 'when extraction is disabled' do
+      before do
+        allow(Recipes::Extraction).to receive(:enabled?).and_return(false)
+      end
+
+      it 'redirects to recipes index' do
+        get extraction_recipes_path(as: user)
+
+        expect(response).to redirect_to(recipes_path)
+      end
+    end
+  end
+
+  describe 'GET /recipes/extraction/result/:token' do
+    let(:token) { 'abc123' }
+
+    before do
+      allow(Recipes::Extraction).to receive(:enabled?).and_return(true)
+    end
+
+    context 'when unauthenticated' do
+      it 'redirects to login' do
+        get extraction_result_recipes_path(token:)
+        expect(response).to redirect_to(sign_in_path)
+      end
+    end
+
+    context 'when authenticated' do
+      context 'when extraction is disabled' do
+        before do
+          allow(Recipes::Extraction).to receive(:enabled?).and_return(false)
+        end
+
+        it 'redirects to recipes index' do
+          get extraction_result_recipes_path(token:, as: user)
+
+          expect(response).to redirect_to(recipes_path)
+        end
+      end
+
+      context 'when token is valid' do
+        let(:recipe_attributes) do
+          {
+            name: 'Toast',
+            ingredients: "Bread\nButter",
+            directions: "Toast bread\nSpread butter",
+            category_names: ['Breakfast']
+          }
+        end
+
+        before do
+          allow(Recipes::Extraction::ResultStore).to receive(:fetch).with(user:, token:).and_return(recipe_attributes)
+        end
+
+        it 'returns 200 and shows extracted recipe page' do
+          get extraction_result_recipes_path(token:, as: user)
+
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to include('Extracted Recipe')
+          expect(response.body).to include('Toast')
+          expect(response.body).to include('Bread')
+        end
+      end
+
+      context 'when token is invalid or expired' do
+        before do
+          allow(Recipes::Extraction::ResultStore).to receive(:fetch).with(user:, token:).and_return(nil)
+        end
+
+        it 'redirects to extraction form' do
+          get extraction_result_recipes_path(token:, as: user)
+
+          expect(response).to redirect_to(extraction_recipes_path)
+        end
+      end
+    end
+  end
+
   describe 'POST /recipes' do
     context 'when user is unauthenticated' do
       it 'redirects to login' do
@@ -253,31 +346,13 @@ RSpec.describe 'Recipes' do
     end
   end
 
-  describe 'POST /recipes/extract' do
-    subject(:post_extract) { post extract_recipes_path(as: user), params: request_params }
-
-    let(:extract_result) do
-      {
-        'name' => 'Toast',
-        'ingredients' => ['Bread'],
-        'directions' => ['Toast bread'],
-        'category_names' => ['Breakfast']
-      }
-    end
-    let(:request_image) { uploaded_image }
-    let(:request_params) { { image: request_image } }
-    let(:uploaded_text_file) do
-      Rack::Test::UploadedFile.new(
-        StringIO.new('not an image'),
-        'text/plain',
-        original_filename: 'not-image.txt'
-      )
-    end
-    let(:uploaded_svg_file) do
-      Rack::Test::UploadedFile.new(
-        StringIO.new('<svg xmlns="http://www.w3.org/2000/svg"><text>Recipe</text></svg>'),
-        'image/svg+xml',
-        original_filename: 'recipe.svg'
+  describe 'POST /recipes/extraction' do
+    let(:extracted_recipe) do
+      Recipe.new(
+        name: 'Toast',
+        ingredients: "Bread\nButter",
+        directions: "Toast bread\nSpread butter",
+        category_names: ['Breakfast']
       )
     end
     let(:oversized_image_tempfile) do
@@ -287,137 +362,159 @@ RSpec.describe 'Recipes' do
         tempfile.rewind
       end
     end
-    let(:oversized_image_file) { Rack::Test::UploadedFile.new(oversized_image_tempfile.path, 'image/jpeg') }
-
-    before do
-      allow(ENV).to receive(:[]).and_call_original
-      allow(ENV).to receive(:[]).with('ANTHROPIC_API_KEY').and_return('test-key')
-    end
 
     after do
       oversized_image_tempfile.close! if instance_variable_defined?(:@oversized_image_tempfile)
     end
 
+    before do
+      allow(Recipes::Extraction).to receive(:enabled?).and_return(true)
+    end
+
     context 'when unauthenticated' do
       it 'redirects to login' do
-        post extract_recipes_path
+        post extraction_recipes_path
         expect(response).to redirect_to(sign_in_path)
       end
     end
 
     context 'when authenticated' do
-      context 'when extraction succeeds' do
+      context 'when extraction is disabled' do
         before do
-          allow(Recipes::Extraction).to receive(:from_file).and_return(extract_result)
-          post_extract
+          allow(Recipes::Extraction).to receive(:enabled?).and_return(false)
         end
 
-        it 'returns ok status' do
-          expect(response).to have_http_status(:ok)
+        it 'redirects to recipes index' do
+          post extraction_recipes_path(as: user), params: { image: uploaded_image }
+
+          expect(response).to redirect_to(recipes_path)
+        end
+      end
+
+      context 'when extraction succeeds' do
+        let(:token) { 'token-123' }
+
+        before do
+          allow(Recipes::Extraction).to receive(:from_file).and_return(extracted_recipe)
+          allow(Recipes::Extraction::ResultStore).to receive(:store)
+            .with(user:, recipe: extracted_recipe)
+            .and_return(token)
+          post extraction_recipes_path(as: user), params: { image: uploaded_image }
         end
 
-        it 'returns extracted recipe json' do
-          expect(response.parsed_body).to eq('recipe' => extract_result)
+        it 'redirects to extraction result' do
+          expect(response).to redirect_to(extraction_result_recipes_path(token:))
         end
       end
 
       context 'when extraction raises an error' do
         before do
           allow(Recipes::Extraction).to receive(:from_file).and_raise(Recipes::Extraction::Error, 'Extraction failed')
-          post_extract
+          post extraction_recipes_path(as: user), params: { image: uploaded_image }
         end
 
         it 'returns unprocessable status' do
           expect(response).to have_http_status(:unprocessable_content)
         end
 
-        it 'returns error payload' do
-          expect(response.parsed_body).to eq('error' => 'Extraction failed')
+        it 'shows extraction form with error' do
+          expect(response.body).to include('Extract Recipe from Image')
+          expect(response.body).to include('Extraction failed')
         end
       end
 
       context 'when image is missing' do
-        let(:request_params) { {} }
-
         it 'returns unprocessable status' do
-          post_extract
+          post extraction_recipes_path(as: user)
 
           expect(response).to have_http_status(:unprocessable_content)
         end
 
-        it 'returns invalid file message' do
-          post_extract
+        it 'shows invalid file message' do
+          post extraction_recipes_path(as: user)
 
-          expect(response.parsed_body).to eq('error' => 'Image is required and must be a valid file.')
+          expect(response.body).to include('Image is required and must be a valid file.')
         end
       end
 
       context 'when image param is not an uploaded file' do
-        let(:request_image) { 'not-a-file' }
-
         it 'returns unprocessable status' do
-          post_extract
+          post extraction_recipes_path(as: user), params: { image: 'not-a-file' }
 
           expect(response).to have_http_status(:unprocessable_content)
         end
 
-        it 'returns image required message' do
-          post_extract
+        it 'shows image required message' do
+          post extraction_recipes_path(as: user), params: { image: 'not-a-file' }
 
-          expect(response.parsed_body).to eq('error' => 'Image is required and must be a valid file.')
+          expect(response.body).to include('Image is required and must be a valid file.')
         end
       end
 
       context 'when upload is not an image' do
-        let(:request_image) { uploaded_text_file }
-
         before do
           allow(Recipes::Extraction).to receive(:from_file).and_call_original
-          post_extract
+          post extraction_recipes_path(as: user), params: { image: uploaded_text_file }
         end
 
-        it 'returns unsupported file type status' do
+        it 'renders unsupported file type status' do
           expect(response).to have_http_status(:unprocessable_content)
         end
 
-        it 'returns unsupported file type message' do
-          expect(response.parsed_body).to eq('error' => 'Unsupported file type. Image is required.')
+        it 'shows unsupported file type message' do
+          expect(response.body).to include('Unsupported file type. Image is required.')
         end
       end
 
       context 'when image mime type is unsupported' do
-        let(:request_image) { uploaded_svg_file }
-
         before do
           allow(Recipes::Extraction).to receive(:from_file).and_call_original
-          post_extract
+          post extraction_recipes_path(as: user), params: { image: uploaded_svg_file }
         end
 
         it 'returns unprocessable status' do
           expect(response).to have_http_status(:unprocessable_content)
         end
 
-        it 'returns unsupported type message' do
-          expect(response.parsed_body).to eq('error' => 'Unsupported file type. Image is required.')
+        it 'shows unsupported type message' do
+          expect(response.body).to include('Unsupported file type. Image is required.')
         end
       end
 
       context 'when upload exceeds max size' do
-        let(:request_image) { oversized_image_file }
-
         before do
           allow(Recipes::Extraction).to receive(:from_file).and_call_original
-          post_extract
+          post extraction_recipes_path(as: user), params: { image: oversized_image_file }
         end
 
         it 'returns unprocessable status' do
           expect(response).to have_http_status(:unprocessable_content)
         end
 
-        it 'returns max size message' do
-          expect(response.parsed_body).to eq('error' => 'Image is too large. Maximum allowed size is 5 MB.')
+        it 'shows max size message' do
+          expect(response.body).to include('Image is too large. Maximum allowed size is 5 MB.')
         end
       end
+    end
+
+    def uploaded_text_file
+      Rack::Test::UploadedFile.new(
+        StringIO.new('not an image'),
+        'text/plain',
+        original_filename: 'not-image.txt'
+      )
+    end
+
+    def uploaded_svg_file
+      Rack::Test::UploadedFile.new(
+        StringIO.new('<svg xmlns="http://www.w3.org/2000/svg"><text>Recipe</text></svg>'),
+        'image/svg+xml',
+        original_filename: 'recipe.svg'
+      )
+    end
+
+    def oversized_image_file
+      Rack::Test::UploadedFile.new(oversized_image_tempfile.path, 'image/jpeg')
     end
   end
 

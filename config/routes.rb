@@ -1,17 +1,17 @@
-Rails.application.routes.draw do
+Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   namespace :admin do
-    resources :users, only: [:index, :show, :edit, :update]
-    resources :recipes, only: [:index, :show]
-    resources :categories, only: [:index, :show]
+    resources :users, only: %i[index show edit update]
+    resources :recipes, only: %i[index show]
+    resources :categories, only: %i[index show]
 
     root to: 'users#index'
   end
 
-  resources :passwords, only: [:create, :new]
-  resource :session, only: [:create]
+  resources :passwords, only: %i[create new]
+  resource :session, only: %i[create]
 
-  resources :users, only: [:create] do
-    resource :password, only: [:edit, :update]
+  resources :users, only: %i[create] do
+    resource :password, only: %i[edit update]
   end
 
   get '/sign_in' => 'sessions#new', as: 'sign_in'
@@ -23,7 +23,9 @@ Rails.application.routes.draw do
   resources :recipes do
     get 'web_search', on: :collection
     get 'web_result', on: :collection
-    post 'extract', on: :collection
+    get 'extraction', on: :collection, action: :extraction_form
+    post 'extraction', on: :collection, action: :extraction
+    get 'extraction/result/:token', on: :collection, action: :extraction_result, as: :extraction_result
     get 'archive/download', on: :collection, action: :download_archive
     get 'archive/upload', on: :collection, action: :upload_archive_form
     post 'archive/upload', on: :collection, action: :upload_archive

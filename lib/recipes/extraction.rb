@@ -5,10 +5,12 @@ module Recipes
     VALID_TYPES = ['image/jpeg', 'image/png', 'image/webp'].freeze
     MAX_IMAGE_SIZE = Recipe::MAX_IMAGE_SIZE
 
-    delegate :recipe, to: :extractor
-
     def self.from_file(image_file)
-      new(image_file:).recipe
+      new(image_file:).send(:recipe)
+    end
+
+    def self.enabled?
+      ENV['ANTHROPIC_API_KEY'].present?
     end
 
     private
@@ -23,6 +25,10 @@ module Recipes
 
     def extractor
       @extractor ||= Anthropic.new(image_file:, media_type:)
+    end
+
+    def recipe
+      RecipeBuilder.build(extractor.call)
     end
 
     def validate_image_file!
