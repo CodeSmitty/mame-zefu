@@ -2,12 +2,9 @@ require 'rails_helper'
 
 RSpec.describe 'Recipes' do
   let(:user) { create(:user) }
-  let(:recipe_name) { 'Spaghetti' }
   let(:category_name) { 'Italian' }
-  let(:category) { create(:category, name: category_name) }
   let!(:recipe) { create(:recipe, user: user) }
   let(:other_user) { create(:user) }
-  let(:other_recipe) { create(:recipe, user: other_user) }
   let(:uploaded_image) { fixture_file_upload('test.png', 'image/png') }
 
   describe 'GET /recipes' do
@@ -251,6 +248,174 @@ RSpec.describe 'Recipes' do
           get web_result_recipes_path(url: url, as: user)
           expect(response).to have_http_status(:ok)
           expect(response.body).to include('Unable to import recipe')
+        end
+      end
+    end
+  end
+
+  describe 'POST /recipes/extract' do
+    subject(:post_extract) { post extract_recipes_path(as: user), params: request_params }
+
+    let(:extract_result) do
+      {
+        'name' => 'Toast',
+        'ingredients' => ['Bread'],
+        'directions' => ['Toast bread'],
+        'category_names' => ['Breakfast']
+      }
+    end
+    let(:request_image) { uploaded_image }
+    let(:request_params) { { image: request_image } }
+    let(:uploaded_text_file) do
+      Rack::Test::UploadedFile.new(
+        StringIO.new('not an image'),
+        'text/plain',
+        original_filename: 'not-image.txt'
+      )
+    end
+    let(:uploaded_svg_file) do
+      Rack::Test::UploadedFile.new(
+        StringIO.new('<svg xmlns="http://www.w3.org/2000/svg"><text>Recipe</text></svg>'),
+        'image/svg+xml',
+        original_filename: 'recipe.svg'
+      )
+    end
+    let(:oversized_image_tempfile) do
+      Tempfile.new(['too-large', '.jpg']).tap do |tempfile|
+        tempfile.binmode
+        tempfile.write('a' * (Recipe::MAX_IMAGE_SIZE + 1))
+        tempfile.rewind
+      end
+    end
+    let(:oversized_image_file) { Rack::Test::UploadedFile.new(oversized_image_tempfile.path, 'image/jpeg') }
+
+    before do
+      allow(ENV).to receive(:[]).and_call_original
+      allow(ENV).to receive(:[]).with('ANTHROPIC_API_KEY').and_return('test-key')
+    end
+
+    after do
+      oversized_image_tempfile.close! if instance_variable_defined?(:@oversized_image_tempfile)
+    end
+
+    context 'when unauthenticated' do
+      it 'redirects to login' do
+        post extract_recipes_path
+        expect(response).to redirect_to(sign_in_path)
+      end
+    end
+
+    context 'when authenticated' do
+      context 'when extraction succeeds' do
+        before do
+          allow(Recipes::Extraction).to receive(:from_file).and_return(extract_result)
+          post_extract
+        end
+
+        it 'returns ok status' do
+          expect(response).to have_http_status(:ok)
+        end
+
+        it 'returns extracted recipe json' do
+          expect(response.parsed_body).to eq('recipe' => extract_result)
+        end
+      end
+
+      context 'when extraction raises an error' do
+        before do
+          allow(Recipes::Extraction).to receive(:from_file).and_raise(Recipes::Extraction::Error, 'Extraction failed')
+          post_extract
+        end
+
+        it 'returns unprocessable status' do
+          expect(response).to have_http_status(:unprocessable_content)
+        end
+
+        it 'returns error payload' do
+          expect(response.parsed_body).to eq('error' => 'Extraction failed')
+        end
+      end
+
+      context 'when image is missing' do
+        let(:request_params) { {} }
+
+        it 'returns unprocessable status' do
+          post_extract
+
+          expect(response).to have_http_status(:unprocessable_content)
+        end
+
+        it 'returns invalid file message' do
+          post_extract
+
+          expect(response.parsed_body).to eq('error' => 'Image is required and must be a valid file.')
+        end
+      end
+
+      context 'when image param is not an uploaded file' do
+        let(:request_image) { 'not-a-file' }
+
+        it 'returns unprocessable status' do
+          post_extract
+
+          expect(response).to have_http_status(:unprocessable_content)
+        end
+
+        it 'returns image required message' do
+          post_extract
+
+          expect(response.parsed_body).to eq('error' => 'Image is required and must be a valid file.')
+        end
+      end
+
+      context 'when upload is not an image' do
+        let(:request_image) { uploaded_text_file }
+
+        before do
+          allow(Recipes::Extraction).to receive(:from_file).and_call_original
+          post_extract
+        end
+
+        it 'returns unsupported file type status' do
+          expect(response).to have_http_status(:unprocessable_content)
+        end
+
+        it 'returns unsupported file type message' do
+          expect(response.parsed_body).to eq('error' => 'Unsupported file type. Image is required.')
+        end
+      end
+
+      context 'when image mime type is unsupported' do
+        let(:request_image) { uploaded_svg_file }
+
+        before do
+          allow(Recipes::Extraction).to receive(:from_file).and_call_original
+          post_extract
+        end
+
+        it 'returns unprocessable status' do
+          expect(response).to have_http_status(:unprocessable_content)
+        end
+
+        it 'returns unsupported type message' do
+          expect(response.parsed_body).to eq('error' => 'Unsupported file type. Image is required.')
+        end
+      end
+
+      context 'when upload exceeds max size' do
+        let(:request_image) { oversized_image_file }
+
+        before do
+          allow(Recipes::Extraction).to receive(:from_file).and_call_original
+          post_extract
+        end
+
+        it 'returns unprocessable status' do
+          expect(response).to have_http_status(:unprocessable_content)
+        end
+
+        it 'returns max size message' do
+          expect(response.parsed_body).to eq('error' => 'Image is too large. Maximum allowed size is 5 MB.')
         end
       end
     end
