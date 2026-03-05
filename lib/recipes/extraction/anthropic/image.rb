@@ -101,10 +101,10 @@ module Recipes
         end
 
         def initial_resize_target
-          raw_bitesize = image.to_blob.bytesize
+          raw_bytesize = image.to_blob.bytesize
           max_bytesize = (MAX_BASE64_BYTES * 3) / 4
 
-          target_ratio = Math.sqrt(max_bytesize.to_f / raw_bitesize)
+          target_ratio = Math.sqrt(max_bytesize.to_f / raw_bytesize)
           resize_ratio = target_ratio.clamp(0.1, 1.0)
 
           [
