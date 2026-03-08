@@ -12,9 +12,9 @@ export default class extends Controller {
   decrement(e) {
     e.preventDefault()
     let current = this.getCurrentValue()
-    console.log('current value: ', current)
+    console.log("current value: ", current)
     let newValue = current / 2
-    console.log('new value: ', newValue)
+    console.log("new value: ", newValue)
     let min = this.getOriginalValue()
     if (newValue >= 4) {
       let minValue
@@ -27,10 +27,10 @@ export default class extends Controller {
   increment(e) {
     e.preventDefault()
     let current = this.getCurrentValue()
-    console.log('current value: ', current)
+    console.log("current value: ", current)
     if (current) {
       let newValue = current * 2
-      console.log('new value: ', newValue)
+      console.log("new value: ", newValue)
       let min = this.getOriginalValue()
 
       if ((newValue <= 100) & (newValue >= min)) {

@@ -26,7 +26,7 @@ module Recipes
 
     def parse_single_ingredient(ingredient) # rubocop:disable Metrics/MethodLength
       normalized = normalize_fractions(ingredient)
-      if ingredient.match(/^\d+\s+\(\s*\d+\s*(oz|lb)\s*\)/i)
+      if ingredient.match(%r{^\d+\s+([a-z]+)?\s*\(\s*[\d/-]+\s*(oz|lb)\s*\)}i)
         match = ingredient.match(/^(\d+)\s+(.+)/)
         return {
           original: ingredient,
@@ -58,8 +58,14 @@ module Recipes
     end
 
     def normalize_fractions(text)
-      text.gsub(FRACTION_PATTERN) do |match|
+      normalized_text = text.gsub(FRACTION_PATTERN) do |match|
         FRACTION_MAP[match]
+      end
+      normalized_text.gsub(%r{(\d+)[\s-]+(\d+)/(\d+)}) do
+        whole = ::Regexp.last_match(1).to_i
+        num   = ::Regexp.last_match(2).to_i
+        den   = ::Regexp.last_match(3).to_i
+        "#{(whole * den) + num}/#{den}"
       end
     end
   end

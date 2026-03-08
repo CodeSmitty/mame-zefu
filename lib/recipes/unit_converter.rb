@@ -12,7 +12,7 @@ module Recipes
         sorted_units = unit_converter[:sorted_units]
 
         base_unit = find_best_unit(converter, sorted_units)
-        update_ingredient_with_conversion(ingredient, base_unit)
+        update_conversion(ingredient, base_unit)
       rescue Measured::UnitError
         uncovertable_ingredient(ingredient)
       end
@@ -33,17 +33,25 @@ module Recipes
       base_unit
     end
 
-    def update_ingredient_with_conversion(ingredient, base_unit)
+    def update_conversion(ingredient, base_unit) # rubocop:disable Metrics/AbcSize
       formatted_value = Fractional.new(base_unit.value.to_f, to_human: true).to_s
       ingredient[:converted_quantity] = formatted_value
-      ingredient[:converted_unit] = base_unit.unit.name.to_s
-      ingredient[:converted_description] = "#{formatted_value} #{base_unit.unit.name} #{ingredient[:ingredient]}"
+
+      if base_unit.unit
+        unit_name = base_unit.unit.name.to_s
+        ingredient[:converted_unit] = unit_name
+        ingredient[:converted_description] = "#{formatted_value} #{base_unit.unit.name} #{ingredient[:ingredient]}"
+      else
+        ingredient[:converted_unit] = nil
+        ingredient[:converted_description] = "#{formatted_value} #{ingredient[:ingredient]}"
+      end
     end
 
     def uncovertable_ingredient(ingredient)
-      ingredient[:converted_quantity] = nil
+      ingredient[:converted_quantity] = Fractional.new(ingredient[:scaled_quantity].to_f, to_human: true).to_s
       ingredient[:converted_unit] = nil
-      ingredient[:converted_description] = nil
+      ingredient[:converted_description] =
+        "#{ingredient[:converted_quantity]}#{ingredient[:converted_unit]} #{ingredient[:ingredient]}"
     end
 
     def sort_volume_or_weight_units(_scaled_quantity, unit_str) # rubocop:disable Metrics/MethodLength

@@ -12,6 +12,7 @@ services:
       - "3000:3000"
     environment:
       - DATABASE_URL=postgres://mame_zefu:password@postgres:5432/mame_zefu_development
+      - RAILS_ENV=development
   postgres:
     image: postgres:15-alpine
     volumes:
