@@ -23,7 +23,7 @@ RSpec.describe Recipes::Extraction::Anthropic do
     allow(Anthropic::Client).to receive(:new).with(timeout: described_class::TIMEOUT_SECONDS).and_return(client)
   end
 
-  describe '#recipe' do
+  describe '#call' do
     context 'when tool output is returned' do
       let(:expected_request) do
         hash_including(
@@ -47,29 +47,29 @@ RSpec.describe Recipes::Extraction::Anthropic do
       end
 
       it 'sends the expected model request' do
-        service.recipe
+        service.call
 
         expect(messages).to have_received(:create).with(expected_request)
       end
 
       it 'normalizes name field' do
-        expect(service.recipe['name']).to eq('Cake')
+        expect(service.call['name']).to eq('Cake')
       end
 
       it 'fills missing string fields with empty strings' do
-        expect(service.recipe).to include(default_string_fields)
+        expect(service.call).to include(default_string_fields)
       end
 
       it 'normalizes ingredients array' do
-        expect(service.recipe['ingredients']).to eq(['sugar'])
+        expect(service.call['ingredients']).to eq(['sugar'])
       end
 
       it 'normalizes directions array' do
-        expect(service.recipe['directions']).to eq(['mix'])
+        expect(service.call['directions']).to eq(['mix'])
       end
 
       it 'normalizes category names array' do
-        expect(service.recipe['category_names']).to eq(['dessert'])
+        expect(service.call['category_names']).to eq(['dessert'])
       end
     end
 
@@ -97,35 +97,35 @@ RSpec.describe Recipes::Extraction::Anthropic do
       end
 
       it 'drops unknown fields' do
-        expect(service.recipe).not_to have_key('extra_field')
+        expect(service.call).not_to have_key('extra_field')
       end
 
       it 'keeps normalized schema fields' do
-        expect(service.recipe).to include(expected_fields)
+        expect(service.call).to include(expected_fields)
       end
 
       it 'fills missing schema fields with defaults' do
-        expect(service.recipe).to include(default_string_fields)
+        expect(service.call).to include(default_string_fields)
       end
     end
 
     it 'raises when no tool output is returned' do
       allow(messages).to receive(:create).and_return(Struct.new(:content).new([]))
 
-      expect { service.recipe }.to raise_error(described_class::Error, /No extraction tool output/)
+      expect { service.call }.to raise_error(described_class::Error, /No extraction tool output/)
     end
 
     it 'raises when tool input cannot be parsed as JSON' do
       allow(messages).to receive(:create).and_return(tool_use_response(invalid_json_input))
 
-      expect { service.recipe }.to raise_error(described_class::Error, /invalid JSON/)
+      expect { service.call }.to raise_error(described_class::Error, /invalid JSON/)
     end
 
     it 'wraps API errors from Anthropic client' do
       api_error = Anthropic::Errors::APIError.new(url: 'https://api.anthropic.com', message: 'boom')
       allow(messages).to receive(:create).and_raise(api_error)
 
-      expect { service.recipe }.to raise_error(described_class::Error, /Image extraction failed: boom/)
+      expect { service.call }.to raise_error(described_class::Error, /Image extraction failed: boom/)
     end
   end
 

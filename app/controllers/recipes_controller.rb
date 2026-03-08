@@ -1,11 +1,13 @@
 class RecipesController < ApplicationController # rubocop:disable Metrics/ClassLength
   before_action :require_login
-  before_action :validate_image_upload, only: [:extract]
+  before_action :ensure_extraction_enabled, only: %i[extraction_form extraction extraction_result]
+  before_action :validate_image_upload, only: [:extraction]
   before_action :set_recipe, only: %i[show edit update destroy toggle_favorite delete_image]
   skip_after_action :verify_pundit_authorization, only: %i[
     web_search web_result
     download_archive upload_archive_form upload_archive
-    new create extract
+    extraction_form extraction extraction_result
+    new create
   ]
 
   def web_search; end
@@ -20,13 +22,30 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
     Rails.logger.error("Recipe import error: #{e.class} - #{e.message}. Source: #{uri_from_params}")
   end
 
-  def extract
-    recipe = Recipes::Extraction.from_file(image_upload_param.tempfile.path)
+  def extraction_form; end
 
-    render json: { recipe: }, status: :ok
+  def extraction
+    token = Recipes::Extraction::ResultStore.store(user: current_user, recipe: extracted_recipe)
+
+    redirect_to(
+      extraction_result_recipes_path(token:),
+      notice: 'Recipe extracted. Review and save.'
+    )
   rescue Recipes::Extraction::Error => e
     Rails.logger.error("Recipe extraction error: #{e.class} - #{e.message}")
-    render json: { error: e.message }, status: :unprocessable_content
+    flash.now[:alert] = e.message
+    render :extraction_form, status: :unprocessable_content
+  end
+
+  def extraction_result
+    recipe_attributes = Recipes::Extraction::ResultStore.fetch(user: current_user, token: params[:token].to_s)
+
+    unless recipe_attributes
+      redirect_to extraction_recipes_path, alert: 'Extraction result not found or expired.'
+      return
+    end
+
+    @recipe = current_user.recipes.new(recipe_attributes)
   end
 
   # GET /recipes/archive/download
@@ -153,10 +172,21 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
     upload = image_upload_param
     return if upload.respond_to?(:tempfile) && upload.tempfile.respond_to?(:path)
 
-    render json: { error: 'Image is required and must be a valid file.' }, status: :unprocessable_content
+    flash.now[:alert] = 'Image is required and must be a valid file.'
+    render :extraction_form, status: :unprocessable_content
   end
 
   def image_upload_param
     params[:image]
+  end
+
+  def extracted_recipe
+    Recipes::Extraction.from_file(image_upload_param.tempfile.path)
+  end
+
+  def ensure_extraction_enabled
+    return if Recipes::Extraction.enabled?
+
+    redirect_to recipes_path, alert: 'Recipe extraction is not enabled.'
   end
 end

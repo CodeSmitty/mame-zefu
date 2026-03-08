@@ -1,4 +1,8 @@
 module RecipesHelper
+  def recipe_extraction_enabled?
+    Recipes::Extraction.enabled?
+  end
+
   def recipe_draft_key(recipe)
     draft_id = recipe.persisted? ? recipe.id : 'new'
 

@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+set -eu
+
+cd "$(dirname "$0")/../.."
+
+if docker compose exec -T web true >/dev/null 2>&1; then
+  exec docker compose exec web bash
+fi
+
+echo "web container is not running. Start it first with: bin/docker/dev"
+exit 1

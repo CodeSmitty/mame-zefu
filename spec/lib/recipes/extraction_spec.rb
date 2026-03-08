@@ -8,44 +8,39 @@ RSpec.describe Recipes::Extraction do
   describe '.from_file' do
     subject(:from_file) { described_class.from_file(valid_image_file) }
 
-    let(:recipe_payload) { { 'name' => 'Cake' } }
-    let(:extraction) { instance_double(described_class, recipe: recipe_payload) }
+    let(:extractor_payload) { { 'name' => 'Cake' } }
+    let(:recipe_model) { Recipe.new(name: 'Cake') }
+    let(:extraction) { described_class.send(:new, image_file: valid_image_file) }
+    let(:extractor) { instance_double(Recipes::Extraction::Anthropic, call: extractor_payload) }
 
     before do
       allow(described_class).to receive(:new).with(image_file: valid_image_file).and_return(extraction)
+      allow(extraction).to receive(:extractor).and_return(extractor)
+      allow(Recipes::Extraction::RecipeBuilder).to receive(:build).with(extractor_payload).and_return(recipe_model)
     end
 
-    it 'builds an extraction and returns recipe output' do
-      expect(from_file).to eq(recipe_payload)
+    it 'returns an unsaved recipe model from extracted payload' do
+      expect(from_file).to be_a(Recipe)
+      expect(from_file).not_to be_persisted
+      expect(from_file).to eq(recipe_model)
     end
   end
 
-  describe '#recipe' do
-    subject(:recipe) { service.recipe }
-
-    let(:service) { described_class.send(:new, image_file: valid_image_file) }
-    let(:extractor_payload) { { 'name' => 'Bread' } }
-    let(:extractor) { instance_double(Recipes::Extraction::Anthropic, recipe: extractor_payload) }
-
+  describe '.enabled?' do
     before do
-      allow(Recipes::Extraction::Anthropic).to receive(:new)
-        .with(image_file: valid_image_file, media_type: anything)
-        .and_return(extractor)
+      allow(ENV).to receive(:[]).and_call_original
     end
 
-    it 'delegates recipe retrieval to anthropic extractor' do
-      expect(recipe).to eq(extractor_payload)
+    it 'returns true when Anthropic API key is set' do
+      allow(ENV).to receive(:[]).with('ANTHROPIC_API_KEY').and_return('test-key')
+
+      expect(described_class.enabled?).to be(true)
     end
 
-    it 'memoizes extractor instance across multiple recipe calls' do
-      recipe
-      recipe
+    it 'returns false when Anthropic API key is missing' do
+      allow(ENV).to receive(:[]).with('ANTHROPIC_API_KEY').and_return(nil)
 
-      expect(Recipes::Extraction::Anthropic).to have_received(:new).once
-    end
-
-    it 'returns same extractor result on consecutive calls' do
-      expect(recipe).to eq(service.recipe)
+      expect(described_class.enabled?).to be(false)
     end
   end
 
@@ -70,6 +65,26 @@ RSpec.describe Recipes::Extraction do
         expect { described_class.send(:new, image_file: valid_image_file) }
           .to raise_error(described_class::Error, /Image is too large/)
       end
+    end
+  end
+
+  describe 'extractor memoization' do
+    let(:service) { described_class.send(:new, image_file: valid_image_file) }
+    let(:extractor_payload) { { 'name' => 'Bread' } }
+    let(:extractor) { instance_double(Recipes::Extraction::Anthropic, call: extractor_payload) }
+
+    before do
+      allow(Recipes::Extraction::Anthropic).to receive(:new)
+        .with(image_file: valid_image_file, media_type: anything)
+        .and_return(extractor)
+      allow(Recipes::Extraction::RecipeBuilder).to receive(:build).and_return(Recipe.new(name: 'Bread'))
+    end
+
+    it 'memoizes anthropic extractor instance' do
+      service.send(:recipe)
+      service.send(:recipe)
+
+      expect(Recipes::Extraction::Anthropic).to have_received(:new).once
     end
   end
 
