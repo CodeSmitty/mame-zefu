@@ -78,7 +78,7 @@ module Recipes
         @media_type = media_type
       end
 
-      def recipe
+      def call
         response = client.messages.create(message_params)
         parse_output(response)
       rescue ::Anthropic::Errors::APIError => e
