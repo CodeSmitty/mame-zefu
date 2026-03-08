@@ -6,46 +6,13 @@ on:
     branches: [ "main" ]
 jobs:
   test:
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:15-alpine
-        ports:
-          - "5432:5432"
-        env:
-          POSTGRES_DB: mame_zefu_test
-          POSTGRES_USER: mame_zefu
-          POSTGRES_PASSWORD: password
-    env:
-      RAILS_ENV: test
-      DATABASE_URL: "postgres://mame_zefu:password@localhost:5432/mame_zefu_test"
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Install Ruby and gems
-        uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-      - name: Set up database schema
-        run: bin/rails db:schema:load
-      - name: Compile assets
-        run: SECRET_KEY_BASE=DUMMY bin/rails assets:precompile
-      - name: Run tests
-        run: bundle exec rspec --format documentation
-      - name: Upload to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+    uses: ./.github/workflows/rails-docker-ci.yml
+    with:
+      job_type: test
+    secrets:
+      codecov_token: ${{ secrets.CODECOV_TOKEN }}
+
   lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Install Ruby and gems
-        uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-      - name: Rubocop
-        run: bundle exec rubocop --parallel --format github
-      - name: ERB Lint
-        run: bundle exec erb_lint --lint-all
+    uses: ./.github/workflows/rails-docker-ci.yml
+    with:
+      job_type: lint

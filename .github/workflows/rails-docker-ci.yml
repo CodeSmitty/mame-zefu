@@ -1,0 +1,70 @@
+name: Rails Docker CI
+
+on:
+  workflow_call:
+    inputs:
+      job_type:
+        description: Which Docker CI task to run (test or lint)
+        required: true
+        type: string
+    secrets:
+      codecov_token:
+        description: Codecov token for test uploads
+        required: false
+
+jobs:
+  docker_ci:
+    runs-on: ubuntu-latest
+    env:
+      CODECOV_TOKEN: ${{ secrets.codecov_token }}
+      COMPOSE_PROJECT_NAME: mame-zefu
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build web image (cached)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.dev
+          load: true
+          tags: mame-zefu-web:latest
+          cache-from: type=gha,scope=mame-zefu-web
+          cache-to: type=gha,mode=max,scope=mame-zefu-web
+
+      - name: Start database
+        if: inputs.job_type == 'test'
+        run: docker compose up -d --wait postgres
+
+      - name: Compile assets
+        if: inputs.job_type == 'test'
+        run: docker compose run --rm -T -e SECRET_KEY_BASE=DUMMY web bin/rails assets:precompile
+
+      - name: Prepare test database
+        if: inputs.job_type == 'test'
+        run: docker compose run --rm -T -e RAILS_ENV=test web bin/rails db:prepare
+
+      - name: Run tests
+        if: inputs.job_type == 'test'
+        run: docker compose run --rm -T -e CI=true -e GITHUB_ACTIONS=true web bundle exec rspec --format documentation
+
+      - name: Rubocop
+        if: inputs.job_type == 'lint'
+        run: docker compose run --rm -T web bundle exec rubocop --parallel --format github
+
+      - name: ERB Lint
+        if: inputs.job_type == 'lint'
+        run: docker compose run --rm -T web bundle exec erb_lint --lint-all
+      - name: Tear down Docker services
+        if: always()
+        run: docker compose down --remove-orphans --volumes
+
+      - name: Upload to Codecov
+        if: inputs.job_type == 'test' && env.CODECOV_TOKEN != ''
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ env.CODECOV_TOKEN }}
+          files: coverage/coverage.xml
