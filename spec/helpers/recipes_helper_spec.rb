@@ -1,6 +1,30 @@
 require 'rails_helper'
 
 RSpec.describe RecipesHelper do
+  describe '#recipe_draft_key' do
+    let(:current_user) { create(:user) }
+
+    before do
+      allow(helper).to receive(:current_user).and_return(current_user)
+    end
+
+    context 'when recipe is persisted' do
+      let(:recipe) { create(:recipe, user: current_user) }
+
+      it 'returns a key with the persisted recipe id' do
+        expect(helper.recipe_draft_key(recipe)).to eq("user:#{current_user.id}:recipe:#{recipe.id}")
+      end
+    end
+
+    context 'when recipe is not persisted' do
+      let(:recipe) { build(:recipe, user: current_user) }
+
+      it 'returns a key with new as the recipe id' do
+        expect(helper.recipe_draft_key(recipe)).to eq("user:#{current_user.id}:recipe:new")
+      end
+    end
+  end
+
   describe '#category_select_options' do
     subject(:options) { helper.category_select_options(recipe) }
 

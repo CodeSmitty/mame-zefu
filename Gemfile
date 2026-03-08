@@ -4,6 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby "3.3.7"
 
 gem "administrate"
+gem "anthropic"
 gem "bootsnap", require: false
 gem "clearance"
 gem "down", "~> 5.0"
@@ -12,6 +13,7 @@ gem "importmap-rails"
 gem 'ingreedy', '~> 0.1.0'
 gem "jbuilder"
 gem "measured"
+gem "mini_magick"
 gem "net_tcp_client"
 gem "parser", "~> 3.3.7.0"
 gem "pg", "~> 1.1"

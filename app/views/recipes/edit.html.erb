@@ -1,14 +1,10 @@
-<div class="mx-auto md:w-4/5 w-full form-container lg:px-20 p-5">
-  <h1 class="font-bold text-2xl lg:text-4xl text-secondary text-start">Editing recipe</h1>
-
-  <%= render "form", recipe: @recipe %>
-</div>
+<%= render "form_page", recipe: @recipe, title: "Editing recipe" %>
 
 <div class="pt-0 lg:pt-4 lg:px-8 edit-delete-container shadow-xl lg:shadow-none fixed bottom-0 lg:static bg-black lg:bg-transparent w-screen lg:w-8/12 inset-x-0 lg:inset-auto mx-0 lg:mx-auto flex flex-row justify-center lg:justify-start gap-2 z-50 lg:z-auto">
   <%= button_tag(form: "recipe_form", class: "inline-flex items-center rounded-lg py-2 px-3 bg-transparent border border-transparent text-white hover:text-secondary font-medium cursor-pointer lg:bg-white lg:border-secondary lg:text-secondary lg:hover:bg-secondary lg:hover:text-white") do %>
     <%= render_icon "micro/document_check", classes: "me-1" %> Save
   <% end %>
   <%= link_to @recipe, class: "inline-flex items-center rounded-lg py-2 px-3 bg-transparent border border-transparent text-white hover:text-secondary font-medium cursor-pointer lg:bg-white lg:border-secondary lg:text-secondary lg:hover:bg-secondary lg:hover:text-white" do %>
-    <%= render_icon "micro/arrow_uturn_left", classes: "me-1" %> Cancel
+    <%= render_icon "micro/arrow_uturn_left", classes: "me-1" %> Back
   <% end %>
 </div>

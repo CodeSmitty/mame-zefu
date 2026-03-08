@@ -28,12 +28,12 @@ RSpec.feature 'User edits a recipe' do
     expect(recipe_show_page.recipe_name).to have_text(recipe_data[:name])
   end
 
-  scenario 'and clicks cancel' do
+  scenario 'and clicks back' do
     home_page.recipe_link(recipe.name).click
 
     recipe_show_page.edit_button.click
     edit_recipe_page.recipe_form.fill_form(recipe_data)
-    edit_recipe_page.cancel_button.click
+    edit_recipe_page.back_button.click
 
     expect(recipe_show_page.recipe_name).to have_text(recipe.name)
   end

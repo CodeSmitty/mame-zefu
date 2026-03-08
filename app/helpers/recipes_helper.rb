@@ -1,4 +1,10 @@
 module RecipesHelper
+  def recipe_draft_key(recipe)
+    draft_id = recipe.persisted? ? recipe.id : 'new'
+
+    "user:#{current_user.id}:recipe:#{draft_id}"
+  end
+
   def category_select_options(recipe)
     user = recipe.user || current_user
     existing_categories = user.categories.pluck(:name)

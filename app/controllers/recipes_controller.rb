@@ -1,10 +1,11 @@
 class RecipesController < ApplicationController # rubocop:disable Metrics/ClassLength
   before_action :require_login
+  before_action :validate_image_upload, only: [:extract]
   before_action :set_recipe, only: %i[show edit update destroy toggle_favorite delete_image]
   skip_after_action :verify_pundit_authorization, only: %i[
     web_search web_result
     download_archive upload_archive_form upload_archive
-    new create
+    new create extract
   ]
 
   def web_search; end
@@ -17,6 +18,15 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
     flash.now[:alert] = 'Unable to import recipe.'
 
     Rails.logger.error("Recipe import error: #{e.class} - #{e.message}. Source: #{uri_from_params}")
+  end
+
+  def extract
+    recipe = Recipes::Extraction.from_file(image_upload_param.tempfile.path)
+
+    render json: { recipe: }, status: :ok
+  rescue Recipes::Extraction::Error => e
+    Rails.logger.error("Recipe extraction error: #{e.class} - #{e.message}")
+    render json: { error: e.message }, status: :unprocessable_content
   end
 
   # GET /recipes/archive/download
@@ -137,5 +147,16 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
       .require(:recipe)
       .permit(:name, :ingredients, :directions, :yield, :prep_time, :cook_time, :total_time, :description,
               :rating, :is_favorite, :notes, :source, :image, :image_src, category_names: [])
+  end
+
+  def validate_image_upload
+    upload = image_upload_param
+    return if upload.respond_to?(:tempfile) && upload.tempfile.respond_to?(:path)
+
+    render json: { error: 'Image is required and must be a valid file.' }, status: :unprocessable_content
+  end
+
+  def image_upload_param
+    params[:image]
   end
 end
