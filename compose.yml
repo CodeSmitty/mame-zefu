@@ -11,7 +11,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgres://mame_zefu:password@postgres:5432/mame_zefu_development
+      - DB_HOST=postgres
   postgres:
     image: postgres:15-alpine
     volumes:
