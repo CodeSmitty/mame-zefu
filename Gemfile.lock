@@ -385,6 +385,10 @@ GEM
       site_prism-all_there (> 3, < 5)
     site_prism-all_there (3.0.7)
     smart_properties (1.17.0)
+    solid_cache (1.0.10)
+      activejob (>= 7.2)
+      activerecord (>= 7.2)
+      railties (>= 7.2)
     sprockets (4.2.2)
       concurrent-ruby (~> 1.0)
       logger
@@ -470,6 +474,7 @@ DEPENDENCIES
   simplecov
   simplecov-cobertura
   site_prism
+  solid_cache
   sprockets-rails
   stimulus-rails
   tailwindcss-rails (~> 4.0)
