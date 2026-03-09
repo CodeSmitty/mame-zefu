@@ -37,6 +37,9 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
       post :toggle_favorite
       delete :image, action: :delete_image
     end
+    member do
+      post :update_yield
+    end
   end
 
   get '*unmatched_route', to: 'application#not_found', constraints: lambda { |req|
