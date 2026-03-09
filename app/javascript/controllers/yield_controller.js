@@ -1,59 +1,50 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["decrement", "increment", "yield"]
-
   connect() {
-    console.log("yield file connected")
-    const currentValue = this.yieldTarget.value
-    console.log(this.yieldTarget.innerHTML)
+    console.log("Hello controller connected")
   }
 
-  decrement(e) {
-    e.preventDefault()
-    let current = this.getCurrentValue()
-    console.log("current value: ", current)
-    let newValue = current / 2
-    console.log("new value: ", newValue)
-    let min = this.getOriginalValue()
-    if (newValue >= 4) {
-      let minValue
-      this.yieldTarget.value = Math.floor(newValue)
-      minValue = this.yieldTarget.value
-      console.log(minValue)
-    }
+  async decrement(event) {
+    event.preventDefault()
+    const recipeId = this.data.get("recipe-id-value")
+    const originalYield = parseFloat(this.data.get("original-value"))
+    await this.updateYield(recipeId, originalYield - 1)
   }
 
-  increment(e) {
-    e.preventDefault()
-    let current = this.getCurrentValue()
-    console.log("current value: ", current)
-    if (current) {
-      let newValue = current * 2
-      console.log("new value: ", newValue)
-      let min = this.getOriginalValue()
+  async increment(event) {
+    event.preventDefault()
+    const recipeId = this.data.get("recipe-id-value")
+    const originalYield = parseFloat(this.data.get("original-value"))
+    await this.updateYield(recipeId, originalYield + 1)
+  }
 
-      if ((newValue <= 100) & (newValue >= min)) {
-        this.yieldTarget.value = newValue
-        console.log(this.yieldTarget.value)
+  async updateYield(recipeId, newYield) {
+    try {
+      const response = await fetch(`/recipes/${recipeId}/update_yield`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content,
+        },
+        body: JSON.stringify({ yield: newYield }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        this.updateYieldDisplay(data.new_yield)
+      } else {
+        console.error("Failed to update yield")
       }
+    } catch (error) {
+      console.error("Error updating yield:", error)
     }
   }
 
-  getCurrentValue() {
-    return this.extractNumber(this.yieldTarget.value)
-  }
-
-  getOriginalValue() {
-    if (!this.yieldTarget.dataset.originalValue) {
-      this.yieldTarget.dataset.originalValue = this.getCurrentValue()
+  updateYieldDisplay(newYield) {
+    const valueElement = this.element.querySelector("[data-yield-target='value']")
+    if (valueElement) {
+      valueElement.textContent = newYield
     }
-    return this.extractNumber(this.yieldTarget.dataset.originalValue)
-  }
-
-  extractNumber(str) {
-    const numericString = (str || "").replace(/[^\d.-]/g, "")
-    const match = numericString.match(/-?\d+(?:\.\d+)?/)
-    return match ? parseFloat(match[0]) : 0
   }
 }

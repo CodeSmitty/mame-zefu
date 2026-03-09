@@ -88,6 +88,23 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
   # GET /recipes/1 or /recipes/1.json
   def show; end
 
+  def update_yield
+    @recipe = Recipe.find(params[:id])
+    multiplier = params[:multiplier].to_f
+    new_yield = params[:new_yield].to_i
+
+    # Calculate scaled ingredients
+    calculator = Recipes::IngredientCalculator.new
+    scaled_ingredients = calculator.calculate_total_ingredients(@recipe, multiplier)
+
+    # Update the recipe with new yield and ingredients
+    if @recipe.update(yield: new_yield, ingredients: scaled_ingredients.join("\n"))
+      render json: { ingredients: scaled_ingredients }
+    else
+      render json: { error: "Could not update recipe" }, status: :unprocessable_entity
+    end
+  end
+
   # GET /recipes/new
   def new
     @recipe = current_user.recipes.new
