@@ -25,7 +25,8 @@ export default class extends Controller {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content,
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .content,
         },
         body: JSON.stringify({ yield: newYield }),
       })
@@ -42,7 +43,9 @@ export default class extends Controller {
   }
 
   updateYieldDisplay(newYield) {
-    const valueElement = this.element.querySelector("[data-yield-target='value']")
+    const valueElement = this.element.querySelector(
+      "[data-yield-target='value']",
+    )
     if (valueElement) {
       valueElement.textContent = newYield
     }
