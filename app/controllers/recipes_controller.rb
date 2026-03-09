@@ -101,7 +101,7 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
     if @recipe.update(yield: new_yield, ingredients: scaled_ingredients.join("\n"))
       render json: { ingredients: scaled_ingredients }
     else
-      render json: { error: "Could not update recipe" }, status: :unprocessable_entity
+      render json: { error: 'Could not update recipe' }, status: :unprocessable_content
     end
   end
 
