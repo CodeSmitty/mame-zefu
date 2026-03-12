@@ -185,7 +185,7 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
   end
 
   def ensure_extraction_enabled
-    return if Recipes::Extraction.enabled?
+    return if Recipes::Extraction.enabled?(current_user)
 
     redirect_to recipes_path, alert: 'Recipe extraction is not enabled.'
   end

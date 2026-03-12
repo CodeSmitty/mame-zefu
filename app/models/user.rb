@@ -3,4 +3,8 @@ class User < ApplicationRecord
 
   has_many :recipes, dependent: :destroy
   has_many :categories, dependent: :destroy
+
+  def flipper_id
+    email
+  end
 end

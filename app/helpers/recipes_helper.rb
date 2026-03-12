@@ -1,6 +1,6 @@
 module RecipesHelper
   def recipe_extraction_enabled?
-    Recipes::Extraction.enabled?
+    Recipes::Extraction.enabled?(current_user)
   end
 
   def recipe_draft_key(recipe)

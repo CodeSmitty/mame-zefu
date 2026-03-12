@@ -27,20 +27,32 @@ RSpec.describe Recipes::Extraction do
   end
 
   describe '.enabled?' do
+    let(:user) { build_stubbed(:user) }
+
     before do
       allow(ENV).to receive(:[]).and_call_original
+      allow(Feature).to receive(:recipe_extraction_enabled?)
     end
 
-    it 'returns true when Anthropic API key is set' do
+    it 'returns true when API key is set and feature is enabled' do
       allow(ENV).to receive(:[]).with('ANTHROPIC_API_KEY').and_return('test-key')
+      allow(Feature).to receive(:recipe_extraction_enabled?).with(user).and_return(true)
 
-      expect(described_class.enabled?).to be(true)
+      expect(described_class.enabled?(user)).to be(true)
     end
 
     it 'returns false when Anthropic API key is missing' do
       allow(ENV).to receive(:[]).with('ANTHROPIC_API_KEY').and_return(nil)
 
-      expect(described_class.enabled?).to be(false)
+      expect(described_class.enabled?(user)).to be(false)
+      expect(Feature).not_to have_received(:recipe_extraction_enabled?)
+    end
+
+    it 'returns false when feature is disabled' do
+      allow(ENV).to receive(:[]).with('ANTHROPIC_API_KEY').and_return('test-key')
+      allow(Feature).to receive(:recipe_extraction_enabled?).with(user).and_return(false)
+
+      expect(described_class.enabled?(user)).to be(false)
     end
   end
 
