@@ -3,4 +3,21 @@ set -eu
 
 cd "$(dirname "$0")/../.."
 
-exec docker compose up --build web postgres "$@"
+usage() {
+	cat <<'USAGE'
+Usage: bin/docker/dev [docker compose up args...]
+
+Examples:
+	bin/docker/setup
+	bin/docker/dev
+	bin/docker/dev -d
+	bin/docker/dev -d --build
+USAGE
+}
+
+if [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ] || [ "${1:-}" = "help" ]; then
+	usage
+	exit 0
+fi
+
+exec docker compose up "$@" web postgres
