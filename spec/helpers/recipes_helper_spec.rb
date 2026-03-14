@@ -2,11 +2,17 @@ require 'rails_helper'
 
 RSpec.describe RecipesHelper do
   describe '#recipe_extraction_enabled?' do
+    let(:current_user) { create(:user) }
+
+    before do
+      allow(helper).to receive(:current_user).and_return(current_user)
+    end
+
     it 'delegates to Recipes::Extraction.enabled?' do
       allow(Recipes::Extraction).to receive(:enabled?).and_return(true)
 
       expect(helper.recipe_extraction_enabled?).to be(true)
-      expect(Recipes::Extraction).to have_received(:enabled?)
+      expect(Recipes::Extraction).to have_received(:enabled?).with(current_user)
     end
   end
 
