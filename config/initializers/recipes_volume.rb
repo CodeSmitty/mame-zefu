@@ -3,10 +3,9 @@ module Recipes
     unit :tsp, aliases: %i[teaspoon tspn teaspoons]
 
     unit :tbsp, value: "3 tsp", aliases: %i[tablespoon tbspn tablespoons]
-    unit :cup,  value: "16 tbsp", aliases: %i[cups cup]
-    unit :pt,   value: "2 cup", aliases: %i[pint pints]
-    unit :qt,   value: "2 pt", aliases: %i[quart quarts]
-    unit :gal,  value: "4 qt", aliases: %i[gallon gallons]
+    unit :cup, value: "16 tbsp", aliases: %i[cups cup]
+    unit :qt,  value: "4 cup", aliases: %i[quart quarts pint pints pt]
+    unit :gal, value: "4 qt", aliases: %i[gallon gallons]
   end
 
   Weight = Measured.build do

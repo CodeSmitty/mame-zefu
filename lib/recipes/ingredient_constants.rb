@@ -11,36 +11,29 @@ module Recipes
       '⅒' => '1/10'
     }.freeze
 
-    DO_NOT_SCALE = %w[
-      salt
-      kosher salt
-      sea salt
-      salt and pepper
-      black pepper
-      pepper
-      water
-      oil
-    ].freeze
-
     VOLUME_UNITS = {
       'tsp' => 1,
       'tspn' => 1,
       'teaspoon' => 1,
       'teaspoons' => 1,
       'tbsp' => 3,
+      'tbspn' => 3,
       'tablespoon' => 3,
       'tablespoons' => 3,
       'cup' => 48,
       'cups' => 48,
-      'pint' => 96,
-      'pints' => 96,
+      'qt' => 192,
       'quart' => 192,
       'quarts' => 192,
+      'pint' => 192,
+      'pints' => 192,
+      'pt' => 192,
+      'gal' => 768,
       'gallon' => 768,
       'gallons' => 768
     }.freeze
 
-    VOLUME_ORDER = %w[tsp tbsp cup pint quart gallon].freeze
+    VOLUME_ORDER = %w[tsp tbsp cup qt gal].freeze
 
     WEIGHT_UNITS = {
       'g' => 1,
@@ -58,6 +51,6 @@ module Recipes
       'oz' => 28.3495
     }.freeze
 
-    WEIGHT_ORDER = %w[g kg oz pound].freeze
+    WEIGHT_ORDER = %w[g oz lb kg].freeze
   end
 end

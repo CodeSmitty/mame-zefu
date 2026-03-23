@@ -10,8 +10,7 @@ module Recipes
       parser = Recipes::IngredientParser.new(recipe).parse_ingredients
       scaler = Recipes::IngredientScaler.new.scale_ingredients(parser, multiplier)
       converter = Recipes::UnitConverter.new.converter(scaler)
-
-      converter.pluck { |ing| ing[:converted_description] }.join('/n')
+      converter.pluck(:converted_description).join("\n")
     end
   end
 end

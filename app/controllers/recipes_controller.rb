@@ -2,7 +2,7 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
   before_action :require_login
   before_action :ensure_extraction_enabled, only: %i[extraction_form extraction extraction_result]
   before_action :validate_image_upload, only: [:extraction]
-  before_action :set_recipe, only: %i[show edit update destroy toggle_favorite delete_image]
+  before_action :set_recipe, only: %i[show edit update destroy toggle_favorite delete_image update_yield]
   skip_after_action :verify_pundit_authorization, only: %i[
     web_search web_result
     download_archive upload_archive_form upload_archive
@@ -90,16 +90,10 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
 
   def update_yield
     @recipe = Recipe.find(params[:id])
-    multiplier = params[:multiplier].to_f
-    new_yield = params[:new_yield].to_i
+    result = Recipes::YieldUpdater.new(recipe: @recipe, params:).call
 
-    # Calculate scaled ingredients
-    calculator = Recipes::IngredientCalculator.new
-    scaled_ingredients = calculator.calculate_total_ingredients(@recipe, multiplier)
-
-    # Update the recipe with new yield and ingredients
-    if @recipe.update(yield: new_yield, ingredients: scaled_ingredients.join("\n"))
-      render json: { ingredients: scaled_ingredients }
+    if result.success?
+      render json: { ingredients: result.ingredients, yield: result.yield_display }
     else
       render json: { error: 'Could not update recipe' }, status: :unprocessable_content
     end

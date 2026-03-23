@@ -10,7 +10,6 @@ module Recipes
         unit_converter = sort_volume_or_weight_units(ingredient[:scaled_quantity], unit_str)
         converter = unit_converter[:converter].new(ingredient[:scaled_quantity], unit_str)
         sorted_units = unit_converter[:sorted_units]
-
         base_unit = find_best_unit(converter, sorted_units)
         update_conversion(ingredient, base_unit)
       rescue Measured::UnitError
@@ -21,14 +20,35 @@ module Recipes
     private
 
     def find_best_unit(converter, sorted_units)
-      current_index = sorted_units.index(converter.unit.name.to_s)
-      base_unit = converter
-      ((current_index + 1)...sorted_units.length).each do |i|
-        candidate = sorted_units[i]
+      current_index = unit_index(converter, sorted_units)
+      return converter if current_index.nil?
+
+      scaled_up_unit, scaled_up_index = scale_up(converter, current_index, sorted_units)
+      scale_down(scaled_up_unit, scaled_up_index, sorted_units)
+    end
+
+    def unit_index(converter, sorted_units)
+      unit_name = converter.unit.name.to_s
+      sorted_units.map(&:to_s).index(unit_name)
+    end
+
+    def scale_up(base_unit, index, sorted_units)
+      while index < (sorted_units.length - 1)
+        candidate = sorted_units[index + 1]
         converted = base_unit.convert_to(candidate)
         break unless converted.value >= 1
 
         base_unit = converted
+        index += 1
+      end
+      [base_unit, index]
+    end
+
+    def scale_down(base_unit, index, sorted_units)
+      while index.positive? && base_unit.value < 1
+        candidate = sorted_units[index - 1]
+        base_unit = base_unit.convert_to(candidate)
+        index -= 1
       end
       base_unit
     end
