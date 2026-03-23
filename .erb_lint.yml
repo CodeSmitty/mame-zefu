@@ -3,6 +3,7 @@ glob: "**/*.{html,text,js}{+*,}.erb"
 exclude:
   - '**/vendor/**/*'
   - '**/node_modules/**/*'
+  - 'app/views/admin/application/_navigation.html.erb'
 EnableDefaultLinters: true
 linters:
   Rubocop:

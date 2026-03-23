@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+set -eu
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname "$0")" && pwd)
+# shellcheck source=bin/docker/_lib.sh
+. "$SCRIPT_DIR/_lib.sh"
+
+cd_repo_root "$SCRIPT_DIR"
+
+if [ "$#" -eq 0 ]; then
+  docker run --rm -v "$PWD:/work" -w /work node:22-alpine npx --yes prettier --check .
+else
+  docker run --rm -v "$PWD:/work" -w /work node:22-alpine npx --yes prettier "$@"
+fi

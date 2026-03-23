@@ -1,0 +1,22 @@
+#!/usr/bin/env sh
+set -eu
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname "$0")" && pwd)
+# shellcheck source=bin/docker/_lib.sh
+. "$SCRIPT_DIR/_lib.sh"
+
+cd_repo_root "$SCRIPT_DIR"
+
+if [ "$#" -gt 0 ]; then
+  echo "Usage: bin/docker/lint"
+  exit 1
+fi
+
+print_step "Running RuboCop"
+"$SCRIPT_DIR/rubocop"
+
+print_step "Running ERB Lint"
+"$SCRIPT_DIR/erb_lint"
+
+print_step "Running Prettier"
+"$SCRIPT_DIR/prettier"

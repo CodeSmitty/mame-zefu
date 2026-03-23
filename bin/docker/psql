@@ -1,0 +1,24 @@
+#!/usr/bin/env sh
+set -eu
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname "$0")" && pwd)
+# shellcheck source=bin/docker/_lib.sh
+. "$SCRIPT_DIR/_lib.sh"
+
+cd_repo_root "$SCRIPT_DIR"
+
+POSTGRES_STARTED_BY_SCRIPT=0
+
+cleanup_postgres_if_needed() {
+  if [ "$POSTGRES_STARTED_BY_SCRIPT" -eq 1 ]; then
+    docker compose stop postgres >/dev/null
+  fi
+}
+
+if ! postgres_is_running; then
+  docker compose up -d postgres >/dev/null
+  POSTGRES_STARTED_BY_SCRIPT=1
+  trap cleanup_postgres_if_needed EXIT INT TERM
+fi
+
+docker compose exec postgres psql -U mame_zefu -d mame_zefu_development "$@"

@@ -1,4 +1,8 @@
 Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
+  constraints Clearance::Constraints::SignedIn.new { |user| user.is_admin? } do
+    mount Flipper::UI.app(Flipper) => '/admin/flipper', as: :flipper_ui
+  end
+
   namespace :admin do
     resources :users, only: %i[index show edit update]
     resources :recipes, only: %i[index show]

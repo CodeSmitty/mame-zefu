@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+set -eu
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname "$0")" && pwd)
+# shellcheck source=bin/docker/_lib.sh
+. "$SCRIPT_DIR/_lib.sh"
+
+cd_repo_root "$SCRIPT_DIR"
+
+if [ "$#" -eq 0 ]; then
+  compose_web bundle exec erb_lint --lint-all
+else
+  compose_web bundle exec erb_lint "$@"
+fi

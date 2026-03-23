@@ -9,8 +9,8 @@ module Recipes
       new(image_file:).send(:recipe)
     end
 
-    def self.enabled?
-      ENV['ANTHROPIC_API_KEY'].present?
+    def self.enabled?(user)
+      ENV['ANTHROPIC_API_KEY'].present? && Feature.recipe_extraction_enabled?(user)
     end
 
     private

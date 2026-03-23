@@ -1,0 +1,62 @@
+#!/usr/bin/env sh
+set -eu
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname "$0")" && pwd)
+# shellcheck source=bin/docker/_lib.sh
+. "$SCRIPT_DIR/_lib.sh"
+
+cd_repo_root "$SCRIPT_DIR"
+
+usage() {
+  cat <<'USAGE'
+Usage: bin/docker/setup
+
+Runs one-time Docker setup tasks:
+  - prepare + seed development database
+  - prepare test database
+  - clear logs and tempfiles
+USAGE
+}
+
+if [ "$#" -gt 0 ]; then
+  case "$1" in
+    -h|--help|help)
+      usage
+      exit 0
+      ;;
+    *)
+      usage
+      exit 1
+      ;;
+  esac
+fi
+
+POSTGRES_STARTED_BY_SCRIPT=0
+
+cleanup_postgres_if_needed() {
+  if [ "$POSTGRES_STARTED_BY_SCRIPT" -eq 1 ]; then
+    docker compose stop postgres >/dev/null
+  fi
+}
+
+ensure_postgres() {
+  if postgres_is_running; then
+    return
+  fi
+
+  print_step "Starting postgres"
+  docker compose up -d postgres >/dev/null
+  POSTGRES_STARTED_BY_SCRIPT=1
+  trap cleanup_postgres_if_needed EXIT INT TERM
+}
+
+ensure_postgres
+
+print_step "Preparing development database (migrations + seeds)"
+compose_web ./bin/rails db:prepare db:seed
+
+print_step "Preparing test database"
+compose_web env RAILS_ENV=test ./bin/rails db:prepare
+
+print_step "Removing old logs and tempfiles"
+compose_web ./bin/rails log:clear tmp:clear
