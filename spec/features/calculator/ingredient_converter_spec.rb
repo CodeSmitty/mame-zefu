@@ -73,6 +73,21 @@ RSpec.describe 'Ingredient Converter' do
     end
   end
 
+  describe '#scale_down' do
+    let(:sorted_units) { %w[tsp tbsp cup] }
+
+    it 'steps down to the next smaller unit while value is below one' do # rubocop:disable RSpec/ExampleLength
+      smaller_unit = instance_double(Recipes::Volume, value: 8)
+      base_unit = instance_double(Recipes::Volume, value: 0.5)
+      allow(base_unit).to receive(:convert_to).with('tbsp').and_return(smaller_unit)
+
+      result = unit_converter.send(:scale_down, base_unit, 2, sorted_units)
+
+      expect(base_unit).to have_received(:convert_to).with('tbsp')
+      expect(result).to be(smaller_unit)
+    end
+  end
+
   describe '#update_ingredient_with_conversion' do
     let(:ingredient) { { ingredient: 'flour' } }
     let(:base_unit) { instance_double(Measured::Unit, name: 'cup') }

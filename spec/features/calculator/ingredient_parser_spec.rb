@@ -72,5 +72,56 @@ RSpec.describe 'Ingredient Parser' do
         ]
       end
     end
+
+    context 'with unscalable ingredient text' do
+      let(:ingredients_text) { 'Salt to taste' }
+
+      it 'marks the ingredient as unscalable' do
+        expect(parsed_ingredients).to eq [
+          { original: 'Salt to taste', quantity: nil, unit: nil, ingredient: 'Salt to taste', unscalable: true }
+        ]
+      end
+    end
+
+    context 'with numeric text that falls back to regex parsing' do
+      let(:ingredients_text) { '3 blorps mystery powder' }
+
+      it 'parses quantity and ingredient without a unit' do
+        expect(parsed_ingredients).to eq [
+          { original: '3 blorps mystery powder', quantity: '3/1', unit: nil, ingredient: 'blorps mystery powder' }
+        ]
+      end
+    end
+  end
+
+  describe '#unscalable_parse' do
+    let(:ingredients_text) { '' }
+
+    it 'returns the original ingredient as unscalable metadata' do # rubocop:disable RSpec/ExampleLength
+      parsed = ingredient_parser.send(:unscalable_parse, 'Salt to taste')
+
+      expect(parsed).to eq(
+        original: 'Salt to taste',
+        quantity: nil,
+        unit: nil,
+        ingredient: 'Salt to taste',
+        unscalable: true
+      )
+    end
+  end
+
+  describe '#try_regex_fallback' do
+    let(:ingredients_text) { '' }
+
+    it 'returns parsed fallback data with original ingredient preserved' do # rubocop:disable RSpec/ExampleLength
+      parsed = ingredient_parser.send(:try_regex_fallback, '3 mystery powder', '3 mystery powder')
+
+      expect(parsed).to eq(
+        original: '3 mystery powder',
+        quantity: '3/1',
+        unit: nil,
+        ingredient: 'mystery powder'
+      )
+    end
   end
 end
