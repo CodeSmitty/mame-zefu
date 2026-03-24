@@ -20,9 +20,9 @@ RSpec.describe 'Ingredient Converter' do
     it 'converts the units to the best fit and updates the description' do
       results = converted_result
 
-      expect(results[0][:converted_quantity]).to eq '1'
-      expect(results[0][:converted_unit]).to eq 'pt'
-      expect(results[0][:converted_description]).to eq '1 pt flour'
+      expect(results[0][:converted_quantity]).to eq '2'
+      expect(results[0][:converted_unit]).to eq 'cup'
+      expect(results[0][:converted_description]).to eq '2 cup flour'
     end
 
     it 'sorts volume units correctly' do

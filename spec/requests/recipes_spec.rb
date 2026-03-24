@@ -217,6 +217,68 @@ RSpec.describe 'Recipes' do
     end
   end
 
+  describe 'POST /recipes/:id/update_yield' do
+    let!(:recipe) do
+      create(
+        :recipe,
+        user: user,
+        yield: '24 servings',
+        ingredients: "1 cup flour\n2 tablespoons butter"
+      )
+    end
+    let(:params) do
+      {
+        new_yield: 48,
+        original_yield: 24,
+        base_yield: 24,
+        base_ingredients: "1 cup flour\n2 tablespoons butter"
+      }
+    end
+
+    context 'when unauthenticated' do
+      it 'returns unauthorized' do
+        post update_yield_recipe_path(recipe), params: params, as: :json
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context 'when authenticated as the recipe owner' do
+      before { post update_yield_recipe_path(recipe, as: user), params: params, as: :json }
+
+      it 'returns ok with updated yield and ingredients' do
+        expect(response).to have_http_status(:ok)
+        expect(response.parsed_body).to eq('ingredients' => "2 cup flour\n4 tbsp butter", 'yield' => '48 servings')
+      end
+
+      it 'persists the recipe changes to the database' do
+        recipe.reload
+        expect(recipe.yield).to eq('48 servings')
+        expect(recipe.ingredients).to eq("2 cup flour\n4 tbsp butter")
+      end
+    end
+
+    context 'when authenticated as another user' do
+      it 'does not update the recipe' do
+        expect do
+          post update_yield_recipe_path(recipe, as: other_user), params: params, as: :json
+        end.to raise_error(Pundit::NotAuthorizedError)
+      end
+    end
+
+    context 'when the updater fails' do
+      it 'returns unprocessable content' do
+        result = Recipes::YieldUpdater::Result.new(false, nil, nil)
+        allow(Recipes::YieldUpdater).to receive(:new).and_return(instance_double(Recipes::YieldUpdater, call: result))
+
+        post update_yield_recipe_path(recipe, as: user), params: params, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.parsed_body).to eq('error' => 'Could not update recipe')
+      end
+    end
+  end
+
   describe 'POST /recipes/:id/toggle_favorite' do
     context 'when user is unauthenticated' do
       it 'redirects to login' do

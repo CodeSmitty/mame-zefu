@@ -5,6 +5,16 @@ RSpec.describe 'Ingredient Parser' do
   let(:recipe) { create(:recipe, user: user, ingredients: ingredients_text) }
   let(:ingredient_parser) { Recipes::IngredientParser.new(recipe) }
 
+  describe '#normalize_fractions' do
+    let(:ingredients_text) { '' }
+
+    it 'normalizes attached unicode fractions and mixed numbers' do
+      normalized = ingredient_parser.send(:normalize_fractions, '1¼ cups flour and 2 1/2 cups milk')
+
+      expect(normalized).to eq('5/4 cups flour and 5/2 cups milk')
+    end
+  end
+
   describe '#parse_ingredients' do
     subject(:parsed_ingredients) { ingredient_parser.parse_ingredients }
 
@@ -53,11 +63,11 @@ RSpec.describe 'Ingredient Parser' do
         INGREDIENTS
       end
 
-      it 'returns original text with nil for quantity and unit' do # rubocop:disable RSpec/ExampleLength
+      it 'returns original text with default quantity and nil unit' do # rubocop:disable RSpec/ExampleLength
         expect(parsed_ingredients).to eq [
-          { original: 'Just some text without numbers or units', quantity: nil, unit: nil,
+          { original: 'Just some text without numbers or units', quantity: '1/1', unit: nil,
             ingredient: 'Just some text without numbers or units' },
-          { original: 'Another line that\'s not an ingredient format', quantity: nil, unit: nil,
+          { original: 'Another line that\'s not an ingredient format', quantity: '1/1', unit: nil,
             ingredient: 'Another line that\'s not an ingredient format' }
         ]
       end

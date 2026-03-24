@@ -18,23 +18,42 @@ module Recipes
 
     private
 
-    def scale_with_logic(parsed, multiplier) # rubocop:disable Metrics/MethodLength
-      original_quantity = parsed[:quantity] ? parsed[:quantity].to_r : 1
-      scaled_quantity = original_quantity * multiplier
-      fraction_quantity = Fractional.new(scaled_quantity)
-      scaled_quantity = fraction_quantity.to_s
-      Rails.logger.debug { "Scaled quantity: #{scaled_quantity} (#{fraction_quantity.to_f})" }
+    def scale_with_logic(parsed, multiplier)
+      return unscaled_result(parsed) if parsed[:quantity].nil?
 
-      scaled_description = if parsed[:unit]
-                             "#{scaled_quantity} #{parsed[:unit]} #{parsed[:ingredient]}"
-                           else
-                             "#{scaled_quantity} #{parsed[:ingredient]}"
-                           end.strip
+      scaled_quantity = Fractional.new(parsed[:quantity].to_r * multiplier).to_s
+      scaled_quantity_max = scale_max_quantity(parsed[:quantity_max], multiplier)
 
       parsed.merge(
         scaled_quantity: scaled_quantity,
-        scaled_description: scaled_description,
+        scaled_quantity_max: scaled_quantity_max,
+        scaled_description: build_scaled_description(scaled_quantity, scaled_quantity_max, parsed),
         scale_applied: true
+      )
+    end
+
+    def scale_max_quantity(quantity_max, multiplier)
+      return nil unless quantity_max
+
+      Fractional.new(quantity_max.to_r * multiplier).to_s
+    end
+
+    def build_scaled_description(scaled_quantity, scaled_quantity_max, parsed)
+      if parsed[:unit] && scaled_quantity_max
+        "#{scaled_quantity} to #{scaled_quantity_max} #{parsed[:unit]} #{parsed[:ingredient]}"
+      elsif parsed[:unit]
+        "#{scaled_quantity} #{parsed[:unit]} #{parsed[:ingredient]}"
+      else
+        "#{scaled_quantity} #{parsed[:ingredient]}"
+      end.strip
+    end
+
+    def unscaled_result(parsed)
+      parsed.merge(
+        scaled_quantity: nil,
+        scaled_quantity_max: nil,
+        scaled_description: parsed[:original],
+        scale_applied: false
       )
     end
   end
