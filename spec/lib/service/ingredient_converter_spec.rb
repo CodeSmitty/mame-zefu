@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Ingredient Converter' do
+RSpec.describe 'IngredientConverter', type: :service do
   let(:unit_converter) { Recipes::UnitConverter.new }
 
   describe '#converter' do

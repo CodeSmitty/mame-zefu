@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Ingredient Scaler' do
+RSpec.describe 'IngredientScaler', type: :service do
   let(:ingredient_scaler) { Recipes::IngredientScaler.new }
 
   describe '#scale_ingredient' do

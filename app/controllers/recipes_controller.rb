@@ -89,7 +89,6 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
   def show; end
 
   def update_yield
-    @recipe = Recipe.find(params[:id])
     result = Recipes::YieldUpdater.new(recipe: @recipe, params:).call
 
     if result.success?

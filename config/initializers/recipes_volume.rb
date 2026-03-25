@@ -4,7 +4,7 @@ module Recipes
 
     unit :tbsp, value: "3 tsp", aliases: %i[tablespoon tbspn tablespoons]
     unit :cup, value: "16 tbsp", aliases: %i[cups cup]
-    unit :qt,  value: "4 cup", aliases: %i[quart quarts pint pints pt]
+    unit :qt,  value: "4 cup", aliases: %i[quart quarts]
     unit :gal, value: "4 qt", aliases: %i[gallon gallons]
   end
 

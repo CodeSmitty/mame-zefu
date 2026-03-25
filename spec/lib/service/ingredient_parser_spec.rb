@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Ingredient Parser' do
+RSpec.describe 'IngredientParser', type: :service do
   let(:user) { create(:user) }
   let(:recipe) { create(:recipe, user: user, ingredients: ingredients_text) }
   let(:ingredient_parser) { Recipes::IngredientParser.new(recipe) }

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Ingredient Calculator' do
+RSpec.describe 'IngredientCalculator', type: :service do
   let(:user) { create(:user) }
   let(:recipe) { create(:recipe, user: user, ingredients: ingredients_text) }
   let(:ingredient_calculator) { Recipes::IngredientCalculator.new(recipe) }
