@@ -94,7 +94,6 @@
                 <ul data-controller="list" class="list-inside space-y-1 mb-8 columns-1 lg:columns-2 gap-x-2 gap-y-2 px-4">
                   <% list.split("\n").each do |item| %>
                     <li
-                      data-yield-ingredients-target="recipe-ingredients"
                       data-action="click->list#strike"
                       class="break-words leading-snug py-1"
                       itemprop="recipeIngredient"><%= item %></li>
