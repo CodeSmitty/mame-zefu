@@ -12,7 +12,6 @@ module Recipes
     end
 
     def scale_ingredient(parsed_ingredient, multiplier)
-      parsed_ingredient[:ingredient].to_s.downcase
       scale_with_logic(parsed_ingredient, multiplier)
     end
 

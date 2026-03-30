@@ -1,8 +1,17 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static values = { recipeId: Number, originalYield: Number }
+  static values = {
+    recipeId: Number,
+    originalYield: Number,
+    maxServings: { type: Number, default: 100 },
+  }
   static targets = ["input", "value"]
+
+  get maxServings() {
+    return this.maxServingsValue
+  }
+
   connect() {
     this.loading = false
     this.baseYieldValue = this.originalYieldValue
