@@ -19,6 +19,10 @@ class RecipePolicy < ApplicationPolicy
     owner?
   end
 
+  def update_yield?
+    owner?
+  end
+
   class Scope
     def initialize(user, scope)
       @user = user

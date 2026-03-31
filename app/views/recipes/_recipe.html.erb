@@ -41,11 +41,23 @@
             <% end %>
           </div>
         <% end %>
-        <div class="flex lg:flex-row flex-col w-full gap-0 lg:gap-4 text-lg">
-          <%= render partial: "recipes/helpers/prep", locals: { itemprop: "recipeYield", label: "Yield", value: recipe.yield } %>
-          <%= render partial: "recipes/helpers/prep", locals: { itemprop: "prepTime", label: "Prep Time", value: recipe.prep_time } %>
-          <%= render partial: "recipes/helpers/prep", locals: { itemprop: "cookTime", label: "Cook Time", value: recipe.cook_time } %>
-          <%= render partial: "recipes/helpers/prep", locals: { itemprop: "totalTime", label: "Total Time", value: recipe.total_time } %>
+        <% max_servings = 100 %>
+        <div data-controller="yield" data-yield-recipe-id-value="<%= recipe.id %>" class="mb-4"
+          data-yield-original-yield-value="<%= (recipe.yield.to_s[/\d+/] || 1).to_i %>"
+          data-yield-max-servings-value="<%= max_servings %>">
+          <div class="flex lg:flex-row flex-col w-full gap-0 lg:gap-4 text-lg">
+            <%= render partial: "recipes/helpers/prep", locals: { itemprop: "recipeYield", label: "Yield", value: recipe.yield } %>
+            <%= render partial: "recipes/helpers/prep", locals: { itemprop: "prepTime", label: "Prep Time", value: recipe.prep_time } %>
+            <%= render partial: "recipes/helpers/prep", locals: { itemprop: "cookTime", label: "Cook Time", value: recipe.cook_time } %>
+            <%= render partial: "recipes/helpers/prep", locals: { itemprop: "totalTime", label: "Total Time", value: recipe.total_time } %>
+          </div>
+          <div>
+            <div class="flex flex-col items-left gap-2">
+                  <label for="yield-input" class="text-sm">Change Servings 1-<%= max_servings %></label>
+                  <input id="yield-input" type="text" inputmode="numeric" pattern="[0-9]*" data-yield-target="input" data-action="change->yield#custom" value="<%= (recipe.yield.to_s[/\d+/] || 1).to_i %>" placeholder="<%= (recipe.yield.to_s[/\d+/] || 1).to_i %>" class="w-20 border border-gray-300 rounded-md px-2 py-1 text-center" autocomplete="off">
+                  <span data-yield-target="value" class="hidden"><%= recipe.yield %></span>
+              </div>
+          </div>
         </div>
         <div class="flex flex-row flex-wrap p-2 lg:p-0">
           <% recipe.category_names.sort_by(&:downcase).each do |category| %>
