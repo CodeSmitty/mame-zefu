@@ -25,9 +25,6 @@ module Recipes
       'qt' => 192,
       'quart' => 192,
       'quarts' => 192,
-      'pint' => 192,
-      'pints' => 192,
-      'pt' => 192,
       'gal' => 768,
       'gallon' => 768,
       'gallons' => 768
@@ -52,5 +49,26 @@ module Recipes
     }.freeze
 
     WEIGHT_ORDER = %w[g oz lb kg].freeze
+
+    METRIC_WEIGHT_UNITS = %w[g gram grams kg kilogram kilograms].freeze
+    IMPERIAL_WEIGHT_UNITS = %w[oz ounce ounces lb lbs pound pounds].freeze
+    METRIC_WEIGHT_ORDER = %w[g kg].freeze
+    IMPERIAL_WEIGHT_ORDER = %w[oz lb].freeze
+
+    WEIGHT_LADDER_FOR_UNIT = {
+      'g' => METRIC_WEIGHT_ORDER,
+      'gram' => METRIC_WEIGHT_ORDER,
+      'grams' => METRIC_WEIGHT_ORDER,
+      'kg' => METRIC_WEIGHT_ORDER,
+      'kilogram' => METRIC_WEIGHT_ORDER,
+      'kilograms' => METRIC_WEIGHT_ORDER,
+      'oz' => IMPERIAL_WEIGHT_ORDER,
+      'ounce' => IMPERIAL_WEIGHT_ORDER,
+      'ounces' => IMPERIAL_WEIGHT_ORDER,
+      'lb' => IMPERIAL_WEIGHT_ORDER,
+      'lbs' => IMPERIAL_WEIGHT_ORDER,
+      'pound' => IMPERIAL_WEIGHT_ORDER,
+      'pounds' => IMPERIAL_WEIGHT_ORDER
+    }.freeze
   end
 end

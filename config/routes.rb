@@ -38,7 +38,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   root 'recipes#index'
   resources :recipes do
     member do
-      post :toggle_favorite 
+      post :toggle_favorite
       post :update_yield
       delete :image, action: :delete_image
     end

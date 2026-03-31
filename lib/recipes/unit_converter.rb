@@ -19,7 +19,7 @@ module Recipes
       base_unit = find_best_unit(converter, unit_converter[:sorted_units])
       update_conversion(ingredient, base_unit)
     rescue Measured::UnitError
-      uncovertable_ingredient(ingredient)
+      unconvertable_ingredient(ingredient)
     end
 
     def find_best_unit(converter, sorted_units)
@@ -72,7 +72,7 @@ module Recipes
       end
     end
 
-    def uncovertable_ingredient(ingredient)
+    def unconvertable_ingredient(ingredient)
       ingredient[:converted_quantity] = format_quantity(ingredient[:scaled_quantity])
       ingredient[:converted_unit] = nil
       ingredient[:converted_description] =
@@ -92,7 +92,7 @@ module Recipes
     end
 
     def format_quantity(value)
-      rational = value.is_a?(String) ? value.to_r : value.to_f.rationalize(1e-9)
+      rational = value.to_r
       whole = rational.to_i
       fraction = rational - whole
 
@@ -113,7 +113,7 @@ module Recipes
         {
           converter: Recipes::Weight,
           unit_system: Recipes::Weight.unit_system,
-          sorted_units: WEIGHT_ORDER
+          sorted_units: Recipes::IngredientConstants::WEIGHT_LADDER_FOR_UNIT[unit_str] || WEIGHT_ORDER
         }
       else
         raise Measured::UnitError, "Unit '#{unit_str}' is not recognized as volume or weight."

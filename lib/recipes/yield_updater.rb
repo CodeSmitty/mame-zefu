@@ -7,8 +7,10 @@ module Recipes
       @params = params
     end
 
-    def call
+    def call # rubocop:disable Metrics/MethodLength
       new_yield = @params[:new_yield].to_i
+      return Result.new(false, nil, nil) if new_yield < 1
+
       source_yield = yield_source_value
       multiplier = Rational(new_yield, source_yield)
       yield_display = "#{new_yield} servings"
