@@ -66,7 +66,7 @@ export default class extends Controller {
       console.error("Error updating yield:", error)
     }
 
-    if(!success){
+    if (!success) {
       this.inputTarget.value = previousYield
       alert("Failed to update yield. Please try again.")
     }
