@@ -1,17 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static values = {
-    recipeId: Number,
-    originalYield: Number,
-    maxServings: { type: Number, default: 100 },
-  }
+  static values = { recipeId: Number, originalYield: Number }
   static targets = ["input", "value"]
-
-  get maxServings() {
-    return this.maxServingsValue
-  }
-
   connect() {
     this.loading = false
     this.baseYieldValue = this.originalYieldValue
@@ -44,6 +35,8 @@ export default class extends Controller {
   }
 
   async updateYield(recipeId, newYield) {
+    const previousYield = this.originalYieldValue
+    let success = false
     try {
       const response = await fetch(`/recipes/${recipeId}/update_yield`, {
         method: "POST",
@@ -65,11 +58,17 @@ export default class extends Controller {
         this.originalYieldValue = newYield
         this.updateYieldDisplay(data?.yield)
         this.updateIngredientsDisplay(data?.ingredients)
+        success = true
       } else {
         console.error("Failed to update yield")
       }
     } catch (error) {
       console.error("Error updating yield:", error)
+    }
+
+    if(!success){
+      this.inputTarget.value = previousYield
+      alert("Failed to update yield. Please try again.")
     }
   }
 

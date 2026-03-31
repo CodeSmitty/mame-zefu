@@ -10,8 +10,9 @@ module Recipes
 
     private
 
-    def convert_ingredient(ingredient)
+    def convert_ingredient(ingredient) # rubocop:disable Metrics/AbcSize
       return update_range_conversion(ingredient) if ingredient[:scaled_quantity_max]
+      return unconvertable_ingredient(ingredient) if ingredient[:scaled_quantity].nil?
 
       unit_str = ingredient[:unit].to_s.strip.downcase
       unit_converter = sort_volume_or_weight_units(ingredient[:scaled_quantity], unit_str)
@@ -73,7 +74,8 @@ module Recipes
     end
 
     def unconvertable_ingredient(ingredient)
-      ingredient[:converted_quantity] = format_quantity(ingredient[:scaled_quantity])
+      quantity = ingredient[:scaled_quantity]
+      ingredient[:converted_quantity] = quantity.nil? ? nil : format_quantity(quantity)
       ingredient[:converted_unit] = nil
       ingredient[:converted_description] =
         "#{ingredient[:converted_quantity]}#{ingredient[:converted_unit]} #{ingredient[:ingredient]}"
