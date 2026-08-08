@@ -43,7 +43,7 @@ RSpec.feature 'Visitor resets password' do
   end
 
   def expect_page_to_display_change_password_message
-    expect(page).to have_content I18n.t('passwords.create.description')
+    expect(page).to have_text I18n.t('passwords.create.description')
   end
 
   def expect_mailer_to_have_delivery(recipient, subject, body) # rubocop:disable Metrics/AbcSize
