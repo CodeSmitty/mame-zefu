@@ -29,10 +29,42 @@ module RecipesHelper
     return item unless ingredient_parsing_enabled?
 
     parsed = Recipes::Ingredient::Parser.new(item).parse || {}
-    safe_join(parsed_ingredient_pieces(parsed, item), ' ')
+    content = safe_join(parsed_ingredient_pieces(parsed, item), ' ')
+
+    ingredient_debug_markup(content, parsed)
   end
 
   private
+
+  def ingredient_debug_markup(content, parsed)
+    return content unless current_user&.is_admin?
+
+    content_tag(:span, data: { controller: 'ingredient-debug' }) do
+      safe_join([content, debug_toggle_button, debug_panel(parsed)])
+    end
+  end
+
+  def debug_toggle_button
+    icon = render('icons/micro/magnifying_glass', classes: '')
+
+    content_tag(:button, icon, type: 'button',
+                               class: 'ingredient-debug-toggle text-gray-500 align-middle ms-1 cursor-pointer ' \
+                                      'no-underline',
+                               data: { action: 'click->ingredient-debug#toggle:stop' })
+  end
+
+  def debug_panel(parsed)
+    # Wrapped in an inline-block span so the ancestor <li>'s line-through decoration
+    # (toggled by the strikethrough feature) doesn't paint through this block-level <pre>.
+    # The "hidden" toggle class stays on the <pre> itself to avoid colliding with
+    # "inline-block" on the same element (both are display utilities with equal
+    # specificity, and Tailwind's generated order would let inline-block win).
+    content_tag(:span, class: 'inline-block') do
+      content_tag(:pre, JSON.pretty_generate(parsed),
+                  class: 'ingredient-debug-panel hidden mt-1 p-2 text-xs bg-gray-100 rounded whitespace-pre-wrap',
+                  data: { ingredient_debug_target: 'panel' })
+    end
+  end
 
   def parsed_ingredient_pieces(parsed, item)
     [quantity_piece(parsed), unit_piece(parsed), ingredient_piece(parsed, item)].compact

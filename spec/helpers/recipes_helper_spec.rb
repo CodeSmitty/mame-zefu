@@ -34,8 +34,11 @@ RSpec.describe RecipesHelper do
   describe '#parsed_ingredient_markup' do
     subject(:markup) { helper.parsed_ingredient_markup('1 cup flour') }
 
+    let(:current_user) { build_stubbed(:user, is_admin: is_admin) }
+    let(:is_admin) { false }
+
     before do
-      allow(helper).to receive(:ingredient_parsing_enabled?).and_return(feature_enabled)
+      allow(helper).to receive_messages(current_user: current_user, ingredient_parsing_enabled?: feature_enabled)
     end
 
     context 'when ingredient parsing is enabled' do
@@ -43,6 +46,24 @@ RSpec.describe RecipesHelper do
 
       it 'renders parsed quantity, unit, and ingredient markup' do
         expect(markup).to include('1', 'cup', 'flour')
+      end
+
+      it 'does not include a debug toggle for non-admin users' do
+        expect(markup).not_to include('ingredient-debug-toggle')
+      end
+
+      context 'when the current user is an admin' do
+        let(:is_admin) { true }
+
+        it 'includes a debug toggle button' do
+          expect(markup).to include('ingredient-debug-toggle')
+        end
+
+        it 'includes the raw parser output in a hidden panel' do
+          decoded_markup = CGI.unescapeHTML(markup)
+
+          expect(decoded_markup).to include('"quantity": "1/1"', '"unit": "cup"', '"ingredient": "flour"')
+        end
       end
     end
 
