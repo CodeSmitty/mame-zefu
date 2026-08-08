@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-RSpec.describe 'IngredientParser', type: :service do
+RSpec.describe Recipes::Ingredient::Parser, type: :service do
   let(:user) { create(:user) }
   let(:recipe) { create(:recipe, user: user, ingredients: ingredients_text) }
-  let(:ingredient_parser) { Recipes::IngredientParser.new(recipe) }
+  let(:ingredient_parser) { described_class.new(recipe) }
 
   describe '#normalize_fractions' do
     let(:ingredients_text) { '' }
