@@ -1,44 +1,42 @@
 require 'ingreedy'
-require_relative 'constants'
+require_relative 'fraction_normalizer'
 
 module Recipes
   module Ingredient
     class Parser
-      include Constants
+      attr_reader :ingredient
 
-      attr_accessor :recipe
-
-      FRACTION_PATTERN = Regexp.union(FRACTION_MAP.keys)
-
-      def initialize(recipe)
-        @recipe = recipe
-      end
-
-      def parse_ingredients
-        ingredients_text = recipe.ingredients.to_s
-        ingredients = ingredients_text.split(/[\r\n]+/).map(&:strip).reject(&:empty?)
-
-        ingredients.map do |ingredient|
-          parse_single_ingredient(ingredient)
+      def self.parse_ingredients(recipe)
+        # Splits multi-line ingredient text into individual non-empty lines.
+        recipe.ingredients.to_s.split(/[\r\n]+/).map(&:strip).reject(&:empty?).map do |ingredient|
+          new(ingredient).parse
         end.compact
       end
 
-      private
+      def initialize(ingredient)
+        @ingredient = ingredient.to_s.strip
+      end
 
-      def parse_single_ingredient(ingredient)
+      def parse
+        return if ingredient.empty?
+
+        # Matches free-form "to taste" lines that should not be scaled.
         return unscalable_parse(ingredient) if ingredient.match?(/\bto taste\b/i)
 
         container_result = try_container_parse(ingredient)
         return container_result if container_result
 
+        parse_normalized_ingredient(ingredient)
+      end
+
+      private
+
+      def parse_normalized_ingredient(ingredient)
         normalized = normalized_ingredient(ingredient)
-        range_result = try_range_parse(normalized, ingredient)
-        return range_result if range_result
-
-        ingreedy_result = try_ingreedy(normalized, ingredient)
-        return ingreedy_result if ingreedy_result
-
-        try_regex_fallback(normalized, ingredient) || default_parse(ingredient)
+        try_range_parse(normalized, ingredient) ||
+          try_ingreedy(normalized, ingredient) ||
+          try_regex_fallback(normalized, ingredient) ||
+          default_parse(ingredient)
       end
 
       def unscalable_parse(ingredient)
@@ -52,7 +50,7 @@ module Recipes
       end
 
       def normalized_ingredient(ingredient)
-        normalize_fractions(ingredient)
+        FractionNormalizer.normalize(ingredient)
       end
 
       def try_ingreedy(normalized, ingredient)
@@ -70,6 +68,7 @@ module Recipes
       end
 
       def try_range_parse(normalized, ingredient)
+        # Matches ranges like "1-2 tsp sugar" or "1 to 2 tsp sugar".
         match = normalized.match(%r{\A([\d/.]+)\s*(?:to|-)\s*([\d/.]+)\s+([^\s]+)\s+(.+)\z}i)
         return unless match
 
@@ -83,6 +82,7 @@ module Recipes
       end
 
       def try_container_parse(ingredient)
+        # Matches container forms like "1 (14 oz) can tomatoes".
         match = ingredient.match(/\A(\d+)\s+(\(.+\)\s+.+)\z/)
         return unless match
 
@@ -95,6 +95,7 @@ module Recipes
       end
 
       def try_regex_fallback(normalized, ingredient)
+        # Matches a leading numeric quantity followed by remaining ingredient text.
         match = normalized.match(%r{\A([\d\s/.]+)\s+(.+)})
         return unless match
 
@@ -113,19 +114,6 @@ module Recipes
           unit: nil,
           ingredient: ingredient
         }
-      end
-
-      def normalize_fractions(text)
-        normalized_text = text.gsub(/(\d)(#{FRACTION_PATTERN})/) do
-          "#{::Regexp.last_match(1)} #{FRACTION_MAP[::Regexp.last_match(2)]}"
-        end
-        normalized_text = normalized_text.gsub(FRACTION_PATTERN) { |match| FRACTION_MAP[match] }
-        normalized_text.gsub(%r{(\d+)[\s-]+(\d+)/(\d+)}) do
-          whole = ::Regexp.last_match(1).to_i
-          num   = ::Regexp.last_match(2).to_i
-          den   = ::Regexp.last_match(3).to_i
-          "#{(whole * den) + num}/#{den}"
-        end
       end
     end
   end
