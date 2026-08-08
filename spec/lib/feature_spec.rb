@@ -53,4 +53,29 @@ RSpec.describe Feature do
       expect(described_class.recipe_extraction_enabled?(user)).to be(false)
     end
   end
+
+  describe '.ingredient_parsing_enabled?' do
+    let(:user) { build_stubbed(:user) }
+
+    it 'returns true when main flag is enabled and disabled flag is off' do
+      allow(Flipper).to receive(:enabled?).with(:ingredient_parsing, user).and_return(true)
+      allow(Flipper).to receive(:enabled?).with('ingredient_parsing_disabled', user).and_return(false)
+
+      expect(described_class.ingredient_parsing_enabled?(user)).to be(true)
+    end
+
+    it 'returns false when main flag is disabled' do
+      allow(Flipper).to receive(:enabled?).with(:ingredient_parsing, user).and_return(false)
+      allow(Flipper).to receive(:enabled?).with('ingredient_parsing_disabled', user).and_return(false)
+
+      expect(described_class.ingredient_parsing_enabled?(user)).to be(false)
+    end
+
+    it 'returns false when user is explicitly disabled' do
+      allow(Flipper).to receive(:enabled?).with(:ingredient_parsing, user).and_return(true)
+      allow(Flipper).to receive(:enabled?).with('ingredient_parsing_disabled', user).and_return(true)
+
+      expect(described_class.ingredient_parsing_enabled?(user)).to be(false)
+    end
+  end
 end

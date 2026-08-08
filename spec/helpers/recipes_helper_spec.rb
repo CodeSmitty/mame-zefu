@@ -16,6 +16,45 @@ RSpec.describe RecipesHelper do
     end
   end
 
+  describe '#ingredient_parsing_enabled?' do
+    let(:current_user) { create(:user) }
+
+    before do
+      allow(helper).to receive(:current_user).and_return(current_user)
+    end
+
+    it 'delegates to Feature.ingredient_parsing_enabled?' do
+      allow(Feature).to receive(:ingredient_parsing_enabled?).and_return(true)
+
+      expect(helper.ingredient_parsing_enabled?).to be(true)
+      expect(Feature).to have_received(:ingredient_parsing_enabled?).with(current_user)
+    end
+  end
+
+  describe '#parsed_ingredient_markup' do
+    subject(:markup) { helper.parsed_ingredient_markup('1 cup flour') }
+
+    before do
+      allow(helper).to receive(:ingredient_parsing_enabled?).and_return(feature_enabled)
+    end
+
+    context 'when ingredient parsing is enabled' do
+      let(:feature_enabled) { true }
+
+      it 'renders parsed quantity, unit, and ingredient markup' do
+        expect(markup).to include('1', 'cup', 'flour')
+      end
+    end
+
+    context 'when ingredient parsing is disabled' do
+      let(:feature_enabled) { false }
+
+      it 'returns the original item text' do
+        expect(markup).to eq('1 cup flour')
+      end
+    end
+  end
+
   describe '#recipe_draft_key' do
     let(:current_user) { create(:user) }
 

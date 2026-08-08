@@ -8,7 +8,7 @@ export default class extends Controller {
   }
 
   strike(event) {
-    event.target.classList.toggle("line-through")
+    event.target.closest("li").classList.toggle("line-through")
   }
 
   focus(event) {
