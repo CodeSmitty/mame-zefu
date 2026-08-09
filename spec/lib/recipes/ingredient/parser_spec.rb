@@ -74,6 +74,18 @@ RSpec.describe Recipes::Ingredient::Parser, type: :service do
       end
     end
 
+    context 'with a unit followed by a trailing comma' do
+      let(:ingredient_text) { '2 tablespoons, minced fresh parsley leaves' }
+      let(:expected_parse) do
+        { original: '2 tablespoons, minced fresh parsley leaves', quantity: '2/1', unit: 'tablespoon',
+          ingredient: 'minced fresh parsley leaves' }
+      end
+
+      it 'parses the unit and strips the comma from the ingredient text' do
+        expect(parsed_ingredient).to eq(expected_parse)
+      end
+    end
+
     context 'with invalid format' do
       let(:ingredient_text) { 'Just some text without numbers or units' }
       let(:expected_parse) do

@@ -54,17 +54,29 @@ module Recipes
       end
 
       def try_ingreedy(normalized, ingredient)
-        parsed = Ingreedy.parse(normalized)
+        parsed = Ingreedy.parse(normalized_for_ingreedy(normalized))
         return nil if parsed.amount.nil?
 
         {
           original: ingredient,
           quantity: parsed.amount&.to_s || '1/1',
           unit: parsed.unit&.to_s,
-          ingredient: parsed.ingredient
+          ingredient: normalize_ingredient_text(parsed.ingredient, parsed.unit&.to_s)
         }
       rescue Ingreedy::ParseFailed
         nil
+      end
+
+      def normalized_for_ingreedy(normalized)
+        # Accept common ingredient phrasing like "2 tablespoons, minced parsley" by
+        # removing the comma that separates the parsed unit from the ingredient text.
+        normalized.gsub(%r{\A([\d\s/.]+)\s+([[:alpha:]]+),\s+}i, '\\1 \\2 ')
+      end
+
+      def normalize_ingredient_text(ingredient_text, unit)
+        return ingredient_text if unit.blank?
+
+        ingredient_text.sub(/\A\s*,\s*/, '').sub(/\A\s+/, '').sub(/\A,/, '').strip
       end
 
       def try_range_parse(normalized, ingredient)
