@@ -92,6 +92,22 @@ RSpec.describe Recipes::Ingredient::Parser, type: :service do
       end
     end
 
+    context 'when unit recognition raises during range parsing' do
+      let(:ingredient_text) { '3 to 4 blorps finely crushed' }
+      let(:expected_parse) do
+        { original: '3 to 4 blorps finely crushed', quantity: '3/1', quantity_max: '4/1', unit: nil,
+          ingredient: 'blorps finely crushed' }
+      end
+
+      before do
+        allow(Ingreedy).to receive(:parse).with('1 blorps sugar').and_raise(Ingreedy::ParseFailed)
+      end
+
+      it 'treats the candidate as a non-unit and keeps the range text as ingredient content' do
+        expect(parsed_ingredient).to eq(expected_parse)
+      end
+    end
+
     context 'with a hyphenated fractional range' do
       let(:ingredient_text) { '1/4-1/2 tsp Cayenne Pepper' }
       let(:expected_parse) do
