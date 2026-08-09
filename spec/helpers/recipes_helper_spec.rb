@@ -242,4 +242,18 @@ RSpec.describe RecipesHelper do
       end
     end
   end
+
+  describe '#humanized_quantity' do
+    context 'when the quantity is a valid fraction' do
+      it 'returns a human-readable mixed number' do
+        expect(helper.send(:humanized_quantity, '3/2')).to eq('1 1/2')
+      end
+    end
+
+    context 'when the quantity cannot be converted to a fraction' do
+      it 'falls back to returning the original quantity' do
+        expect(helper.send(:humanized_quantity, 'bogus')).to eq('bogus')
+      end
+    end
+  end
 end

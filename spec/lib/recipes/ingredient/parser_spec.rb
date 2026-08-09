@@ -61,6 +61,17 @@ RSpec.describe Recipes::Ingredient::Parser, type: :service do
       end
     end
 
+    context 'with a range measurement' do
+      let(:ingredient_text) { '1 to 2 tsp sugar' }
+      let(:expected_parse) do
+        { original: '1 to 2 tsp sugar', quantity: '1/1', quantity_max: '2/1', unit: 'tsp', ingredient: 'sugar' }
+      end
+
+      it 'parses the quantity range, unit, and ingredient text' do
+        expect(parsed_ingredient).to eq(expected_parse)
+      end
+    end
+
     context 'with invalid format' do
       let(:ingredient_text) { 'Just some text without numbers or units' }
       let(:expected_parse) do
