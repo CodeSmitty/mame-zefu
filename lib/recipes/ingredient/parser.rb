@@ -3,6 +3,7 @@ require_relative 'fraction_normalizer'
 
 module Recipes
   module Ingredient
+    # rubocop:disable Metrics/ClassLength
     class Parser
       attr_reader :ingredient
 
@@ -84,13 +85,40 @@ module Recipes
         match = normalized.match(%r{\A([\d/.]+)\s*(?:to|-)\s*([\d/.]+)\s+([^\s]+)\s+(.+)\z}i)
         return unless match
 
+        build_range_parse_result(match, ingredient)
+      end
+
+      def build_range_parse_result(match, ingredient)
+        unit_candidate = match[3]
+
+        return range_result_without_unit(match, ingredient) unless recognized_unit?(unit_candidate)
+
         {
           original: ingredient,
           quantity: match[1].to_r.to_s,
           quantity_max: match[2].to_r.to_s,
-          unit: match[3],
+          unit: unit_candidate,
           ingredient: match[4].strip
         }
+      end
+
+      def range_result_without_unit(match, ingredient)
+        {
+          original: ingredient,
+          quantity: match[1].to_r.to_s,
+          quantity_max: match[2].to_r.to_s,
+          unit: nil,
+          ingredient: "#{match[3]} #{match[4]}".strip
+        }
+      end
+
+      def recognized_unit?(candidate)
+        normalized_candidate = candidate.to_s.downcase.gsub(/[^a-z.]/, '').delete_suffix('.')
+        return false if normalized_candidate.blank?
+
+        Ingreedy.parse("1 #{normalized_candidate} sugar").unit.present?
+      rescue Ingreedy::ParseFailed
+        false
       end
 
       def try_container_parse(ingredient)
@@ -128,5 +156,6 @@ module Recipes
         }
       end
     end
+    # rubocop:enable Metrics/ClassLength
   end
 end
