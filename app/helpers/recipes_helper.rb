@@ -73,8 +73,14 @@ module RecipesHelper
   def quantity_piece(parsed)
     return if parsed[:quantity].blank?
 
-    content_tag(:span, humanized_quantity(parsed[:quantity]),
+    content_tag(:span, quantity_text(parsed),
                 class: 'ingredient-quantity font-semibold tabular-nums')
+  end
+
+  def quantity_text(parsed)
+    return humanized_quantity(parsed[:quantity]) if parsed[:quantity_max].blank?
+
+    "#{humanized_quantity(parsed[:quantity])} to #{humanized_quantity(parsed[:quantity_max])}"
   end
 
   def unit_piece(parsed)

@@ -82,6 +82,23 @@ RSpec.describe RecipesHelper do
           expect(markup).to include('bogus', 'cup', 'flour')
         end
       end
+
+      context 'when parser returns a quantity range' do
+        let(:parser_double) do
+          instance_double(
+            Recipes::Ingredient::Parser,
+            parse: { original: '1 to 2 tsp sugar', quantity: '1/1', quantity_max: '2/1', unit: 'tsp', ingredient: 'sugar' }
+          )
+        end
+
+        before do
+          allow(Recipes::Ingredient::Parser).to receive(:new).and_return(parser_double)
+        end
+
+        it 'renders both minimum and maximum quantities' do
+          expect(markup).to include('1 to 2', 'tsp', 'sugar')
+        end
+      end
     end
 
     context 'when ingredient parsing is disabled' do
