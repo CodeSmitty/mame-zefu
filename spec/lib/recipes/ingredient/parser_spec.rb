@@ -6,6 +6,12 @@ RSpec.describe Recipes::Ingredient::Parser, type: :service do
   describe '#parse' do
     subject(:parsed_ingredient) { ingredient_parser.parse }
 
+    shared_examples 'a quantity-less ingredient' do
+      let(:expected_parse) { { original: ingredient_text, quantity: nil, unit: nil, ingredient: ingredient_text } }
+
+      it { expect(parsed_ingredient).to eq(expected_parse) }
+    end
+
     context 'with attached unicode fractions and mixed numbers' do
       let(:ingredient_text) { '1¼ cups flour and 2 1/2 cups milk' }
       let(:expected_parse) do
@@ -101,7 +107,7 @@ RSpec.describe Recipes::Ingredient::Parser, type: :service do
     context 'with invalid format' do
       let(:ingredient_text) { 'Just some text without numbers or units' }
       let(:expected_parse) do
-        { original: 'Just some text without numbers or units', quantity: '1/1', unit: nil,
+        { original: 'Just some text without numbers or units', quantity: nil, unit: nil,
           ingredient: 'Just some text without numbers or units' }
       end
 
@@ -110,10 +116,30 @@ RSpec.describe Recipes::Ingredient::Parser, type: :service do
       end
     end
 
+    context 'with ingredient text that has no quantity or unit' do
+      context 'with optional garnish text' do
+        let(:ingredient_text) { 'Additional fresh blueberries, optional' }
+
+        it_behaves_like 'a quantity-less ingredient'
+      end
+
+      context 'with single-word ingredient text' do
+        let(:ingredient_text) { 'ice' }
+
+        it_behaves_like 'a quantity-less ingredient'
+      end
+
+      context 'with seasoning text' do
+        let(:ingredient_text) { 'Salt and pepper, for taste' }
+
+        it_behaves_like 'a quantity-less ingredient'
+      end
+    end
+
     context 'when ingreedy cannot parse a non-numeric ingredient' do
       let(:ingredient_text) { 'fresh oregano leaves' }
       let(:expected_parse) do
-        { original: 'fresh oregano leaves', quantity: '1/1', unit: nil, ingredient: 'fresh oregano leaves' }
+        { original: 'fresh oregano leaves', quantity: nil, unit: nil, ingredient: 'fresh oregano leaves' }
       end
 
       before do

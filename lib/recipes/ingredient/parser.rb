@@ -122,7 +122,7 @@ module Recipes
       def default_parse(ingredient)
         {
           original: ingredient,
-          quantity: '1/1',
+          quantity: nil,
           unit: nil,
           ingredient: ingredient
         }
