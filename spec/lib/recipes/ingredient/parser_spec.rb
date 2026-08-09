@@ -3,18 +3,20 @@ require 'rails_helper'
 RSpec.describe Recipes::Ingredient::Parser, type: :service do
   subject(:ingredient_parser) { described_class.new(ingredient_text) }
 
-  describe '#normalized_ingredient' do
-    let(:ingredient_text) { '' }
-
-    it 'normalizes attached unicode fractions and mixed numbers' do
-      normalized = ingredient_parser.send(:normalized_ingredient, '1¼ cups flour and 2 1/2 cups milk')
-
-      expect(normalized).to eq('5/4 cups flour and 5/2 cups milk')
-    end
-  end
-
   describe '#parse' do
     subject(:parsed_ingredient) { ingredient_parser.parse }
+
+    context 'with attached unicode fractions and mixed numbers' do
+      let(:ingredient_text) { '1¼ cups flour and 2 1/2 cups milk' }
+      let(:expected_parse) do
+        { original: '1¼ cups flour and 2 1/2 cups milk', quantity: '5/4', unit: 'cup',
+          ingredient: 'flour and 5/2 cups milk' }
+      end
+
+      it 'normalizes quantity and parses it through the public parse API' do
+        expect(parsed_ingredient).to eq(expected_parse)
+      end
+    end
 
     context 'with simple ingredient text' do
       let(:ingredient_text) { '1 cup flour' }
@@ -84,6 +86,21 @@ RSpec.describe Recipes::Ingredient::Parser, type: :service do
       end
     end
 
+    context 'when ingreedy cannot parse a non-numeric ingredient' do
+      let(:ingredient_text) { 'fresh oregano leaves' }
+      let(:expected_parse) do
+        { original: 'fresh oregano leaves', quantity: '1/1', unit: nil, ingredient: 'fresh oregano leaves' }
+      end
+
+      before do
+        allow(Ingreedy).to receive(:parse).and_raise(Ingreedy::ParseFailed)
+      end
+
+      it 'falls back to the default parse output' do
+        expect(parsed_ingredient).to eq(expected_parse)
+      end
+    end
+
     context 'with unscalable ingredient text' do
       let(:ingredient_text) { 'Salt to taste' }
       let(:expected_parse) do
@@ -102,6 +119,21 @@ RSpec.describe Recipes::Ingredient::Parser, type: :service do
       end
 
       it 'parses quantity and ingredient without a unit' do
+        expect(parsed_ingredient).to eq(expected_parse)
+      end
+    end
+
+    context 'when ingreedy fails on numeric text' do
+      let(:ingredient_text) { '3 mystery powder' }
+      let(:expected_parse) do
+        { original: '3 mystery powder', quantity: '3/1', unit: nil, ingredient: 'mystery powder' }
+      end
+
+      before do
+        allow(Ingreedy).to receive(:parse).and_raise(Ingreedy::ParseFailed)
+      end
+
+      it 'falls back to regex parsing through the public parse API' do
         expect(parsed_ingredient).to eq(expected_parse)
       end
     end
@@ -154,37 +186,6 @@ RSpec.describe Recipes::Ingredient::Parser, type: :service do
           { original: '2 eggs', quantity: '2/1', unit: nil, ingredient: 'eggs' }
         ]
       end
-    end
-  end
-
-  describe '#unscalable_parse' do
-    let(:ingredient_text) { '' }
-
-    it 'returns the original ingredient as unscalable metadata' do # rubocop:disable RSpec/ExampleLength
-      parsed = ingredient_parser.send(:unscalable_parse, 'Salt to taste')
-
-      expect(parsed).to eq(
-        original: 'Salt to taste',
-        quantity: nil,
-        unit: nil,
-        ingredient: 'Salt to taste',
-        unscalable: true
-      )
-    end
-  end
-
-  describe '#try_regex_fallback' do
-    let(:ingredient_text) { '' }
-
-    it 'returns parsed fallback data with original ingredient preserved' do # rubocop:disable RSpec/ExampleLength
-      parsed = ingredient_parser.send(:try_regex_fallback, '3 mystery powder', '3 mystery powder')
-
-      expect(parsed).to eq(
-        original: '3 mystery powder',
-        quantity: '3/1',
-        unit: nil,
-        ingredient: 'mystery powder'
-      )
     end
   end
 end

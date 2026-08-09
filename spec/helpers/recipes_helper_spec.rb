@@ -65,6 +65,23 @@ RSpec.describe RecipesHelper do
           expect(decoded_markup).to include('"quantity": "1/1"', '"unit": "cup"', '"ingredient": "flour"')
         end
       end
+
+      context 'when parser returns an invalid quantity value' do
+        let(:parser_double) do
+          instance_double(
+            Recipes::Ingredient::Parser,
+            parse: { original: 'whatever flour', quantity: 'bogus', unit: 'cup', ingredient: 'flour' }
+          )
+        end
+
+        before do
+          allow(Recipes::Ingredient::Parser).to receive(:new).and_return(parser_double)
+        end
+
+        it 'renders the original quantity text through the public helper API' do
+          expect(markup).to include('bogus', 'cup', 'flour')
+        end
+      end
     end
 
     context 'when ingredient parsing is disabled' do
@@ -239,20 +256,6 @@ RSpec.describe RecipesHelper do
 
       it 'returns an empty array' do
         expect(options).to be_empty
-      end
-    end
-  end
-
-  describe '#humanized_quantity' do
-    context 'when the quantity is a valid fraction' do
-      it 'returns a human-readable mixed number' do
-        expect(helper.send(:humanized_quantity, '3/2')).to eq('1 1/2')
-      end
-    end
-
-    context 'when the quantity cannot be converted to a fraction' do
-      it 'falls back to returning the original quantity' do
-        expect(helper.send(:humanized_quantity, 'bogus')).to eq('bogus')
       end
     end
   end
