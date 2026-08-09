@@ -40,7 +40,7 @@ module RecipesHelper
     return content unless current_user&.is_admin?
 
     content_tag(:span, data: { controller: 'ingredient-debug' }) do
-      safe_join([content, debug_toggle_button, debug_panel(parsed)])
+      safe_join([debug_toggle_button, content, debug_panel(parsed)])
     end
   end
 
@@ -48,7 +48,7 @@ module RecipesHelper
     icon = render('icons/micro/magnifying_glass', classes: '')
 
     content_tag(:button, icon, type: 'button',
-                               class: 'ingredient-debug-toggle text-gray-500 align-middle ms-1 cursor-pointer ' \
+                               class: 'ingredient-debug-toggle text-gray-500 align-middle me-1 cursor-pointer ' \
                                       'no-underline',
                                data: { action: 'click->ingredient-debug#toggle:stop' })
   end

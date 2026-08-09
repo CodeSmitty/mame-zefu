@@ -87,7 +87,8 @@ RSpec.describe RecipesHelper do
         let(:parser_double) do
           instance_double(
             Recipes::Ingredient::Parser,
-            parse: { original: '1 to 2 tsp sugar', quantity: '1/1', quantity_max: '2/1', unit: 'tsp', ingredient: 'sugar' }
+            parse: { original: '1 to 2 tsp sugar', quantity: '1/1', quantity_max: '2/1', unit: 'tsp',
+                     ingredient: 'sugar' }
           )
         end
 
