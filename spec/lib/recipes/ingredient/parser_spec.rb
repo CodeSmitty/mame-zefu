@@ -74,6 +74,18 @@ RSpec.describe Recipes::Ingredient::Parser, type: :service do
       end
     end
 
+    context 'with a hyphenated fractional range' do
+      let(:ingredient_text) { '1/4-1/2 tsp Cayenne Pepper' }
+      let(:expected_parse) do
+        { original: '1/4-1/2 tsp Cayenne Pepper', quantity: '1/4', quantity_max: '1/2', unit: 'tsp',
+          ingredient: 'Cayenne Pepper' }
+      end
+
+      it 'parses the fraction range without mangling the second fraction' do
+        expect(parsed_ingredient).to eq(expected_parse)
+      end
+    end
+
     context 'with a unit followed by a trailing comma' do
       let(:ingredient_text) { '2 tablespoons, minced fresh parsley leaves' }
       let(:expected_parse) do
