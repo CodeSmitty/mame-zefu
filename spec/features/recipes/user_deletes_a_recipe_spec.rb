@@ -17,7 +17,7 @@ RSpec.feature 'User deletes a recipe' do
 
     recipe_show_page.delete_button.click
 
-    expect(home_page).to have_content('Recipe was successfully destroyed.')
+    expect(home_page).to have_text('Recipe was successfully destroyed.')
     expect(home_page).to have_no_link(recipe.name)
   end
 end

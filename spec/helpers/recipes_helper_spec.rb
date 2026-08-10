@@ -173,7 +173,7 @@ RSpec.describe RecipesHelper do
     context 'when there are both existing and pending categories' do
       let(:category_names) { %w[Main] }
       let(:pending_category_names) { %w[French Appetizer] }
-      let(:expected_categories) { (category_names + pending_category_names) }
+      let(:expected_categories) { category_names + pending_category_names }
 
       it 'combines existing and pending categories' do
         expect(options).to match_array(expected_options)
