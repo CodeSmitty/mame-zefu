@@ -1,5 +1,5 @@
 class Feature
-  NAMES = %i[recipe_extraction].freeze
+  NAMES = %i[recipe_extraction ingredient_parsing].freeze
 
   def self.sync_features
     features = NAMES.flat_map { |name| [name, :"#{name}_disabled"] }

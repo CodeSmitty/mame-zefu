@@ -16,6 +16,101 @@ RSpec.describe RecipesHelper do
     end
   end
 
+  describe '#ingredient_parsing_enabled?' do
+    let(:current_user) { create(:user) }
+
+    before do
+      allow(helper).to receive(:current_user).and_return(current_user)
+    end
+
+    it 'delegates to Feature.ingredient_parsing_enabled?' do
+      allow(Feature).to receive(:ingredient_parsing_enabled?).and_return(true)
+
+      expect(helper.ingredient_parsing_enabled?).to be(true)
+      expect(Feature).to have_received(:ingredient_parsing_enabled?).with(current_user)
+    end
+  end
+
+  describe '#parsed_ingredient_markup' do
+    subject(:markup) { helper.parsed_ingredient_markup('1 cup flour') }
+
+    let(:current_user) { build_stubbed(:user, is_admin: is_admin) }
+    let(:is_admin) { false }
+
+    before do
+      allow(helper).to receive_messages(current_user: current_user, ingredient_parsing_enabled?: feature_enabled)
+    end
+
+    context 'when ingredient parsing is enabled' do
+      let(:feature_enabled) { true }
+
+      it 'renders parsed quantity, unit, and ingredient markup' do
+        expect(markup).to include('1', 'cup', 'flour')
+      end
+
+      it 'does not include a debug toggle for non-admin users' do
+        expect(markup).not_to include('ingredient-debug-toggle')
+      end
+
+      context 'when the current user is an admin' do
+        let(:is_admin) { true }
+
+        it 'includes a debug toggle button' do
+          expect(markup).to include('ingredient-debug-toggle')
+        end
+
+        it 'includes the raw parser output in a hidden panel' do
+          decoded_markup = CGI.unescapeHTML(markup)
+
+          expect(decoded_markup).to include('"quantity": "1/1"', '"unit": "cup"', '"ingredient": "flour"')
+        end
+      end
+
+      context 'when parser returns an invalid quantity value' do
+        let(:parser_double) do
+          instance_double(
+            Recipes::Ingredient::Parser,
+            parse: { original: 'whatever flour', quantity: 'bogus', unit: 'cup', ingredient: 'flour' }
+          )
+        end
+
+        before do
+          allow(Recipes::Ingredient::Parser).to receive(:new).and_return(parser_double)
+        end
+
+        it 'renders the original quantity text through the public helper API' do
+          expect(markup).to include('bogus', 'cup', 'flour')
+        end
+      end
+
+      context 'when parser returns a quantity range' do
+        let(:parser_double) do
+          instance_double(
+            Recipes::Ingredient::Parser,
+            parse: { original: '1 to 2 tsp sugar', quantity: '1/1', quantity_max: '2/1', unit: 'tsp',
+                     ingredient: 'sugar' }
+          )
+        end
+
+        before do
+          allow(Recipes::Ingredient::Parser).to receive(:new).and_return(parser_double)
+        end
+
+        it 'renders both minimum and maximum quantities' do
+          expect(markup).to include('1 to 2', 'tsp', 'sugar')
+        end
+      end
+    end
+
+    context 'when ingredient parsing is disabled' do
+      let(:feature_enabled) { false }
+
+      it 'returns the original item text' do
+        expect(markup).to eq('1 cup flour')
+      end
+    end
+  end
+
   describe '#recipe_draft_key' do
     let(:current_user) { create(:user) }
 
