@@ -24,7 +24,7 @@ RSpec.feature 'User edits a recipe' do
     recipe_show_page.edit_button.click
     edit_recipe_page.save_recipe(recipe_data)
 
-    expect(home_page).to have_content('Recipe was successfully updated.')
+    expect(home_page).to have_text('Recipe was successfully updated.')
     expect(recipe_show_page.recipe_name).to have_text(recipe_data[:name])
   end
 
