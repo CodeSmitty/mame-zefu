@@ -149,7 +149,7 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
 
   # Use callbacks to share common setup or constraints between actions.
   def set_recipe
-    @recipe = authorize Recipe.find(params[:id])
+    @recipe = authorize Recipe.find(params.expect(:id))
   end
 
   def uri_from_params
@@ -163,9 +163,8 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
   # Only allow a list of trusted parameters through.
   def recipe_params
     params
-      .require(:recipe)
-      .permit(:name, :ingredients, :directions, :yield, :prep_time, :cook_time, :total_time, :description,
-              :rating, :is_favorite, :notes, :source, :image, :image_src, category_names: [])
+      .expect(recipe: [:name, :ingredients, :directions, :yield, :prep_time, :cook_time, :total_time, :description,
+                       :rating, :is_favorite, :notes, :source, :image, :image_src, { category_names: [] }])
   end
 
   def validate_image_upload
