@@ -7,7 +7,7 @@ gem "administrate"
 gem "anthropic"
 gem "bootsnap", require: false
 gem "clearance"
-gem "down", "~> 5.0"
+gem "down"
 gem "flipper-active_record"
 gem "flipper-ui"
 gem "flipper"
@@ -17,11 +17,11 @@ gem "ingreedy"
 gem "jbuilder"
 gem "mini_magick"
 gem "net_tcp_client"
-gem "parser", "~> 3.3.7.0"
+gem "parser"
 gem "pg", "~> 1.1"
 gem "puma", "< 9"
-gem "pundit", "~> 2.5"
-gem "rails", "~> 7.2.3", ">= 7.2.3.1"
+gem "pundit"
+gem "rails", "~> 8.1.0"
 gem "rails_semantic_logger"
 gem "solid_cache"
 gem "sprockets-rails"
@@ -34,16 +34,16 @@ group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
   gem 'erb_lint'
   gem 'factory_bot_rails'
-  gem 'pundit-matchers', '~> 4.0'
+  gem 'pundit-matchers'
   gem 'pry'
-  gem 'rspec-rails', '~> 7.1.0'
+  gem 'rspec-rails', '~> 8.0.0'
   gem 'rubocop', require: false
   gem 'rubocop-capybara', require: false
   gem 'rubocop-factory_bot', require: false
   gem 'rubocop-rails', require: false
   gem 'rubocop-rspec', require: false
   gem 'rubocop-rspec_rails', require: false
-  gem 'shoulda-matchers', '~> 6.0'
+  gem 'shoulda-matchers'
 end
 
 group :development do
