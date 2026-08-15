@@ -5,5 +5,17 @@ export default class extends Controller {
 
   toggle() {
     this.panelTarget.classList.toggle("hidden")
+    this.forceColumnReflow()
+  }
+
+  // Mobile browsers don't shrink CSS column heights when content collapses mid-column,
+  // leaving stale whitespace below. Toggling display forces a synchronous relayout.
+  forceColumnReflow() {
+    const columns = this.element.closest("ul")
+    if (!columns) return
+
+    columns.style.display = "none"
+    void columns.offsetHeight
+    columns.style.display = ""
   }
 }
