@@ -45,7 +45,7 @@ RSpec.describe RecipesHelper do
       let(:feature_enabled) { true }
 
       it 'renders parsed quantity, unit, and ingredient markup' do
-        expect(markup).to include('1', 'cup', 'flour')
+        expect(markup).to include('1', 'c', 'flour')
       end
 
       it 'does not include a debug toggle for non-admin users' do
@@ -62,20 +62,21 @@ RSpec.describe RecipesHelper do
         it 'includes the raw parser output in a hidden panel' do
           decoded_markup = CGI.unescapeHTML(markup)
 
-          expect(decoded_markup).to include('"quantity": "1/1"', '"unit": "cup"', '"ingredient": "flour"')
+          expect(decoded_markup).to include('"original": "1 cup flour"', '"quantity": "1/1"',
+                                            '"unit": "cup"', '"name": "flour"')
         end
       end
 
       context 'when parser returns an invalid quantity value' do
         let(:parser_double) do
           instance_double(
-            Recipes::Ingredient::Parser,
-            parse: { original: 'whatever flour', quantity: 'bogus', unit: 'cup', ingredient: 'flour' }
+            Ingredient::Parser,
+            parse: Ingredient.new(quantity: 'bogus', unit: 'cup', name: 'flour')
           )
         end
 
         before do
-          allow(Recipes::Ingredient::Parser).to receive(:new).and_return(parser_double)
+          allow(Ingredient::Parser).to receive(:new).and_return(parser_double)
         end
 
         it 'renders the original quantity text through the public helper API' do
@@ -86,18 +87,25 @@ RSpec.describe RecipesHelper do
       context 'when parser returns a quantity range' do
         let(:parser_double) do
           instance_double(
-            Recipes::Ingredient::Parser,
-            parse: { original: '1 to 2 tsp sugar', quantity: '1/1', quantity_max: '2/1', unit: 'tsp',
-                     ingredient: 'sugar' }
+            Ingredient::Parser,
+            parse: Ingredient.new(quantity: '1/1', quantity_max: '2/1', unit: 'tsp', name: 'sugar')
           )
         end
 
         before do
-          allow(Recipes::Ingredient::Parser).to receive(:new).and_return(parser_double)
+          allow(Ingredient::Parser).to receive(:new).and_return(parser_double)
         end
 
         it 'renders both minimum and maximum quantities' do
           expect(markup).to include('1 to 2', 'tsp', 'sugar')
+        end
+      end
+
+      context 'when the quantity converts to a larger unit' do
+        subject(:markup) { helper.parsed_ingredient_markup('6 teaspoon salt') }
+
+        it 'renders the converted quantity and unit' do
+          expect(markup).to include('2', 'tbsp', 'salt')
         end
       end
     end
