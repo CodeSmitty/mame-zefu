@@ -14,8 +14,9 @@ export default class extends Controller {
     const columns = this.element.closest("ul")
     if (!columns) return
 
+    const previousDisplay = columns.style.display
     columns.style.display = "none"
     void columns.offsetHeight
-    columns.style.display = ""
+    columns.style.display = previousDisplay
   }
 }
