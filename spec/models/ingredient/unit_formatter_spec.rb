@@ -32,11 +32,47 @@ RSpec.describe Ingredient::UnitFormatter, type: :service do
     end
 
     context 'with a volume quantity smaller than one of its unit' do
-      let(:quantity) { '1/2' }
+      let(:quantity) { '1/5' }
       let(:unit) { 'cup' }
 
       it 'scales down to a smaller unit' do
-        expect(result).to have_attributes(quantity: '8/1', unit: 'tbsp')
+        expect(result).to have_attributes(quantity: '16/5', unit: 'tbsp')
+      end
+    end
+
+    context 'with a tbsp quantity that is a clean quarter, half, or three-quarter cup' do
+      let(:unit) { 'tbsp' }
+
+      [
+        ['4/1', '1/4'],
+        ['8/1', '1/2'],
+        ['12/1', '3/4']
+      ].each do |tbsp_quantity, cup_quantity|
+        context "with #{tbsp_quantity} tbsp" do
+          let(:quantity) { tbsp_quantity }
+
+          it "converts to #{cup_quantity} c" do
+            expect(result).to have_attributes(quantity: cup_quantity, unit: 'c')
+          end
+        end
+      end
+    end
+
+    context 'with a tbsp quantity that is not a clean fraction of a cup' do
+      let(:quantity) { '5/1' }
+      let(:unit) { 'tbsp' }
+
+      it 'stays in tbsp' do
+        expect(result).to have_attributes(quantity: '5/1', unit: 'tbsp')
+      end
+    end
+
+    context 'with a tsp quantity that is a clean third cup' do
+      let(:quantity) { '16/1' }
+      let(:unit) { 'tsp' }
+
+      it 'converts to 1/3 c' do
+        expect(result).to have_attributes(quantity: '1/3', unit: 'c')
       end
     end
 
