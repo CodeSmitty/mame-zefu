@@ -1,6 +1,4 @@
 require 'ingreedy'
-require_relative '../ingredient'
-require_relative 'fraction_normalizer'
 
 class Ingredient
   # rubocop:disable Metrics/ClassLength

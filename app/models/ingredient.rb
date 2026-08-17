@@ -1,5 +1,4 @@
 require 'fractional'
-require_relative 'ingredient/unit_formatter'
 
 class Ingredient
   # Non-persisted representation of a single parsed recipe ingredient line.

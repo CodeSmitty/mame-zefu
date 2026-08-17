@@ -1,5 +1,3 @@
-require_relative 'constants'
-
 class Ingredient
   class FractionNormalizer
     include Constants

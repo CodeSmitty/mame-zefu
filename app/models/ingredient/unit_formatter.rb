@@ -1,5 +1,3 @@
-require_relative 'constants'
-
 class Ingredient
   # Converts a scaled quantity/unit into the best-fitting display unit,
   # e.g. "8 tbsp" becomes "1/2 cup".
