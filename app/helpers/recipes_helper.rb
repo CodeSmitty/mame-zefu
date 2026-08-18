@@ -28,19 +28,19 @@ module RecipesHelper
   def parsed_ingredient_markup(item)
     return item unless ingredient_parsing_enabled?
 
-    parsed = Recipes::Ingredient::Parser.new(item).parse || {}
-    content = safe_join(parsed_ingredient_pieces(parsed, item), ' ')
+    ingredient = Ingredient::Parser.new(item).parse || Ingredient.new(name: item)
+    content = safe_join(ingredient_pieces(ingredient), ' ')
 
-    ingredient_debug_markup(content, parsed)
+    ingredient_debug_markup(content, ingredient, item)
   end
 
   private
 
-  def ingredient_debug_markup(content, parsed)
+  def ingredient_debug_markup(content, ingredient, original)
     return content unless current_user&.is_admin?
 
     content_tag(:span, data: { controller: 'ingredient-debug' }) do
-      safe_join([debug_toggle_button, content, debug_panel(parsed)])
+      safe_join([debug_toggle_button, content, debug_panel(ingredient, original)])
     end
   end
 
@@ -53,53 +53,39 @@ module RecipesHelper
                                data: { action: 'click->ingredient-debug#toggle:stop' })
   end
 
-  def debug_panel(parsed)
+  def debug_panel(ingredient, original)
     # Wrapped in an inline-block span so the ancestor <li>'s line-through decoration
     # (toggled by the strikethrough feature) doesn't paint through this block-level <pre>.
     # The "hidden" toggle class stays on the <pre> itself to avoid colliding with
     # "inline-block" on the same element (both are display utilities with equal
     # specificity, and Tailwind's generated order would let inline-block win).
     content_tag(:span, class: 'inline-block') do
-      content_tag(:pre, JSON.pretty_generate(parsed),
+      content_tag(:pre, JSON.pretty_generate(ingredient.attributes.merge('original' => original)),
                   class: 'ingredient-debug-panel hidden mt-1 p-2 text-xs bg-gray-100 rounded whitespace-pre-wrap',
                   data: { ingredient_debug_target: 'panel' })
     end
   end
 
-  def parsed_ingredient_pieces(parsed, item)
-    [quantity_piece(parsed), unit_piece(parsed), ingredient_piece(parsed, item)].compact
+  def ingredient_pieces(ingredient)
+    [quantity_piece(ingredient), unit_piece(ingredient), ingredient_piece(ingredient)].compact
   end
 
-  def quantity_piece(parsed)
-    return if parsed[:quantity].blank?
+  def quantity_piece(ingredient)
+    return if ingredient.formatted_quantity.blank?
 
-    content_tag(:span, quantity_text(parsed),
+    content_tag(:span, ingredient.formatted_quantity,
                 class: 'ingredient-quantity font-semibold tabular-nums')
   end
 
-  def quantity_text(parsed)
-    return humanized_quantity(parsed[:quantity]) if parsed[:quantity_max].blank?
+  def unit_piece(ingredient)
+    return if ingredient.formatted_unit.blank?
 
-    "#{humanized_quantity(parsed[:quantity])} to #{humanized_quantity(parsed[:quantity_max])}"
-  end
-
-  def unit_piece(parsed)
-    return if parsed[:unit].blank?
-
-    content_tag(:span, parsed[:unit],
+    content_tag(:span, ingredient.formatted_unit,
                 class: 'ingredient-unit font-semibold font-mono')
   end
 
-  def ingredient_piece(parsed, item)
-    ingredient_text = parsed[:ingredient].presence || item
-
-    content_tag(:span, ingredient_text, class: 'ingredient-name')
-  end
-
-  def humanized_quantity(quantity)
-    Fractional.new(quantity, to_human: true).to_s(mixed_number: true)
-  rescue StandardError
-    quantity
+  def ingredient_piece(ingredient)
+    content_tag(:span, ingredient.name, class: 'ingredient-name')
   end
 
   def category_options(category_names)

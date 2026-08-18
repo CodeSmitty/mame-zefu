@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Recipes::Ingredient::FractionNormalizer, type: :service do
+RSpec.describe Ingredient::FractionNormalizer, type: :service do
   describe '.normalize' do
     subject(:normalized_text) { described_class.normalize(input_text) }
 
