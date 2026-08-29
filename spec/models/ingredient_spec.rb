@@ -84,8 +84,16 @@ RSpec.describe Ingredient do
   describe '#formatted_unit' do
     subject(:formatted_unit) { ingredient.formatted_unit }
 
-    context 'when the ingredient has no quantity' do
+    context 'when the ingredient has a unit but no quantity' do
       let(:ingredient) { described_class.new(unit: 'tsp', name: 'fresh oregano leaves') }
+
+      it 'returns nil' do
+        expect(formatted_unit).to be_nil
+      end
+    end
+
+    context 'when the ingredient has no quantity and no unit' do
+      let(:ingredient) { described_class.new(name: 'fresh oregano leaves') }
 
       it 'returns nil' do
         expect(formatted_unit).to be_nil
@@ -105,6 +113,60 @@ RSpec.describe Ingredient do
 
       it 'preserves the parsed unit' do
         expect(formatted_unit).to eq('tsp')
+      end
+    end
+  end
+
+  describe '#scalable?' do
+    it 'is true when a quantity is present' do
+      expect(described_class.new(quantity: '1/1')).to be_scalable
+    end
+
+    it 'is true when a unit is present' do
+      expect(described_class.new(unit: 'tsp')).to be_scalable
+    end
+
+    it 'is false when there is no quantity or unit' do
+      expect(described_class.new(name: 'salt')).not_to be_scalable
+    end
+  end
+
+  describe '#scale' do
+    subject(:scale) { ingredient.scale(multiplier) }
+
+    let(:ingredient) { described_class.new(quantity: '1/1', unit: 'tbsp', name: 'butter') }
+    let(:multiplier) { '3/1' }
+
+    it 'updates the quantity and unit using UnitFormatter' do
+      expect(scale).to have_attributes(quantity: '3/1', unit: 'tbsp')
+    end
+
+    it 'returns the ingredient' do
+      expect(scale).to be(ingredient)
+    end
+
+    context 'when the ingredient has a quantity range' do
+      let(:ingredient) { described_class.new(quantity: '1/1', quantity_max: '2/1', unit: 'tbsp') }
+      let(:multiplier) { '2/1' }
+
+      it 'updates both endpoints in the formatter-selected unit' do
+        expect(scale).to have_attributes(quantity: '2/1', quantity_max: '4/1', unit: 'tbsp')
+      end
+    end
+
+    context 'when the ingredient has a unit but no quantity' do
+      let(:ingredient) { described_class.new(unit: 'tsp', name: 'salt') }
+
+      it 'scales assuming an original quantity of 1' do
+        expect(scale.description).to eq('1 tbsp salt')
+      end
+    end
+
+    context 'when the ingredient has no quantity or unit' do
+      let(:ingredient) { described_class.new(name: 'salt') }
+
+      it 'leaves the ingredient unchanged' do
+        expect { scale }.not_to change(ingredient, :attributes)
       end
     end
   end

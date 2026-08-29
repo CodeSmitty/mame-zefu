@@ -108,6 +108,35 @@ RSpec.describe RecipesHelper do
           expect(markup).to include('2', 'tbsp', 'salt')
         end
       end
+
+      context 'when a scale param is present' do
+        before do
+          allow(helper).to receive(:params).and_return(ActionController::Parameters.new(scale: '2'))
+        end
+
+        it 'scales the ingredient quantity' do
+          expect(markup).to include('1', 'pt', 'flour')
+        end
+
+        it 'keeps the original parsed attributes in the admin debug panel' do
+          allow(helper).to receive(:current_user).and_return(build_stubbed(:user, is_admin: true))
+
+          decoded_markup = CGI.unescapeHTML(markup)
+
+          expect(decoded_markup).to include('"quantity": "1/1"', '"unit": "cup"')
+          expect(decoded_markup).not_to include('"quantity": "1/1", "unit": "pt"')
+        end
+      end
+
+      context 'when the scale param is invalid' do
+        before do
+          allow(helper).to receive(:params).and_return(ActionController::Parameters.new(scale: 'bogus'))
+        end
+
+        it 'falls back to a scale of 1' do
+          expect(markup).to include('1', 'c', 'flour')
+        end
+      end
     end
 
     context 'when ingredient parsing is disabled' do

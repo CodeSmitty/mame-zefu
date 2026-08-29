@@ -34,6 +34,11 @@ RSpec.describe 'Recipes' do
         get recipe_path(recipe, as: user)
         expect(response).to have_http_status(:ok)
       end
+
+      it 'returns a 200 when a scale param is present' do
+        get recipe_path(recipe, params: { scale: '2', as: user })
+        expect(response).to have_http_status(:ok)
+      end
     end
 
     context 'when recipe does not exist' do
