@@ -77,7 +77,28 @@
           </label>
         </div>
         <div class="mx-auto">
-          <h2 class="text-2xl font-semibold mt-8 mb-2">Ingredients</h2>
+          <div id="ingredients" class="flex items-center flex-wrap gap-x-2 mt-8 mb-2 scroll-mt-36">
+            <h2 class="text-2xl font-semibold">Ingredients</h2>
+            <% if recipe_scaling_enabled? %>
+              <div class="flex items-center gap-1 text-gray-600">
+                <% if previous_recipe_scale %>
+                  <%= link_to recipe_path(recipe, scale: previous_recipe_scale, anchor: "ingredients"),
+                              class: "btn btn-xs hover:cursor-pointer",
+                              aria: { label: "Scale recipe down to #{previous_recipe_scale}x" } do %>
+                    <%= render_icon "mini/minus" %>
+                  <% end %>
+                <% else %>
+                  <span class="btn btn-xs opacity-30" aria-hidden="true"><%= render_icon "mini/minus" %></span>
+                <% end %>
+                <span class="text-sm font-medium w-8 text-center"><%= current_recipe_scale %>x</span>
+                <%= link_to recipe_path(recipe, scale: next_recipe_scale, anchor: "ingredients"),
+                            class: "btn btn-xs hover:cursor-pointer",
+                            aria: { label: "Scale recipe up to #{next_recipe_scale}x" } do %>
+                  <%= render_icon "mini/plus" %>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
           <% if recipe.ingredients.present? %>
             <% recipe.ingredients.split(/\n{2,}/).each do |list| %>
               <div class="mb-3 p-0">
