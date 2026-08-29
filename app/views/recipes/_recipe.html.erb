@@ -79,7 +79,7 @@
         <div class="mx-auto">
           <div id="ingredients" class="flex items-center flex-wrap gap-x-2 mt-8 mb-2 scroll-mt-36">
             <h2 class="text-2xl font-semibold">Ingredients</h2>
-            <% if recipe_scaling_enabled? %>
+            <% if recipe_scaling_enabled? && ingredient_parsing_enabled? %>
               <div class="flex items-center gap-1 text-gray-600">
                 <% if previous_recipe_scale %>
                   <%= link_to recipe_path(recipe, scale: previous_recipe_scale, anchor: "ingredients"),
