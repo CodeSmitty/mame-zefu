@@ -11,19 +11,20 @@ class Ingredient
     # quarter (1/4, 1/2, 3/4) or a third (1/3, 2/3).
     DISPLAYABLE_CUP_FRACTION_DENOMINATORS = [2, 3, 4].freeze
 
-    Result = Struct.new(:quantity, :unit)
+    Result = Struct.new(:quantity, :unit, :quantity_max)
 
-    def initialize(quantity:, unit:)
-      @quantity = quantity.to_r
+    def initialize(quantity:, unit:, quantity_max: nil, scale: 1)
+      @quantity = quantity.to_r * scale.to_r
+      @quantity_max = quantity_max&.to_r&.*(scale.to_r)
       @unit = unit.to_s.strip
       @unit_key = canonical_unit(@unit)
     end
 
     def call
-      return Result.new(@quantity.to_s, @unit) unless convertible?
+      return Result.new(@quantity.to_s, @unit, @quantity_max&.to_s) unless convertible?
 
       best_unit_key, best_quantity = best_fit
-      Result.new(best_quantity.to_s, best_unit_key)
+      Result.new(best_quantity.to_s, best_unit_key, quantity_max_in(best_unit_key))
     end
 
     private
@@ -48,6 +49,12 @@ class Ingredient
     # The quantity expressed in the smallest unit of its family (tsp or g).
     def base_amount
       @quantity * units_per_base(@unit_key)
+    end
+
+    def quantity_max_in(unit_key)
+      return unless @quantity_max
+
+      (@quantity_max * units_per_base(@unit_key) / units_per_base(unit_key)).to_s
     end
 
     def units_per_base(unit_key)

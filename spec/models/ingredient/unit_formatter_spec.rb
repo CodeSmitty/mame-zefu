@@ -2,7 +2,9 @@ require 'rails_helper'
 
 RSpec.describe Ingredient::UnitFormatter, type: :service do
   describe '#call' do
-    subject(:result) { described_class.new(quantity: quantity, unit: unit).call }
+    subject(:result) { described_class.new(quantity: quantity, unit: unit, scale: scale).call }
+
+    let(:scale) { 1 }
 
     context 'with a volume quantity that scales up to the next unit' do
       let(:quantity) { '16/1' }
@@ -109,6 +111,39 @@ RSpec.describe Ingredient::UnitFormatter, type: :service do
 
       it 'returns the quantity unchanged' do
         expect(result).to have_attributes(quantity: '2/1', unit: '')
+      end
+    end
+
+    context 'with a scale multiplier' do
+      let(:quantity) { '1/1' }
+      let(:unit) { 'tbsp' }
+      let(:scale) { '3/1' }
+
+      it 'multiplies the quantity before converting units' do
+        expect(result).to have_attributes(quantity: '3/1', unit: 'tbsp')
+      end
+    end
+
+    context 'with a fractional scale multiplier and no unit' do
+      let(:quantity) { '2/1' }
+      let(:unit) { nil }
+      let(:scale) { '1/2' }
+
+      it 'multiplies the quantity unchanged by unit' do
+        expect(result).to have_attributes(quantity: '1/1', unit: '')
+      end
+    end
+
+    context 'with a quantity range' do
+      subject(:range_result) { described_class.new(quantity:, quantity_max:, unit:, scale:).call }
+
+      let(:quantity) { '1/1' }
+      let(:quantity_max) { '2/1' }
+      let(:unit) { 'tbsp' }
+      let(:scale) { '2/1' }
+
+      it 'returns both scaled endpoints in the selected unit' do
+        expect(range_result).to have_attributes(quantity: '2/1', quantity_max: '4/1', unit: 'tbsp')
       end
     end
   end

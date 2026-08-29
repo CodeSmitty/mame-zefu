@@ -31,6 +31,103 @@ RSpec.describe RecipesHelper do
     end
   end
 
+  describe '#recipe_scaling_enabled?' do
+    let(:current_user) { create(:user) }
+
+    before do
+      allow(helper).to receive(:current_user).and_return(current_user)
+    end
+
+    it 'delegates to Feature.recipe_scaling_enabled?' do
+      allow(Feature).to receive(:recipe_scaling_enabled?).and_return(true)
+
+      expect(helper.recipe_scaling_enabled?).to be(true)
+      expect(Feature).to have_received(:recipe_scaling_enabled?).with(current_user)
+    end
+  end
+
+  describe '#current_recipe_scale' do
+    subject(:scale) { helper.current_recipe_scale }
+
+    before do
+      allow(helper).to receive(:params).and_return(ActionController::Parameters.new(scale: scale_param))
+    end
+
+    context 'when no scale param is present' do
+      let(:scale_param) { nil }
+
+      it { is_expected.to eq(1) }
+    end
+
+    context 'when the scale param is 1' do
+      let(:scale_param) { '1' }
+
+      it { is_expected.to eq(1) }
+    end
+
+    context 'when the scale param is a positive even whole number' do
+      let(:scale_param) { '4' }
+
+      it { is_expected.to eq(4) }
+    end
+
+    context 'when the scale param is a positive odd number other than 1' do
+      let(:scale_param) { '3' }
+
+      it { is_expected.to eq(1) }
+    end
+
+    context 'when the scale param is not a whole number' do
+      let(:scale_param) { '2.5' }
+
+      it { is_expected.to eq(1) }
+    end
+
+    context 'when the scale param is not positive' do
+      let(:scale_param) { '-2' }
+
+      it { is_expected.to eq(1) }
+    end
+  end
+
+  describe '#previous_recipe_scale' do
+    subject(:scale) { helper.previous_recipe_scale }
+
+    context 'when the current scale is 1' do
+      before { allow(helper).to receive(:current_recipe_scale).and_return(1) }
+
+      it { is_expected.to be_nil }
+    end
+
+    context 'when the current scale is 2' do
+      before { allow(helper).to receive(:current_recipe_scale).and_return(2) }
+
+      it { is_expected.to eq(1) }
+    end
+
+    context 'when the current scale is greater than 2' do
+      before { allow(helper).to receive(:current_recipe_scale).and_return(6) }
+
+      it { is_expected.to eq(4) }
+    end
+  end
+
+  describe '#next_recipe_scale' do
+    subject(:scale) { helper.next_recipe_scale }
+
+    context 'when the current scale is 1' do
+      before { allow(helper).to receive(:current_recipe_scale).and_return(1) }
+
+      it { is_expected.to eq(2) }
+    end
+
+    context 'when the current scale is greater than 1' do
+      before { allow(helper).to receive(:current_recipe_scale).and_return(4) }
+
+      it { is_expected.to eq(6) }
+    end
+  end
+
   describe '#parsed_ingredient_markup' do
     subject(:markup) { helper.parsed_ingredient_markup('1 cup flour') }
 
@@ -106,6 +203,35 @@ RSpec.describe RecipesHelper do
 
         it 'renders the converted quantity and unit' do
           expect(markup).to include('2', 'tbsp', 'salt')
+        end
+      end
+
+      context 'when a scale param is present' do
+        before do
+          allow(helper).to receive(:params).and_return(ActionController::Parameters.new(scale: '2'))
+        end
+
+        it 'scales the ingredient quantity' do
+          expect(markup).to include('1', 'pt', 'flour')
+        end
+
+        it 'keeps the original parsed attributes in the admin debug panel' do
+          allow(helper).to receive(:current_user).and_return(build_stubbed(:user, is_admin: true))
+
+          decoded_markup = CGI.unescapeHTML(markup)
+
+          expect(decoded_markup).to include('"quantity": "1/1"', '"unit": "cup"')
+          expect(decoded_markup).not_to include('"quantity": "1/1", "unit": "pt"')
+        end
+      end
+
+      context 'when the scale param is invalid' do
+        before do
+          allow(helper).to receive(:params).and_return(ActionController::Parameters.new(scale: 'bogus'))
+        end
+
+        it 'falls back to a scale of 1' do
+          expect(markup).to include('1', 'c', 'flour')
         end
       end
     end
