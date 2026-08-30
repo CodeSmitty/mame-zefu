@@ -76,9 +76,7 @@ class Ingredient
       index = demote_to_smallest_whole_unit(units, index)
       unit_key = units[index]
 
-      return cup_fraction_fit if unit_key == 'tbsp'
-
-      [unit_key, base_amount / units_per_base(unit_key)]
+      cup_fraction_fit(unit_key) || [unit_key, base_amount / units_per_base(unit_key)]
     end
 
     def promote_to_largest_whole_unit(units, index)
@@ -92,13 +90,15 @@ class Ingredient
     end
 
     def whole_quantity_in?(unit_key)
-      (base_amount / units_per_base(unit_key)) >= 1
+      (base_amount % units_per_base(unit_key)).zero?
     end
 
     # Convert tbsp to a fraction of a cup if it lands on a common measure.
-    def cup_fraction_fit
+    def cup_fraction_fit(unit_key)
+      return unless %w[tsp tbsp].include?(unit_key)
+
       cup_quantity = base_amount / units_per_base('c')
-      return ['tbsp', base_amount / units_per_base('tbsp')] unless displayable_cup_fraction?(cup_quantity)
+      return unless displayable_cup_fraction?(cup_quantity)
 
       ['c', cup_quantity]
     end

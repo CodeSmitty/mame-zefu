@@ -212,7 +212,7 @@ RSpec.describe RecipesHelper do
         end
 
         it 'scales the ingredient quantity' do
-          expect(markup).to include('1', 'pt', 'flour')
+          expect(markup).to include('2', 'c', 'flour')
         end
 
         it 'keeps the original parsed attributes in the admin debug panel' do
@@ -221,7 +221,6 @@ RSpec.describe RecipesHelper do
           decoded_markup = CGI.unescapeHTML(markup)
 
           expect(decoded_markup).to include('"quantity": "1/1"', '"unit": "cup"')
-          expect(decoded_markup).not_to include('"quantity": "1/1", "unit": "pt"')
         end
       end
 
