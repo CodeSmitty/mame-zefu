@@ -15,16 +15,16 @@ RSpec.describe Ingredient::UnitFormatter, type: :service do
       end
     end
 
-    context 'with a pint quantity' do
-      let(:quantity) { '2/1' }
-      let(:unit) { 'cup' }
+    context 'with a volume quantity that scales up multiple units' do
+      let(:quantity) { '256/1' }
+      let(:unit) { 'tbsp' }
 
-      it 'converts to pints' do
-        expect(result).to have_attributes(quantity: '1/1', unit: 'pt')
+      it 'converts to the largest applicable unit' do
+        expect(result).to have_attributes(quantity: '1/1', unit: 'gal')
       end
     end
 
-    context 'with a volume quantity that scales up multiple units' do
+    context 'with a volume quantity that is already scaled to the largest unit' do
       let(:quantity) { '1/1' }
       let(:unit) { 'gal' }
 
@@ -33,12 +33,12 @@ RSpec.describe Ingredient::UnitFormatter, type: :service do
       end
     end
 
-    context 'with a volume quantity smaller than one of its unit' do
-      let(:quantity) { '1/5' }
+    context 'with a volume quantity smaller than its unit' do
+      let(:quantity) { '1/8' }
       let(:unit) { 'cup' }
 
       it 'scales down to a smaller unit' do
-        expect(result).to have_attributes(quantity: '16/5', unit: 'tbsp')
+        expect(result).to have_attributes(quantity: '2/1', unit: 'tbsp')
       end
     end
 
@@ -48,7 +48,10 @@ RSpec.describe Ingredient::UnitFormatter, type: :service do
       [
         ['4/1', '1/4'],
         ['8/1', '1/2'],
-        ['12/1', '3/4']
+        ['12/1', '3/4'],
+        ['20/1', '5/4'],
+        ['24/1', '3/2'],
+        ['28/1', '7/4']
       ].each do |tbsp_quantity, cup_quantity|
         context "with #{tbsp_quantity} tbsp" do
           let(:quantity) { tbsp_quantity }
@@ -70,11 +73,48 @@ RSpec.describe Ingredient::UnitFormatter, type: :service do
     end
 
     context 'with a tsp quantity that is a clean third cup' do
-      let(:quantity) { '16/1' }
       let(:unit) { 'tsp' }
 
-      it 'converts to 1/3 c' do
-        expect(result).to have_attributes(quantity: '1/3', unit: 'c')
+      [
+        ['16/1', '1/3'],
+        ['32/1', '2/3'],
+        ['64/1', '4/3'],
+        ['80/1', '5/3']
+      ].each do |tsp_quantity, cup_quantity|
+        context "with #{tsp_quantity} tsp" do
+          let(:quantity) { tsp_quantity }
+
+          it "converts to #{cup_quantity} c" do
+            expect(result).to have_attributes(quantity: cup_quantity, unit: 'c')
+          end
+        end
+      end
+    end
+
+    context 'with a tsp quantity that is not a clean fraction of a cup' do
+      let(:quantity) { '5/1' }
+      let(:unit) { 'tsp' }
+
+      it 'stays in tsp' do
+        expect(result).to have_attributes(quantity: '5/1', unit: 'tsp')
+      end
+    end
+
+    context 'with a pint quantity' do
+      let(:quantity) { '1/1' }
+      let(:unit) { 'pint' }
+
+      it 'converts to cups' do
+        expect(result).to have_attributes(quantity: '2/1', unit: 'c')
+      end
+    end
+
+    context 'with a quart quantity' do
+      let(:quantity) { '1/1' }
+      let(:unit) { 'quart' }
+
+      it 'converts to cups' do
+        expect(result).to have_attributes(quantity: '4/1', unit: 'c')
       end
     end
 

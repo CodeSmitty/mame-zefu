@@ -29,23 +29,25 @@ class Ingredient
       'lb' => 16 * 28.3495r
     }.freeze
 
+    # Results in hash lookup by alias: VOLUME_ALIASES['teaspoon'] => 'tsp'
     VOLUME_ALIASES = {
-      'teaspoon' => 'tsp', 'teaspoons' => 'tsp', 'tspn' => 'tsp',
-      'tablespoon' => 'tbsp', 'tablespoons' => 'tbsp', 'tbspn' => 'tbsp',
-      'cup' => 'c', 'cups' => 'c',
-      'pint' => 'pt', 'pints' => 'pt',
-      'quart' => 'qt', 'quarts' => 'qt',
-      'gallon' => 'gal', 'gallons' => 'gal'
-    }.freeze
+      'tsp' => %w[teaspoon teaspoons tspn],
+      'tbsp' => %w[tablespoon tablespoons tbspn],
+      'c' => %w[cup cups],
+      'pt' => %w[pint pints],
+      'qt' => %w[quart quarts],
+      'gal' => %w[gallon gallons]
+    }.map { |k, v| v.map { |alias_name| [alias_name, k] } }.flatten(1).to_h.freeze
 
+    # Results in hash lookup by alias: WEIGHT_ALIASES['gram'] => 'g'
     WEIGHT_ALIASES = {
-      'gram' => 'g', 'grams' => 'g',
-      'kilogram' => 'kg', 'kilograms' => 'kg',
-      'ounce' => 'oz', 'ounces' => 'oz',
-      'pound' => 'lb', 'pounds' => 'lb', 'lbs' => 'lb'
-    }.freeze
+      'g' => %w[gram grams],
+      'kg' => %w[kilogram kilograms],
+      'oz' => %w[ounce ounces],
+      'lb' => %w[pound pounds lbs]
+    }.map { |k, v| v.map { |alias_name| [alias_name, k] } }.flatten(1).to_h.freeze
 
-    VOLUME_ORDER = %w[tsp tbsp c pt qt gal].freeze
+    VOLUME_ORDER = %w[tsp tbsp c gal].freeze
     WEIGHT_ORDER = %w[g oz lb kg].freeze
 
     METRIC_WEIGHT_ORDER = %w[g kg].freeze
