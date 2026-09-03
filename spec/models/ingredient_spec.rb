@@ -43,6 +43,14 @@ RSpec.describe Ingredient do
         expect(description).to eq('1 c butter')
       end
     end
+
+    context 'when the quantity is too impractical for a single unit' do
+      let(:ingredient) { described_class.new(quantity: '30/1', unit: 'tbsp', name: 'butter') }
+
+      it 'renders the compound measurement' do
+        expect(description).to eq('1 3/4 c + 2 tbsp butter')
+      end
+    end
   end
 
   describe '#formatted_quantity' do

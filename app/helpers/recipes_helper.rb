@@ -1,4 +1,6 @@
 module RecipesHelper
+  include IngredientMarkupHelper
+
   def recipe_extraction_enabled?
     Recipes::Extraction.enabled?(current_user)
   end
@@ -49,83 +51,7 @@ module RecipesHelper
     category_options(user.categories.pluck(:name))
   end
 
-  def parsed_ingredient_markup(item)
-    return item unless ingredient_parsing_enabled?
-
-    ingredient = Ingredient::Parser.new(item).parse || Ingredient.new(name: item)
-    original_attributes = ingredient.attributes
-    ingredient.scale(recipe_scale) if recipe_scale
-    content = safe_join(ingredient_pieces(ingredient), ' ')
-
-    ingredient_debug_markup(content, original_attributes, item)
-  end
-
   private
-
-  def recipe_scale
-    scale = params[:scale].presence
-    return unless valid_scale?(scale)
-
-    scale
-  end
-
-  def valid_scale?(scale)
-    Rational(scale).positive?
-  rescue ArgumentError, TypeError, ZeroDivisionError
-    false
-  end
-
-  def ingredient_debug_markup(content, attributes, original)
-    return content unless current_user&.is_admin?
-
-    content_tag(:span, data: { controller: 'ingredient-debug' }) do
-      safe_join([debug_toggle_button, content, debug_panel(attributes, original)])
-    end
-  end
-
-  def debug_toggle_button
-    icon = render('icons/micro/magnifying_glass', classes: '')
-
-    content_tag(:button, icon, type: 'button',
-                               class: 'ingredient-debug-toggle text-gray-500 align-middle me-1 cursor-pointer ' \
-                                      'no-underline',
-                               data: { action: 'click->ingredient-debug#toggle:stop' })
-  end
-
-  def debug_panel(attributes, original)
-    # Wrapped in an inline-block span so the ancestor <li>'s line-through decoration
-    # (toggled by the strikethrough feature) doesn't paint through this block-level <pre>.
-    # The "hidden" toggle class stays on the <pre> itself to avoid colliding with
-    # "inline-block" on the same element (both are display utilities with equal
-    # specificity, and Tailwind's generated order would let inline-block win).
-    content_tag(:span, class: 'inline-block') do
-      content_tag(:pre, JSON.pretty_generate(attributes.merge('original' => original)),
-                  class: 'ingredient-debug-panel hidden mt-1 p-2 text-xs bg-gray-100 rounded whitespace-pre-wrap',
-                  data: { ingredient_debug_target: 'panel' })
-    end
-  end
-
-  def ingredient_pieces(ingredient)
-    [quantity_piece(ingredient), unit_piece(ingredient), ingredient_piece(ingredient)].compact
-  end
-
-  def quantity_piece(ingredient)
-    return if ingredient.formatted_quantity.blank?
-
-    content_tag(:span, ingredient.formatted_quantity,
-                class: 'ingredient-quantity font-semibold tabular-nums')
-  end
-
-  def unit_piece(ingredient)
-    return if ingredient.formatted_unit.blank?
-
-    content_tag(:span, ingredient.formatted_unit,
-                class: 'ingredient-unit font-semibold font-mono')
-  end
-
-  def ingredient_piece(ingredient)
-    content_tag(:span, ingredient.name, class: 'ingredient-name')
-  end
 
   def category_options(category_names)
     category_names

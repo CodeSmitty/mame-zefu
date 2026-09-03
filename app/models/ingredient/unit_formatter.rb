@@ -5,13 +5,9 @@ class Ingredient
   # "16 oz" becomes "1 lb".
   class UnitFormatter
     include Constants
+    include Rounding
 
-    # Cup amounts smaller than a whole cup are only worth showing as a
-    # fraction of a cup when they land exactly on a common measure: a
-    # quarter (1/4, 1/2, 3/4) or a third (1/3, 2/3).
-    DISPLAYABLE_CUP_FRACTION_DENOMINATORS = [2, 3, 4].freeze
-
-    Result = Struct.new(:quantity, :unit, :quantity_max)
+    Result = Struct.new(:quantity, :unit, :quantity_max, :quantity_secondary, :unit_secondary)
 
     def initialize(quantity:, unit:, quantity_max: nil, scale: 1)
       @quantity = quantity.to_r * scale.to_r
@@ -23,8 +19,8 @@ class Ingredient
     def call
       return Result.new(@quantity.to_s, @unit, @quantity_max&.to_s) unless convertible?
 
-      best_unit_key, best_quantity = best_fit
-      Result.new(best_quantity.to_s, best_unit_key, quantity_max_in(best_unit_key))
+      unit_key, quantity, secondary_unit_key, secondary_quantity = best_fit
+      Result.new(quantity.to_s, unit_key, quantity_max_in(unit_key), secondary_quantity&.to_s, secondary_unit_key)
     end
 
     private
@@ -69,14 +65,27 @@ class Ingredient
     end
 
     # Finds the largest unit in the ladder whose whole-number quantity is
-    # at least 1, falling back to a cup fraction for tbsp amounts.
+    # at least 1, falling back to a cup or teaspoon fraction, and finally to
+    # a two-unit split (e.g. "30 tbsp" becomes "1 3/4 c" plus "2 tbsp") so
+    # that impractical amounts round to a friendlier measurement.
     def best_fit
       units = unit_ladder
       index = promote_to_largest_whole_unit(units, units.index(@unit_key) || 0)
       index = demote_to_smallest_whole_unit(units, index)
-      unit_key = units[index]
+      fitted_measurement(units[index])
+    end
 
-      cup_fraction_fit(unit_key) || [unit_key, base_amount / units_per_base(unit_key)]
+    def fitted_measurement(unit_key)
+      cup_fit = rounded_cup_fit(unit_key)
+      return [*cup_fit, nil, nil] if cup_fit
+
+      compound = compound_fit(unit_key)
+      return compound if compound
+
+      tsp_fit = rounded_tsp_fit(unit_key)
+      return [*tsp_fit, nil, nil] if tsp_fit
+
+      [unit_key, base_amount / units_per_base(unit_key), nil, nil]
     end
 
     def promote_to_largest_whole_unit(units, index)
@@ -91,20 +100,6 @@ class Ingredient
 
     def whole_quantity_in?(unit_key)
       (base_amount % units_per_base(unit_key)).zero?
-    end
-
-    # Convert tbsp to a fraction of a cup if it lands on a common measure.
-    def cup_fraction_fit(unit_key)
-      return unless %w[tsp tbsp].include?(unit_key)
-
-      cup_quantity = base_amount / units_per_base('c')
-      return unless displayable_cup_fraction?(cup_quantity)
-
-      ['c', cup_quantity]
-    end
-
-    def displayable_cup_fraction?(cup_quantity)
-      DISPLAYABLE_CUP_FRACTION_DENOMINATORS.include?(cup_quantity.denominator)
     end
   end
 end
