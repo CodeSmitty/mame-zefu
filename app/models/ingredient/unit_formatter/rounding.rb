@@ -92,6 +92,32 @@ class Ingredient
 
         ['tsp', remainder_base]
       end
+
+      # Splits an amount of at least a gallon that isn't an exact whole
+      # number of gallons into whole gallons plus a cup remainder, e.g.
+      # "89 c" becomes 5 gal (primary) plus 9 c (remainder), so scaling up
+      # doesn't jump straight from a large cup count to a lone gallon figure.
+      def gallon_compound_fit(unit_key)
+        return unless volume_unit? && %w[c tbsp tsp].include?(unit_key)
+
+        whole_gallons = base_amount / units_per_base('gal')
+        return if whole_gallons < 1
+
+        remainder_base = base_amount - (whole_gallons.floor * units_per_base('gal'))
+        return if remainder_base.zero?
+
+        remainder_unit_key, remainder_quantity = rounded_cup_remainder(remainder_base)
+        ['gal', whole_gallons.floor, remainder_unit_key, remainder_quantity]
+      end
+
+      # A cup remainder snaps to a nice fraction (quarters, thirds, halves)
+      # when close enough, otherwise it's shown as its exact value.
+      def rounded_cup_remainder(remainder_base)
+        cup_quantity = remainder_base / units_per_base('c')
+        nice_quantity = nearest_nice_amount(cup_quantity, CUP_FRACTIONS) { |quantity| quantity }
+
+        ['c', nice_quantity || cup_quantity]
+      end
     end
   end
 end

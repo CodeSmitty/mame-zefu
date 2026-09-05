@@ -76,6 +76,9 @@ class Ingredient
     end
 
     def fitted_measurement(unit_key)
+      gallon_compound = gallon_compound_fit(unit_key)
+      return gallon_compound if gallon_compound
+
       cup_fit = rounded_cup_fit(unit_key)
       return [*cup_fit, nil, nil] if cup_fit
 

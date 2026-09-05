@@ -33,6 +33,24 @@ RSpec.describe Ingredient::UnitFormatter, type: :service do
       end
     end
 
+    context 'with a cup quantity of at least a gallon that is not a clean whole number' do
+      let(:quantity) { '84/1' }
+      let(:unit) { 'c' }
+
+      it 'splits into whole gallons plus an exact cup remainder' do
+        expect(result).to have_attributes(quantity: '5/1', unit: 'gal', quantity_secondary: '4/1', unit_secondary: 'c')
+      end
+    end
+
+    context 'with a cup remainder that rounds to a nice fraction' do
+      let(:quantity) { '3952/1' }
+      let(:unit) { 'tsp' }
+
+      it 'splits into whole gallons plus a rounded cup remainder' do
+        expect(result).to have_attributes(quantity: '5/1', unit: 'gal', quantity_secondary: '7/3', unit_secondary: 'c')
+      end
+    end
+
     context 'with a volume quantity smaller than its unit' do
       let(:quantity) { '1/8' }
       let(:unit) { 'cup' }
