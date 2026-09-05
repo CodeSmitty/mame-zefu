@@ -67,6 +67,22 @@ class Ingredient
   end
   alias to_s description
 
+  # The ingredient's own attributes, replaced with the best-fitting
+  # quantity/unit (and any compound remainder) actually shown for display.
+  # Used for debugging; reuses the same measurement powering #formatted_*.
+  def best_fit_attributes
+    return attributes if quantity.blank? || quantity_range? || !formattable_quantity?
+
+    measurement = formatted_measurement
+    attributes.merge(
+      'quantity' => measurement.quantity,
+      'quantity_max' => measurement.quantity_max,
+      'unit' => measurement.unit,
+      'quantity_secondary' => measurement.quantity_secondary,
+      'unit_secondary' => measurement.unit_secondary
+    )
+  end
+
   private
 
   def apply_scaled_measurement(result)

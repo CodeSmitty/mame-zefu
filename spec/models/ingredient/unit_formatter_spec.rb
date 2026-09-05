@@ -81,30 +81,39 @@ RSpec.describe Ingredient::UnitFormatter, type: :service do
       end
     end
 
+    context 'with a quantity that is close to a whole number of cups' do
+      let(:quantity) { '46/1' }
+      let(:unit) { 'tsp' }
+
+      it 'rounds to the whole cup amount' do
+        expect(result).to have_attributes(quantity: '1/1', unit: 'c')
+      end
+    end
+
+    context 'with a quantity that is close to a third of a cup' do
+      let(:quantity) { '31/1' }
+      let(:unit) { 'tsp' }
+
+      it 'rounds to the third cup amount' do
+        expect(result).to have_attributes(quantity: '2/3', unit: 'c', quantity_secondary: nil)
+      end
+    end
+
+    context 'with a quantity that is close to a quarter of a cup' do
+      let(:quantity) { '23/1' }
+      let(:unit) { 'tsp' }
+
+      it 'rounds to the quarter cup amount' do
+        expect(result).to have_attributes(quantity: '1/2', unit: 'c', quantity_secondary: nil)
+      end
+    end
+
     context 'with a tbsp quantity that is not a clean fraction of a cup' do
       let(:quantity) { '5/1' }
       let(:unit) { 'tbsp' }
 
       it 'splits into a cup amount plus an exact tbsp remainder' do
         expect(result).to have_attributes(quantity: '1/4', unit: 'c', quantity_secondary: '1/1', unit_secondary: 'tbsp')
-      end
-    end
-
-    context 'with a large tbsp quantity that scales up impractically' do
-      let(:quantity) { '69/1' }
-      let(:unit) { 'tbsp' }
-
-      it 'rounds to the nearest common cup fraction' do
-        expect(result).to have_attributes(quantity: '13/3', unit: 'c')
-      end
-    end
-
-    context 'with a tbsp quantity that is very close to a whole number of cups' do
-      let(:quantity) { '50/3' }
-      let(:unit) { 'tbsp' }
-
-      it 'rounds down to the whole cup amount' do
-        expect(result).to have_attributes(quantity: '1/1', unit: 'c')
       end
     end
 

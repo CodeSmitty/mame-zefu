@@ -6,6 +6,8 @@ class Ingredient
   class UnitFormatter
     include Constants
     include Rounding
+    include Conversion
+    extend Conversion
 
     Result = Struct.new(:quantity, :unit, :quantity_max, :quantity_secondary, :unit_secondary)
 
@@ -17,10 +19,16 @@ class Ingredient
     end
 
     def call
-      return Result.new(@quantity.to_s, @unit, @quantity_max&.to_s) unless convertible?
+      return Result.new(rational_string(@quantity), @unit, rational_string(@quantity_max)) unless convertible?
 
       unit_key, quantity, secondary_unit_key, secondary_quantity = best_fit
-      Result.new(quantity.to_s, unit_key, quantity_max_in(unit_key), secondary_quantity&.to_s, secondary_unit_key)
+      Result.new(
+        rational_string(quantity),
+        unit_key,
+        rational_string(quantity_max_in(unit_key)),
+        rational_string(secondary_quantity),
+        secondary_unit_key
+      )
     end
 
     private
@@ -37,11 +45,6 @@ class Ingredient
       WEIGHT_UNITS.key?(@unit_key)
     end
 
-    def canonical_unit(unit)
-      key = unit.downcase
-      VOLUME_ALIASES[key] || WEIGHT_ALIASES[key] || key
-    end
-
     # The quantity expressed in the smallest unit of its family (tsp or g).
     def base_amount
       @quantity * units_per_base(@unit_key)
@@ -50,11 +53,7 @@ class Ingredient
     def quantity_max_in(unit_key)
       return unless @quantity_max
 
-      (@quantity_max * units_per_base(@unit_key) / units_per_base(unit_key)).to_s
-    end
-
-    def units_per_base(unit_key)
-      VOLUME_UNITS[unit_key] || WEIGHT_UNITS[unit_key]
+      @quantity_max * units_per_base(@unit_key) / units_per_base(unit_key)
     end
 
     # The units to consider, ordered from smallest to largest.
