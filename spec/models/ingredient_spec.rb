@@ -43,6 +43,14 @@ RSpec.describe Ingredient do
         expect(description).to eq('1 c butter')
       end
     end
+
+    context 'when the quantity is too impractical for a single unit' do
+      let(:ingredient) { described_class.new(quantity: '30/1', unit: 'tbsp', name: 'butter') }
+
+      it 'renders the compound measurement' do
+        expect(description).to eq('1 3/4 c + 2 tbsp butter')
+      end
+    end
   end
 
   describe '#formatted_quantity' do
@@ -113,6 +121,43 @@ RSpec.describe Ingredient do
 
       it 'preserves the parsed unit' do
         expect(formatted_unit).to eq('tsp')
+      end
+    end
+  end
+
+  describe '#best_fit_attributes' do
+    subject(:best_fit_attributes) { ingredient.best_fit_attributes }
+
+    context 'when the quantity converts to a larger unit' do
+      let(:ingredient) { described_class.new(quantity: '16/1', unit: 'tbsp', name: 'butter') }
+
+      it 'reflects the best-fitting quantity and unit' do
+        expect(best_fit_attributes).to include('quantity' => '1/1', 'unit' => 'c', 'name' => 'butter')
+      end
+    end
+
+    context 'when the quantity is too impractical for a single unit' do
+      let(:ingredient) { described_class.new(quantity: '30/1', unit: 'tbsp', name: 'butter') }
+
+      it 'includes the compound remainder' do
+        expect(best_fit_attributes).to include('quantity' => '7/4', 'unit' => 'c',
+                                               'quantity_secondary' => '2/1', 'unit_secondary' => 'tbsp')
+      end
+    end
+
+    context 'when the ingredient has a quantity range' do
+      let(:ingredient) { described_class.new(quantity: '1/1', quantity_max: '2/1', unit: 'tsp') }
+
+      it 'returns the unconverted attributes' do
+        expect(best_fit_attributes).to include('quantity' => '1/1', 'unit' => 'tsp')
+      end
+    end
+
+    context 'when the ingredient has no quantity' do
+      let(:ingredient) { described_class.new(name: 'salt') }
+
+      it 'returns the unconverted attributes' do
+        expect(best_fit_attributes).to include('name' => 'salt')
       end
     end
   end

@@ -156,11 +156,24 @@ RSpec.describe RecipesHelper do
           expect(markup).to include('ingredient-debug-toggle')
         end
 
-        it 'includes the raw parser output in a hidden panel' do
+        it 'includes the parsed ingredient but omits an unchanged rounded measurement' do
           decoded_markup = CGI.unescapeHTML(markup)
 
-          expect(decoded_markup).to include('"original": "1 cup flour"', '"quantity": "1/1"',
-                                            '"unit": "cup"', '"name": "flour"')
+          expect(decoded_markup).to include('"original": "1 cup flour"', '"parsed": {',
+                                            '"quantity": "1/1"', '"unit": "cup"', '"name": "flour"')
+          expect(decoded_markup).not_to include('"rounded": {')
+        end
+
+        it 'includes the best-fit ingredient' do
+          decoded_markup = CGI.unescapeHTML(markup)
+
+          expect(decoded_markup).to include('"best_fit": {', '"quantity": "1/1"', '"unit": "cup"')
+        end
+
+        it 'omits the scaled attributes when no scale is applied' do
+          decoded_markup = CGI.unescapeHTML(markup)
+
+          expect(decoded_markup).not_to include('"scaled": {')
         end
       end
 
@@ -178,6 +191,18 @@ RSpec.describe RecipesHelper do
 
         it 'renders the original quantity text through the public helper API' do
           expect(markup).to include('bogus', 'cup', 'flour')
+        end
+      end
+
+      context 'when the ingredient has a quantity but no unit' do
+        subject(:markup) { helper.parsed_ingredient_markup('2 eggs') }
+
+        before do
+          allow(helper).to receive(:current_user).and_return(build_stubbed(:user, is_admin: true))
+        end
+
+        it 'renders without attempting unit conversion for the rounded debug data' do
+          expect { markup }.not_to raise_error
         end
       end
 
@@ -206,6 +231,31 @@ RSpec.describe RecipesHelper do
         end
       end
 
+      context 'when the quantity is too impractical for a single unit' do
+        subject(:markup) { helper.parsed_ingredient_markup('30 tablespoon butter') }
+
+        before do
+          allow(helper).to receive(:current_user).and_return(build_stubbed(:user, is_admin: true))
+        end
+
+        it 'renders the compound measurement' do
+          expect(markup).to include('1 3/4', 'c', '+ 2 tbsp', 'butter')
+        end
+
+        it 'omits rounded data because the compound best fit is exact' do
+          decoded_markup = CGI.unescapeHTML(markup)
+
+          expect(decoded_markup).not_to include('"rounded": {')
+        end
+
+        it 'shows the compound quantity in the best-fit debug data' do
+          decoded_markup = CGI.unescapeHTML(markup)
+
+          expect(decoded_markup).to include('"best_fit": {', '"quantity": "7/4"', '"unit": "c"',
+                                            '"quantity_secondary": "2/1"', '"unit_secondary": "tbsp"')
+        end
+      end
+
       context 'when a scale param is present' do
         before do
           allow(helper).to receive(:params).and_return(ActionController::Parameters.new(scale: '2'))
@@ -215,12 +265,80 @@ RSpec.describe RecipesHelper do
           expect(markup).to include('2', 'c', 'flour')
         end
 
-        it 'keeps the original parsed attributes in the admin debug panel' do
+        it 'omits rounded data when scaling changes the amount but not through rounding' do
           allow(helper).to receive(:current_user).and_return(build_stubbed(:user, is_admin: true))
 
           decoded_markup = CGI.unescapeHTML(markup)
 
-          expect(decoded_markup).to include('"quantity": "1/1"', '"unit": "cup"')
+          expect(decoded_markup).not_to include('"rounded": {')
+        end
+
+        it 'shows the scale value above the scaled attributes' do
+          allow(helper).to receive(:current_user).and_return(build_stubbed(:user, is_admin: true))
+
+          decoded_markup = CGI.unescapeHTML(markup)
+
+          expect(decoded_markup).to include('"scale": "2"')
+          expect(decoded_markup.index('"scale":')).to be < decoded_markup.index('"scaled":')
+        end
+      end
+
+      context 'when best-fit formatting rounds the scaled quantity' do
+        subject(:markup) { helper.parsed_ingredient_markup('46 teaspoon salt') }
+
+        before do
+          allow(helper).to receive(:current_user).and_return(build_stubbed(:user, is_admin: true))
+        end
+
+        it 'shows the rounded quantity in the parsed unit' do
+          decoded_markup = CGI.unescapeHTML(markup)
+
+          expect(decoded_markup).to include('"rounded": {', '"quantity": "48/1"', '"unit": "teaspoon"')
+        end
+
+        it 'omits the redundant name from the rounded and best-fit data' do
+          decoded_markup = CGI.unescapeHTML(markup)
+
+          expect(decoded_markup.scan('"name"').size).to eq(1)
+        end
+      end
+
+      context 'when the scale param is explicitly 1' do
+        before do
+          allow(helper).to receive_messages(
+            params: ActionController::Parameters.new(scale: '1'),
+            current_user: build_stubbed(:user, is_admin: true)
+          )
+        end
+
+        it 'omits the scaled attributes since they would match parsed' do
+          decoded_markup = CGI.unescapeHTML(markup)
+
+          expect(decoded_markup).not_to include('"scaled": {')
+        end
+
+        it 'omits the scale value since no scaling was applied' do
+          decoded_markup = CGI.unescapeHTML(markup)
+
+          expect(decoded_markup).not_to include('"scale":')
+        end
+      end
+
+      context 'when scaling produces a compound measurement' do
+        subject(:markup) { helper.parsed_ingredient_markup('15 tablespoon butter') }
+
+        before do
+          allow(helper).to receive_messages(
+            params: ActionController::Parameters.new(scale: '2'),
+            current_user: build_stubbed(:user, is_admin: true)
+          )
+        end
+
+        it 'shows the unconverted scaled quantity separately from the final best-fit result' do
+          decoded_markup = CGI.unescapeHTML(markup)
+
+          expect(decoded_markup).to include('"scaled": {', '"quantity": "30/1"', '"unit": "tablespoon"')
+          expect(markup).to include('1 3/4', 'c', '+ 2 tbsp', 'butter')
         end
       end
 

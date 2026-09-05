@@ -5,13 +5,11 @@ class Ingredient
   # "16 oz" becomes "1 lb".
   class UnitFormatter
     include Constants
+    include Rounding
+    include Conversion
+    extend Conversion
 
-    # Cup amounts smaller than a whole cup are only worth showing as a
-    # fraction of a cup when they land exactly on a common measure: a
-    # quarter (1/4, 1/2, 3/4) or a third (1/3, 2/3).
-    DISPLAYABLE_CUP_FRACTION_DENOMINATORS = [2, 3, 4].freeze
-
-    Result = Struct.new(:quantity, :unit, :quantity_max)
+    Result = Struct.new(:quantity, :unit, :quantity_max, :quantity_secondary, :unit_secondary)
 
     def initialize(quantity:, unit:, quantity_max: nil, scale: 1)
       @quantity = quantity.to_r * scale.to_r
@@ -21,10 +19,16 @@ class Ingredient
     end
 
     def call
-      return Result.new(@quantity.to_s, @unit, @quantity_max&.to_s) unless convertible?
+      return Result.new(rational_string(@quantity), @unit, rational_string(@quantity_max)) unless convertible?
 
-      best_unit_key, best_quantity = best_fit
-      Result.new(best_quantity.to_s, best_unit_key, quantity_max_in(best_unit_key))
+      unit_key, quantity, secondary_unit_key, secondary_quantity = best_fit
+      Result.new(
+        rational_string(quantity),
+        unit_key,
+        rational_string(quantity_max_in(unit_key)),
+        rational_string(secondary_quantity),
+        secondary_unit_key
+      )
     end
 
     private
@@ -41,11 +45,6 @@ class Ingredient
       WEIGHT_UNITS.key?(@unit_key)
     end
 
-    def canonical_unit(unit)
-      key = unit.downcase
-      VOLUME_ALIASES[key] || WEIGHT_ALIASES[key] || key
-    end
-
     # The quantity expressed in the smallest unit of its family (tsp or g).
     def base_amount
       @quantity * units_per_base(@unit_key)
@@ -54,11 +53,7 @@ class Ingredient
     def quantity_max_in(unit_key)
       return unless @quantity_max
 
-      (@quantity_max * units_per_base(@unit_key) / units_per_base(unit_key)).to_s
-    end
-
-    def units_per_base(unit_key)
-      VOLUME_UNITS[unit_key] || WEIGHT_UNITS[unit_key]
+      @quantity_max * units_per_base(@unit_key) / units_per_base(unit_key)
     end
 
     # The units to consider, ordered from smallest to largest.
@@ -69,14 +64,30 @@ class Ingredient
     end
 
     # Finds the largest unit in the ladder whose whole-number quantity is
-    # at least 1, falling back to a cup fraction for tbsp amounts.
+    # at least 1, falling back to a cup or teaspoon fraction, and finally to
+    # a two-unit split (e.g. "30 tbsp" becomes "1 3/4 c" plus "2 tbsp") so
+    # that impractical amounts round to a friendlier measurement.
     def best_fit
       units = unit_ladder
       index = promote_to_largest_whole_unit(units, units.index(@unit_key) || 0)
       index = demote_to_smallest_whole_unit(units, index)
-      unit_key = units[index]
+      fitted_measurement(units[index])
+    end
 
-      cup_fraction_fit(unit_key) || [unit_key, base_amount / units_per_base(unit_key)]
+    def fitted_measurement(unit_key)
+      gallon_compound = gallon_compound_fit(unit_key)
+      return gallon_compound if gallon_compound
+
+      cup_fit = rounded_cup_fit(unit_key)
+      return [*cup_fit, nil, nil] if cup_fit
+
+      compound = compound_fit(unit_key)
+      return compound if compound
+
+      tsp_fit = rounded_tsp_fit(unit_key)
+      return [*tsp_fit, nil, nil] if tsp_fit
+
+      [unit_key, base_amount / units_per_base(unit_key), nil, nil]
     end
 
     def promote_to_largest_whole_unit(units, index)
@@ -91,20 +102,6 @@ class Ingredient
 
     def whole_quantity_in?(unit_key)
       (base_amount % units_per_base(unit_key)).zero?
-    end
-
-    # Convert tbsp to a fraction of a cup if it lands on a common measure.
-    def cup_fraction_fit(unit_key)
-      return unless %w[tsp tbsp].include?(unit_key)
-
-      cup_quantity = base_amount / units_per_base('c')
-      return unless displayable_cup_fraction?(cup_quantity)
-
-      ['c', cup_quantity]
-    end
-
-    def displayable_cup_fraction?(cup_quantity)
-      DISPLAYABLE_CUP_FRACTION_DENOMINATORS.include?(cup_quantity.denominator)
     end
   end
 end

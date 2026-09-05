@@ -33,6 +33,24 @@ RSpec.describe Ingredient::UnitFormatter, type: :service do
       end
     end
 
+    context 'with a cup quantity of at least a gallon that is not a clean whole number' do
+      let(:quantity) { '84/1' }
+      let(:unit) { 'c' }
+
+      it 'splits into whole gallons plus an exact cup remainder' do
+        expect(result).to have_attributes(quantity: '5/1', unit: 'gal', quantity_secondary: '4/1', unit_secondary: 'c')
+      end
+    end
+
+    context 'with a cup remainder that rounds to a nice fraction' do
+      let(:quantity) { '3952/1' }
+      let(:unit) { 'tsp' }
+
+      it 'splits into whole gallons plus a rounded cup remainder' do
+        expect(result).to have_attributes(quantity: '5/1', unit: 'gal', quantity_secondary: '7/3', unit_secondary: 'c')
+      end
+    end
+
     context 'with a volume quantity smaller than its unit' do
       let(:quantity) { '1/8' }
       let(:unit) { 'cup' }
@@ -63,12 +81,84 @@ RSpec.describe Ingredient::UnitFormatter, type: :service do
       end
     end
 
+    context 'with a quantity that is close to a whole number of cups' do
+      let(:quantity) { '46/1' }
+      let(:unit) { 'tsp' }
+
+      it 'rounds to the whole cup amount' do
+        expect(result).to have_attributes(quantity: '1/1', unit: 'c')
+      end
+    end
+
+    context 'with a quantity that is close to a third of a cup' do
+      let(:quantity) { '31/1' }
+      let(:unit) { 'tsp' }
+
+      it 'rounds to the third cup amount' do
+        expect(result).to have_attributes(quantity: '2/3', unit: 'c', quantity_secondary: nil)
+      end
+    end
+
+    context 'with a quantity that is close to a quarter of a cup' do
+      let(:quantity) { '23/1' }
+      let(:unit) { 'tsp' }
+
+      it 'rounds to the quarter cup amount' do
+        expect(result).to have_attributes(quantity: '1/2', unit: 'c', quantity_secondary: nil)
+      end
+    end
+
     context 'with a tbsp quantity that is not a clean fraction of a cup' do
       let(:quantity) { '5/1' }
       let(:unit) { 'tbsp' }
 
-      it 'stays in tbsp' do
-        expect(result).to have_attributes(quantity: '5/1', unit: 'tbsp')
+      it 'splits into a cup amount plus an exact tbsp remainder' do
+        expect(result).to have_attributes(quantity: '1/4', unit: 'c', quantity_secondary: '1/1', unit_secondary: 'tbsp')
+      end
+    end
+
+    context 'with a tbsp quantity too impractical for a single unit' do
+      let(:quantity) { '30/1' }
+      let(:unit) { 'tbsp' }
+
+      it 'splits into a cup amount plus an exact tbsp remainder' do
+        expect(result).to have_attributes(quantity: '7/4', unit: 'c', quantity_secondary: '2/1', unit_secondary: 'tbsp')
+      end
+    end
+
+    context 'with a tbsp quantity smaller than a whole cup' do
+      let(:quantity) { '14/1' }
+      let(:unit) { 'tbsp' }
+
+      it 'splits into a cup fraction plus an exact tbsp remainder' do
+        expect(result).to have_attributes(quantity: '3/4', unit: 'c', quantity_secondary: '2/1', unit_secondary: 'tbsp')
+      end
+    end
+
+    context 'with a tsp quantity too impractical for a single unit' do
+      let(:quantity) { '54/1' }
+      let(:unit) { 'tsp' }
+
+      it 'splits into a cup amount plus an exact tbsp remainder' do
+        expect(result).to have_attributes(quantity: '1/1', unit: 'c', quantity_secondary: '2/1', unit_secondary: 'tbsp')
+      end
+    end
+
+    context 'with a tsp quantity smaller than a whole cup' do
+      let(:quantity) { '14/1' }
+      let(:unit) { 'tsp' }
+
+      it 'splits into a cup fraction plus an exact tsp remainder' do
+        expect(result).to have_attributes(quantity: '1/4', unit: 'c', quantity_secondary: '2/1', unit_secondary: 'tsp')
+      end
+    end
+
+    context 'with a compound remainder that is not a whole number of tbsp' do
+      let(:quantity) { '91/1' }
+      let(:unit) { 'tsp' }
+
+      it 'splits into a cup amount plus a tsp remainder' do
+        expect(result).to have_attributes(quantity: '7/4', unit: 'c', quantity_secondary: '7/1', unit_secondary: 'tsp')
       end
     end
 
@@ -97,6 +187,24 @@ RSpec.describe Ingredient::UnitFormatter, type: :service do
 
       it 'stays in tsp' do
         expect(result).to have_attributes(quantity: '5/1', unit: 'tsp')
+      end
+    end
+
+    context 'with a tsp quantity close to a quarter teaspoon' do
+      let(:quantity) { '10/3' }
+      let(:unit) { 'tsp' }
+
+      it 'rounds to the nearest quarter teaspoon' do
+        expect(result).to have_attributes(quantity: '13/4', unit: 'tsp')
+      end
+    end
+
+    context 'with a tsp quantity too far from a quarter teaspoon to round' do
+      let(:quantity) { '7/6' }
+      let(:unit) { 'tsp' }
+
+      it 'stays unrounded' do
+        expect(result).to have_attributes(quantity: '7/6', unit: 'tsp')
       end
     end
 
