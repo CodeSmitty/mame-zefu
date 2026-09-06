@@ -14,7 +14,7 @@ module IngredientDebugHelper
   private
 
   def scaled_attributes(attributes, multiplier)
-    return if multiplier.blank? || multiplier == 1
+    return if multiplier.blank? || multiplier == 1 || attributes['quantity'].blank?
 
     attributes.merge(
       'scale' => multiplier,

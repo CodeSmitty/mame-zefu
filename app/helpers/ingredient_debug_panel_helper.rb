@@ -29,6 +29,10 @@ module IngredientDebugPanelHelper
   end
 
   def debug_data(original, measurements)
-    { original: }.merge(measurements.transform_values { |value| value.is_a?(Hash) ? value.compact : value }).compact
+    { original: }.merge(
+      measurements.transform_values do |value|
+        value.is_a?(Hash) ? value.compact_blank : value
+      end
+    ).compact_blank
   end
 end
