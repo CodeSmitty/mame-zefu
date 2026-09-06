@@ -132,7 +132,7 @@ RSpec.describe RecipesHelper do
     subject(:markup) { helper.parsed_ingredient_markup('1 cup flour') }
 
     let(:current_user) { build_stubbed(:user, is_admin: is_admin) }
-    let(:is_admin) { false }
+    let(:is_admin) { true }
 
     before do
       allow(helper).to receive_messages(current_user: current_user, ingredient_parsing_enabled?: feature_enabled)
@@ -145,13 +145,15 @@ RSpec.describe RecipesHelper do
         expect(markup).to include('1', 'c', 'flour')
       end
 
-      it 'does not include a debug toggle for non-admin users' do
-        expect(markup).not_to include('ingredient-debug-toggle')
+      context 'when the current user is not an admin' do
+        let(:is_admin) { false }
+
+        it 'does not include a debug toggle' do
+          expect(markup).not_to include('ingredient-debug-toggle')
+        end
       end
 
       context 'when the current user is an admin' do
-        let(:is_admin) { true }
-
         it 'includes a debug toggle button' do
           expect(markup).to include('ingredient-debug-toggle')
         end
@@ -197,10 +199,6 @@ RSpec.describe RecipesHelper do
       context 'when the ingredient has a quantity but no unit' do
         subject(:markup) { helper.parsed_ingredient_markup('2 eggs') }
 
-        before do
-          allow(helper).to receive(:current_user).and_return(build_stubbed(:user, is_admin: true))
-        end
-
         it 'renders without attempting unit conversion for the rounded debug data' do
           expect { markup }.not_to raise_error
         end
@@ -234,10 +232,6 @@ RSpec.describe RecipesHelper do
       context 'when the quantity is too impractical for a single unit' do
         subject(:markup) { helper.parsed_ingredient_markup('30 tablespoon butter') }
 
-        before do
-          allow(helper).to receive(:current_user).and_return(build_stubbed(:user, is_admin: true))
-        end
-
         it 'renders the compound measurement' do
           expect(markup).to include('1 3/4', 'c', '+ 2 tbsp', 'butter')
         end
@@ -266,16 +260,12 @@ RSpec.describe RecipesHelper do
         end
 
         it 'omits rounded data when scaling changes the amount but not through rounding' do
-          allow(helper).to receive(:current_user).and_return(build_stubbed(:user, is_admin: true))
-
           decoded_markup = CGI.unescapeHTML(markup)
 
           expect(decoded_markup).not_to include('"rounded": {')
         end
 
         it 'shows the scale value with the scaled attributes' do
-          allow(helper).to receive(:current_user).and_return(build_stubbed(:user, is_admin: true))
-
           decoded_markup = CGI.unescapeHTML(markup)
 
           expect(decoded_markup).to include('"scale": 2')
@@ -284,10 +274,6 @@ RSpec.describe RecipesHelper do
 
       context 'when best-fit formatting rounds the scaled quantity' do
         subject(:markup) { helper.parsed_ingredient_markup('46 teaspoon salt') }
-
-        before do
-          allow(helper).to receive(:current_user).and_return(build_stubbed(:user, is_admin: true))
-        end
 
         it 'shows the rounded quantity in the parsed unit' do
           decoded_markup = CGI.unescapeHTML(markup)
@@ -305,8 +291,7 @@ RSpec.describe RecipesHelper do
       context 'when the scale param is explicitly 1' do
         before do
           allow(helper).to receive_messages(
-            params: ActionController::Parameters.new(scale: '1'),
-            current_user: build_stubbed(:user, is_admin: true)
+            params: ActionController::Parameters.new(scale: '1')
           )
         end
 
@@ -328,8 +313,7 @@ RSpec.describe RecipesHelper do
 
         before do
           allow(helper).to receive_messages(
-            params: ActionController::Parameters.new(scale: '2'),
-            current_user: build_stubbed(:user, is_admin: true)
+            params: ActionController::Parameters.new(scale: '2')
           )
         end
 

@@ -18,17 +18,10 @@ module IngredientDebugHelper
 
     attributes.merge(
       'scale' => multiplier,
-      'quantity' => scaled_rational(attributes['quantity'], multiplier),
-      'quantity_max' => scaled_rational(attributes['quantity_max'], multiplier)
+      # Duplicated from Ingredient::UnitFormatter initializer
+      'quantity' => attributes['quantity'].to_r * multiplier.to_r,
+      'quantity_max' => attributes['quantity_max']&.to_r&.*(multiplier.to_r)
     )
-  end
-
-  def scaled_rational(value, multiplier)
-    return value if value.blank?
-
-    (Rational(value) * Rational(multiplier)).to_s
-  rescue ArgumentError, TypeError, ZeroDivisionError
-    value
   end
 
   # The source attributes with quantity replaced by its equivalent in the
