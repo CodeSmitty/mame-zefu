@@ -18,10 +18,6 @@ module RecipesHelper
     scale
   end
 
-  def recipe_scaled?
-    recipe_scale != 1
-  end
-
   def previous_recipe_scale
     case recipe_scale
     when 1 then nil
