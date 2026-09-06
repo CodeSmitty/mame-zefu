@@ -1,33 +1,55 @@
 module IngredientDebugHelper
+  def debug_measurements(ingredient)
+    parsed = ingredient.attributes
+    scaled = scaled_attributes(parsed, recipe_scale)
+    best_fit = ingredient.scale(recipe_scale).best_fit_attributes
+
+    rounded = rounded_attributes(scaled || parsed, best_fit)
+
+    { parsed:, scaled:, rounded:, best_fit: }.each_with_object({}) do |(key, value), hash|
+      hash[key] = key == :parsed ? value : value&.except('name')
+    end
+  end
+
   private
 
-  def ingredient_debug_markup(content, original, measurements)
-    return content unless current_user&.is_admin?
+  def scaled_attributes(attributes, multiplier)
+    return if multiplier.blank? || multiplier == 1
 
-    content_tag(:span, data: { controller: 'ingredient-debug' }) do
-      safe_join([debug_toggle_button, content, debug_panel(original, measurements)])
-    end
+    attributes.merge(
+      'scale' => multiplier,
+      'quantity' => scaled_rational(attributes['quantity'], multiplier),
+      'quantity_max' => scaled_rational(attributes['quantity_max'], multiplier)
+    )
   end
 
-  def debug_toggle_button
-    icon = render('icons/micro/magnifying_glass', classes: '')
+  def scaled_rational(value, multiplier)
+    return value if value.blank?
 
-    content_tag(:button, icon, type: 'button',
-                               class: 'ingredient-debug-toggle text-gray-500 align-middle me-1 cursor-pointer ' \
-                                      'no-underline',
-                               data: { action: 'click->ingredient-debug#toggle:stop' })
+    (Rational(value) * Rational(multiplier)).to_s
+  rescue ArgumentError, TypeError, ZeroDivisionError
+    value
   end
 
-  def debug_panel(original, measurements)
-    # Keep the debug panel's block display from inheriting the ancestor's line-through.
-    content_tag(:span, class: 'inline-block') do
-      content_tag(:pre, JSON.pretty_generate(debug_data(original, measurements)),
-                  class: 'ingredient-debug-panel hidden mt-1 p-2 text-xs bg-gray-100 rounded whitespace-pre-wrap',
-                  data: { ingredient_debug_target: 'panel' })
-    end
+  # The source attributes with quantity replaced by its equivalent in the
+  # best-fit measurement, so it's comparable to the un-rounded original.
+  def rounded_attributes(source_attributes, best_fit_attributes)
+    return unless formattable_measurement?(source_attributes)
+
+    base_amount = Ingredient::UnitFormatter.total_base_amount(**best_fit_attributes.symbolize_keys.slice(
+      :quantity, :unit, :quantity_secondary, :unit_secondary
+    ))
+    rounded_quantity = Ingredient::UnitFormatter.quantity_in(unit: source_attributes['unit'], base_amount:)
+    return unless rounded_quantity
+    return if Rational(source_attributes['quantity']) == rounded_quantity
+
+    source_attributes.merge('quantity' => Ingredient::UnitFormatter.rational_string(rounded_quantity)).compact
   end
 
-  def debug_data(original, measurements)
-    { original: }.merge(measurements.transform_values { |value| value.is_a?(Hash) ? value.compact : value }).compact
+  def formattable_measurement?(attributes)
+    Rational(attributes['quantity'])
+    true
+  rescue ArgumentError, TypeError, ZeroDivisionError
+    false
   end
 end

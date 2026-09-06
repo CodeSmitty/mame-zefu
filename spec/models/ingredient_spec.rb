@@ -186,8 +186,12 @@ RSpec.describe Ingredient do
       expect(scale).to have_attributes(quantity: '3/1', unit: 'tbsp')
     end
 
-    it 'returns the ingredient' do
-      expect(scale).to be(ingredient)
+    it 'returns a copy of the ingredient' do
+      expect(scale).not_to be(ingredient)
+    end
+
+    it 'does not modify the original ingredient' do
+      expect { scale }.not_to change(ingredient, :attributes)
     end
 
     context 'when the ingredient has a quantity range' do
@@ -213,6 +217,25 @@ RSpec.describe Ingredient do
       it 'leaves the ingredient unchanged' do
         expect { scale }.not_to change(ingredient, :attributes)
       end
+    end
+  end
+
+  describe '#scale!' do
+    subject(:scale!) { ingredient.scale!(multiplier) }
+
+    let(:ingredient) { described_class.new(quantity: '1/1', unit: 'tbsp', name: 'butter') }
+    let(:multiplier) { '3/1' }
+
+    it 'updates the quantity and unit using UnitFormatter' do
+      expect(scale!).to have_attributes(quantity: '3/1', unit: 'tbsp')
+    end
+
+    it 'returns the same ingredient' do
+      expect(scale!).to be(ingredient)
+    end
+
+    it 'modifies the original ingredient' do
+      expect { scale! }.to change(ingredient, :attributes)
     end
   end
 

@@ -17,11 +17,15 @@ class Ingredient
   end
 
   def scalable?
-    quantity.present? || unit.present?
+    Rational(quantity, exception: false) || (quantity.blank? && unit.present?)
   end
 
   def scale(multiplier)
-    return self unless scalable?
+    dup.scale!(multiplier)
+  end
+
+  def scale!(multiplier)
+    return self unless Rational(multiplier, exception: false) && scalable?
 
     apply_scaled_measurement(
       UnitFormatter.new(

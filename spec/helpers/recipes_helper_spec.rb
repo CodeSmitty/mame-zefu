@@ -46,8 +46,8 @@ RSpec.describe RecipesHelper do
     end
   end
 
-  describe '#current_recipe_scale' do
-    subject(:scale) { helper.current_recipe_scale }
+  describe '#recipe_scale' do
+    subject(:scale) { helper.recipe_scale }
 
     before do
       allow(helper).to receive(:params).and_return(ActionController::Parameters.new(scale: scale_param))
@@ -94,19 +94,19 @@ RSpec.describe RecipesHelper do
     subject(:scale) { helper.previous_recipe_scale }
 
     context 'when the current scale is 1' do
-      before { allow(helper).to receive(:current_recipe_scale).and_return(1) }
+      before { allow(helper).to receive(:recipe_scale).and_return(1) }
 
       it { is_expected.to be_nil }
     end
 
     context 'when the current scale is 2' do
-      before { allow(helper).to receive(:current_recipe_scale).and_return(2) }
+      before { allow(helper).to receive(:recipe_scale).and_return(2) }
 
       it { is_expected.to eq(1) }
     end
 
     context 'when the current scale is greater than 2' do
-      before { allow(helper).to receive(:current_recipe_scale).and_return(6) }
+      before { allow(helper).to receive(:recipe_scale).and_return(6) }
 
       it { is_expected.to eq(4) }
     end
@@ -116,13 +116,13 @@ RSpec.describe RecipesHelper do
     subject(:scale) { helper.next_recipe_scale }
 
     context 'when the current scale is 1' do
-      before { allow(helper).to receive(:current_recipe_scale).and_return(1) }
+      before { allow(helper).to receive(:recipe_scale).and_return(1) }
 
       it { is_expected.to eq(2) }
     end
 
     context 'when the current scale is greater than 1' do
-      before { allow(helper).to receive(:current_recipe_scale).and_return(4) }
+      before { allow(helper).to receive(:recipe_scale).and_return(4) }
 
       it { is_expected.to eq(6) }
     end
@@ -273,13 +273,12 @@ RSpec.describe RecipesHelper do
           expect(decoded_markup).not_to include('"rounded": {')
         end
 
-        it 'shows the scale value above the scaled attributes' do
+        it 'shows the scale value with the scaled attributes' do
           allow(helper).to receive(:current_user).and_return(build_stubbed(:user, is_admin: true))
 
           decoded_markup = CGI.unescapeHTML(markup)
 
-          expect(decoded_markup).to include('"scale": "2"')
-          expect(decoded_markup.index('"scale":')).to be < decoded_markup.index('"scaled":')
+          expect(decoded_markup).to include('"scale": 2')
         end
       end
 
