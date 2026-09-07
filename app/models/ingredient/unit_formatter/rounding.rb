@@ -4,11 +4,10 @@ class Ingredient
     # measurement, falling back to a two-unit split (e.g. "1 3/4 c" plus
     # "2 tbsp") when a single unit can't represent the amount closely enough.
     module Rounding
-      # Fractional cup amounts worth snapping to: quarters, thirds, halves,
-      # and a whole cup (a "1" carries into the next whole number of cups).
+      # Standard measuring-cup sizes: quarter and third increments.
       CUP_FRACTIONS = [0r, 1r / 4, 1r / 3, 1r / 2, 2r / 3, 3r / 4, 1r].freeze
 
-      # Standard measuring-spoon sizes: quarter and half teaspoons.
+      # Standard measuring-spoon sizes: quarter increments.
       TSP_FRACTIONS = [0r, 1r / 4, 1r / 2, 3r / 4, 1r].freeze
 
       # A rounded amount is only used if it's within 5% of the original
@@ -96,7 +95,7 @@ class Ingredient
       # Splits an amount of at least a gallon that isn't an exact whole
       # number of gallons into whole gallons plus a cup remainder, e.g.
       # "89 c" becomes 5 gal (primary) plus 9 c (remainder), so scaling up
-      # doesn't jump straight from a large cup count to a lone gallon figure.
+      # doesn't jump between gallons and large cup counts.
       def gallon_compound_fit(unit_key)
         return unless volume_unit? && %w[c tbsp tsp].include?(unit_key)
 
