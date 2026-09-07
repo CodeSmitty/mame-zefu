@@ -90,7 +90,7 @@
                 <% else %>
                   <span class="btn btn-xs opacity-30" aria-hidden="true"><%= render_icon "mini/minus" %></span>
                 <% end %>
-                <span class="text-sm font-medium w-8 text-center"><%= current_recipe_scale %>x</span>
+                <span class="text-sm font-medium w-8 text-center"><%= recipe_scale %>x</span>
                 <%= link_to recipe_path(recipe, scale: next_recipe_scale, anchor: "ingredients"),
                             class: "btn btn-xs hover:cursor-pointer",
                             aria: { label: "Scale recipe up to #{next_recipe_scale}x" } do %>

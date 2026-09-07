@@ -43,6 +43,14 @@ RSpec.describe Ingredient do
         expect(description).to eq('1 c butter')
       end
     end
+
+    context 'when the quantity is too impractical for a single unit' do
+      let(:ingredient) { described_class.new(quantity: '30/1', unit: 'tbsp', name: 'butter') }
+
+      it 'renders the compound measurement' do
+        expect(description).to eq('1 3/4 c + 2 tbsp butter')
+      end
+    end
   end
 
   describe '#formatted_quantity' do
@@ -117,6 +125,43 @@ RSpec.describe Ingredient do
     end
   end
 
+  describe '#best_fit_attributes' do
+    subject(:best_fit_attributes) { ingredient.best_fit_attributes }
+
+    context 'when the quantity converts to a larger unit' do
+      let(:ingredient) { described_class.new(quantity: '16/1', unit: 'tbsp', name: 'butter') }
+
+      it 'reflects the best-fitting quantity and unit' do
+        expect(best_fit_attributes).to include('quantity' => '1/1', 'unit' => 'c', 'name' => 'butter')
+      end
+    end
+
+    context 'when the quantity is too impractical for a single unit' do
+      let(:ingredient) { described_class.new(quantity: '30/1', unit: 'tbsp', name: 'butter') }
+
+      it 'includes the compound remainder' do
+        expect(best_fit_attributes).to include('quantity' => '7/4', 'unit' => 'c',
+                                               'quantity_secondary' => '2/1', 'unit_secondary' => 'tbsp')
+      end
+    end
+
+    context 'when the ingredient has a quantity range' do
+      let(:ingredient) { described_class.new(quantity: '1/1', quantity_max: '2/1', unit: 'tsp') }
+
+      it 'returns the unconverted attributes' do
+        expect(best_fit_attributes).to include('quantity' => '1/1', 'unit' => 'tsp')
+      end
+    end
+
+    context 'when the ingredient has no quantity' do
+      let(:ingredient) { described_class.new(name: 'salt') }
+
+      it 'returns the unconverted attributes' do
+        expect(best_fit_attributes).to include('name' => 'salt')
+      end
+    end
+  end
+
   describe '#scalable?' do
     it 'is true when a quantity is present' do
       expect(described_class.new(quantity: '1/1')).to be_scalable
@@ -141,8 +186,12 @@ RSpec.describe Ingredient do
       expect(scale).to have_attributes(quantity: '3/1', unit: 'tbsp')
     end
 
-    it 'returns the ingredient' do
-      expect(scale).to be(ingredient)
+    it 'returns a copy of the ingredient' do
+      expect(scale).not_to be(ingredient)
+    end
+
+    it 'does not modify the original ingredient' do
+      expect { scale }.not_to change(ingredient, :attributes)
     end
 
     context 'when the ingredient has a quantity range' do
@@ -168,6 +217,25 @@ RSpec.describe Ingredient do
       it 'leaves the ingredient unchanged' do
         expect { scale }.not_to change(ingredient, :attributes)
       end
+    end
+  end
+
+  describe '#scale!' do
+    subject(:scale!) { ingredient.scale!(multiplier) }
+
+    let(:ingredient) { described_class.new(quantity: '1/1', unit: 'tbsp', name: 'butter') }
+    let(:multiplier) { '3/1' }
+
+    it 'updates the quantity and unit using UnitFormatter' do
+      expect(scale!).to have_attributes(quantity: '3/1', unit: 'tbsp')
+    end
+
+    it 'returns the same ingredient' do
+      expect(scale!).to be(ingredient)
+    end
+
+    it 'modifies the original ingredient' do
+      expect { scale! }.to change(ingredient, :attributes)
     end
   end
 
