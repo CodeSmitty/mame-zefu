@@ -106,7 +106,11 @@ class Ingredient
         return if remainder_base.zero?
 
         remainder_unit_key, remainder_quantity = rounded_cup_remainder(remainder_base)
-        ['gal', whole_gallons.floor, remainder_unit_key, remainder_quantity]
+
+        nearest_whole_cup_quantity = remainder_quantity.round
+        return if nearest_whole_cup_quantity.zero?
+
+        ['gal', whole_gallons.floor, remainder_unit_key, nearest_whole_cup_quantity]
       end
 
       # A cup remainder snaps to a nice fraction (quarters, thirds, halves)

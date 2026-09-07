@@ -42,12 +42,12 @@ RSpec.describe Ingredient::UnitFormatter, type: :service do
       end
     end
 
-    context 'with a cup remainder that rounds to a nice fraction' do
+    context 'with a quantity greater than a gallon with a fractional cup remainder' do
       let(:quantity) { '3952/1' }
       let(:unit) { 'tsp' }
 
-      it 'splits into whole gallons plus a rounded cup remainder' do
-        expect(result).to have_attributes(quantity: '5/1', unit: 'gal', quantity_secondary: '7/3', unit_secondary: 'c')
+      it 'rounds to the nearest cup' do
+        expect(result).to have_attributes(quantity: '5/1', unit: 'gal', quantity_secondary: '2/1', unit_secondary: 'c')
       end
     end
 
