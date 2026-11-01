@@ -72,6 +72,7 @@ class Ingredient
       # e.g. 7 tsp becomes 2 tbsp + 1 tsp.
       def tbsp_compound_fit
         return unless volume_unit?
+        return if @quantity_max
 
         rounded = nearest_nice_amount(base_amount, TSP_FRACTIONS) { |quantity| quantity }
         return unless rounded && rounded > 6 && rounded < 12
