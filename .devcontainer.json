@@ -1,0 +1,23 @@
+{
+  "name": "Mame Zefu",
+  "dockerComposeFile": "compose.yml",
+  "service": "web",
+  "runServices": ["web", "postgres"],
+  "workspaceFolder": "/rails",
+  "shutdownAction": "stopCompose",
+  "forwardPorts": [3000, 5432],
+  "portsAttributes": {
+    "3000": { "label": "Rails", "onAutoForward": "openBrowser" },
+    "5432": { "label": "Postgres", "onAutoForward": "silent" }
+  },
+  "postCreateCommand": "bash -c 'for i in $(seq 1 30); do bin/rails db:prepare && bin/rails runner \"Feature.sync_features\" && exit 0; sleep 2; done; exit 1'",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Shopify.ruby-lsp",
+        "esbenp.prettier-vscode",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  }
+}
