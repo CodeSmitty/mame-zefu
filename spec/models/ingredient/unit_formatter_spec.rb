@@ -190,6 +190,31 @@ RSpec.describe Ingredient::UnitFormatter, type: :service do
       end
     end
 
+    context 'with a tsp quantity between 6 and 12 that is not a whole tbsp' do
+      let(:unit) { 'tsp' }
+
+      { '7/1' => %w[2/1 1/1], '8/1' => %w[2/1 2/1], '10/1' => %w[3/1 1/1], '11/1' => %w[3/1 2/1],
+        '15/2' => %w[2/1 3/2] }.each do |tsp_quantity, (tbsp, tsp)|
+        context "with #{tsp_quantity} tsp" do
+          let(:quantity) { tsp_quantity }
+
+          it 'splits into tbsp plus tsp' do
+            expect(result).to have_attributes(quantity: tbsp, unit: 'tbsp', quantity_secondary: tsp,
+                                              unit_secondary: 'tsp')
+          end
+        end
+      end
+    end
+
+    context 'with 9 tsp' do
+      let(:quantity) { '9/1' }
+      let(:unit) { 'tsp' }
+
+      it 'stays a single tbsp amount' do
+        expect(result).to have_attributes(quantity: '3/1', unit: 'tbsp', quantity_secondary: nil)
+      end
+    end
+
     context 'with a tsp quantity close to a quarter teaspoon' do
       let(:quantity) { '10/3' }
       let(:unit) { 'tsp' }

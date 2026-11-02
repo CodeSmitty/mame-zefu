@@ -81,7 +81,7 @@ class Ingredient
       cup_fit = rounded_cup_fit(unit_key)
       return [*cup_fit, nil, nil] if cup_fit
 
-      compound = compound_fit(unit_key)
+      compound = compound_fit(unit_key) || tbsp_compound_fit
       return compound if compound
 
       tsp_fit = rounded_tsp_fit(unit_key)
