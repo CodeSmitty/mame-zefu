@@ -1,13 +1,13 @@
 <div class="w-full">
   <div class="m-1">
-    <%= form_tag recipes_path, method: :get, data: { turbo_frame: :recipes, turbo_action: "advance", controller: "filter" } do |f| %>
+    <%= form_tag recipes_path, method: :get, data: { turbo_frame: :recipes, turbo_action: "advance", controller: "filter", action: "turbo:submit-end->filter#focus" } do |f| %>
       <div class="mb-5">
         <div class="lg:w-7/12 flex flex-col justify-center m-auto">
           <div class="relative my-2">
               <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                 <%= image_tag "recipe.png", class: "w-7/12" %>
               </div>
-              <%= text_field_tag :query, params[:query], data: { action: "input->filter#throttledSubmit" }, placeholder: " ", class: "w-full block rounded-lg px-2.5 pb-2.5 ps-10 text-sm text-gray-900 bg-gray-50 border border-gray-50 appearance-none focus:outline-hidden focus:ring-0 focus:border-secondary peer", autocomplete: 'off', type: 'search', onfocus: "this.setSelectionRange(this.value.length,this.value.length);" %>
+              <%= text_field_tag :query, params[:query], data: { filter_target: "query", action: "input->filter#throttledSubmit" }, placeholder: " ", class: "w-full block rounded-lg px-2.5 pb-2.5 ps-10 text-sm text-gray-900 bg-gray-50 border border-gray-50 appearance-none focus:outline-hidden focus:ring-0 focus:border-secondary peer", autocomplete: 'off', type: 'search', onfocus: "this.setSelectionRange(this.value.length,this.value.length);" %>
               <label class="absolute text-sm ml-2 bg-transparent text-gray-500 duration-300 transform -translate-y-2 -translate-x-1 scale-75 top-2 z-10 origin-[0] bg-gray-50 px-8 peer-focus:bg-gray-50 peer-focus:pb-0 peer-focus:px-2 peer-focus:text-tertiary peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-focus:mx-7 peer-placeholder-shown:top-5 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:rtl:translate-x-2 peer-focus:rtl:left-auto start-1">Search</label>
           </div>
           <div>
@@ -22,10 +22,10 @@
       </div>
     <% end %>
   </div>
-  <div id="recipes" class="flex-column flex-wrap justify-center lg:flex-nowrap">
+  <turbo-frame id="recipes" class="flex-column flex-wrap justify-center lg:flex-nowrap">
     <% @recipes.each do |recipe| %>
       <div class="lg:w-3/6 lg:m-auto border border-b-1 border-secondary border-l-0 border-r-0 border-t-0 m-2 hover:border-tertiary">
-        <%= link_to recipe, class: "recipe block m-auto pb-1 lg-w-7/12 font-medium mb-1 text-2l p-4 text-left lg:text-left" do %>
+        <%= link_to recipe, data: { turbo_frame: "_top" }, class: "recipe block m-auto pb-1 lg-w-7/12 font-medium mb-1 text-2l p-4 text-left lg:text-left" do %>
           <%= recipe.name %>
           <% if recipe.is_favorite? %>
             <%= render_icon "mini/heart", classes: "inline text-rose-600" %>
@@ -33,5 +33,5 @@
         <% end %>
       </div>
     <% end %>
-  </div>
+  </turbo-frame>
 </div>
