@@ -13,6 +13,12 @@ RSpec.describe 'Recipes' do
       expect(response).to have_http_status(:ok)
     end
 
+    it 'loads recipe links outside the search results frame' do
+      get recipes_path(as: user)
+
+      expect(response.body).to include('data-turbo-frame="_top"')
+    end
+
     context 'when unauthenticated' do
       it 'redirects to login' do
         get '/recipes'

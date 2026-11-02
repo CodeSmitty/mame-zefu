@@ -2,14 +2,18 @@ import { Controller } from "@hotwired/stimulus"
 import debounce from "lodash/debounce"
 
 export default class extends Controller {
+  static targets = ["query"]
+
   initialize() {
+    this.focusQueryAfterSubmit = false
     this.throttledSubmit = debounce(this.submit, 800).bind(this)
   }
 
   focus() {
-    const input = document.querySelector(
-      "input[name='query'], input[type='search'], input[type='text']",
-    )
+    if (!this.focusQueryAfterSubmit) return
+
+    this.focusQueryAfterSubmit = false
+    const input = this.queryTarget
 
     if (!input) return
 
@@ -23,6 +27,8 @@ export default class extends Controller {
   }
 
   submit(event) {
+    this.focusQueryAfterSubmit = event?.target?.name === "query"
+
     if (event) {
       event.preventDefault()
     }
