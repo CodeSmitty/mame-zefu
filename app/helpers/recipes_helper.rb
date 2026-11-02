@@ -11,23 +11,26 @@ module RecipesHelper
     Feature.recipe_scaling_enabled?(current_user)
   end
 
+  FRACTIONAL_RECIPE_SCALES = { '0.5' => 0.5, '1.5' => 1.5 }.freeze
+
   def recipe_scale
+    return FRACTIONAL_RECIPE_SCALES[params[:scale].to_s] if FRACTIONAL_RECIPE_SCALES.key?(params[:scale].to_s)
+
     scale = Integer(params[:scale], exception: false)
     return 1 unless scale&.positive? && scale.even?
 
     scale
   end
 
+  PREVIOUS_RECIPE_SCALES = { 0.5 => nil, 1 => 0.5, 1.5 => 1, 2 => 1.5 }.freeze
+  NEXT_RECIPE_SCALES = { 0.5 => 1, 1 => 1.5, 1.5 => 2 }.freeze
+
   def previous_recipe_scale
-    case recipe_scale
-    when 1 then nil
-    when 2 then 1
-    else recipe_scale - 2
-    end
+    PREVIOUS_RECIPE_SCALES.fetch(recipe_scale) { recipe_scale - 2 }
   end
 
   def next_recipe_scale
-    recipe_scale == 1 ? 2 : recipe_scale + 2
+    NEXT_RECIPE_SCALES.fetch(recipe_scale) { recipe_scale + 2 }
   end
 
   def recipe_draft_key(recipe)
