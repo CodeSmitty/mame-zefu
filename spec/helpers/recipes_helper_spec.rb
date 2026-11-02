@@ -77,6 +77,18 @@ RSpec.describe RecipesHelper do
       it { is_expected.to eq(1) }
     end
 
+    context 'when the scale param is 1.5' do
+      let(:scale_param) { '1.5' }
+
+      it { is_expected.to eq(1.5) }
+    end
+
+    context 'when the scale param is 0.5' do
+      let(:scale_param) { '0.5' }
+
+      it { is_expected.to eq(0.5) }
+    end
+
     context 'when the scale param is not a whole number' do
       let(:scale_param) { '2.5' }
 
@@ -93,16 +105,28 @@ RSpec.describe RecipesHelper do
   describe '#previous_recipe_scale' do
     subject(:scale) { helper.previous_recipe_scale }
 
+    context 'when the current scale is 0.5' do
+      before { allow(helper).to receive(:recipe_scale).and_return(0.5) }
+
+      it { is_expected.to be_nil }
+    end
+
     context 'when the current scale is 1' do
       before { allow(helper).to receive(:recipe_scale).and_return(1) }
 
-      it { is_expected.to be_nil }
+      it { is_expected.to eq(0.5) }
+    end
+
+    context 'when the current scale is 1.5' do
+      before { allow(helper).to receive(:recipe_scale).and_return(1.5) }
+
+      it { is_expected.to eq(1) }
     end
 
     context 'when the current scale is 2' do
       before { allow(helper).to receive(:recipe_scale).and_return(2) }
 
-      it { is_expected.to eq(1) }
+      it { is_expected.to eq(1.5) }
     end
 
     context 'when the current scale is greater than 2' do
@@ -115,13 +139,25 @@ RSpec.describe RecipesHelper do
   describe '#next_recipe_scale' do
     subject(:scale) { helper.next_recipe_scale }
 
+    context 'when the current scale is 0.5' do
+      before { allow(helper).to receive(:recipe_scale).and_return(0.5) }
+
+      it { is_expected.to eq(1) }
+    end
+
     context 'when the current scale is 1' do
       before { allow(helper).to receive(:recipe_scale).and_return(1) }
+
+      it { is_expected.to eq(1.5) }
+    end
+
+    context 'when the current scale is 1.5' do
+      before { allow(helper).to receive(:recipe_scale).and_return(1.5) }
 
       it { is_expected.to eq(2) }
     end
 
-    context 'when the current scale is greater than 1' do
+    context 'when the current scale is greater than 1.5' do
       before { allow(helper).to receive(:recipe_scale).and_return(4) }
 
       it { is_expected.to eq(6) }
