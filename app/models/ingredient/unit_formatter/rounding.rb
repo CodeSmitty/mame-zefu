@@ -68,6 +68,21 @@ class Ingredient
         ['c', primary_quantity, remainder_unit_key, remainder_quantity]
       end
 
+      # Splits 6-12 tsp that aren't a whole number of tbsp into tbsp plus tsp,
+      # e.g. 7 tsp becomes 2 tbsp + 1 tsp.
+      def tbsp_compound_fit
+        return unless volume_unit?
+        return if @quantity_max
+
+        rounded = nearest_nice_amount(base_amount, TSP_FRACTIONS) { |quantity| quantity }
+        return unless rounded && rounded > 6 && rounded < 12
+
+        tbsp, tsp = rounded.divmod(units_per_base('tbsp'))
+        return if tsp.zero?
+
+        ['tbsp', tbsp, 'tsp', tsp]
+      end
+
       # The largest whole-cups-plus-nice-fraction amount at or below the
       # total, or nil if the total doesn't even reach a quarter cup.
       def primary_cup_quantity
