@@ -19,6 +19,15 @@ RSpec.describe 'Recipes' do
       expect(response.body).to include('data-turbo-frame="_top"')
     end
 
+    it 'filters to favorite recipes when requested' do
+      favorite_recipe = create(:recipe, user: user, name: 'Favorite recipe', is_favorite: true)
+
+      get recipes_path(params: { is_favorite: 'true', as: user })
+
+      expect(response.body).to include(favorite_recipe.name)
+      expect(response.body).not_to include(recipe.name)
+    end
+
     context 'when unauthenticated' do
       it 'redirects to login' do
         get '/recipes'

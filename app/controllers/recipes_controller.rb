@@ -82,7 +82,11 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
 
   # GET /recipes or /recipes.json
   def index
-    @recipes = policy_scope(Recipe).with_text(params[:query]).in_categories(params[:category_names]).sorted
+    @recipes = policy_scope(Recipe)
+               .with_text(params[:query])
+               .in_categories(params[:category_names])
+               .filter_by_favorite(params[:is_favorite] == 'true')
+               .sorted
   end
 
   # GET /recipes/1 or /recipes/1.json

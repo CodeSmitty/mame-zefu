@@ -13,6 +13,13 @@
           <div>
             <%= select_tag(:category_names, options_for_select(category_filter_options, params[:category_names]), { data: { controller: "tom-select", 'tom-select-create-value': false, action: "change->filter#submit" }, multiple: true, placeholder: "Select Categories" }) %>
           </div>
+          <div class="my-4 flex justify-end w-full">
+            <label class="inline-flex items-center cursor-pointer">
+              <input type="checkbox" value="true" class="sr-only peer" data-controller="filter-favorite" data-filter-favorite-target="checkbox" data-action="change->filter-favorite#submit" name="is_favorite" <%= "checked" if params[:is_favorite] == "true" %>>
+              <div class="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-soft dark:peer-focus:ring-brand-soft rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand"></div>
+              <span class="select-none ms-3 text-sm font-medium text-heading">Show Favorites</span>
+            </label>
+          </div>
           <div class="mt-2 flex justify-end w-full">
             <%= link_to archive_download_recipes_path, data: { turbo: false }, class: "inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary font-medium cursor-pointer" do %>
               <%= render_icon "mini/arrow_down_tray", classes: "me-1" %> Download
