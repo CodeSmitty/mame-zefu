@@ -41,6 +41,9 @@ class Recipe < ApplicationRecord
       .having('count(distinct categories.id) = ?', category_names.size)
   }
 
+  scope :is_favorite, -> { where(is_favorite: true) }
+  scope :filter_by_favorite, ->(filter) { where(is_favorite: true) if filter }
+
   scope :sorted, -> { order(name: :asc) }
 
   private
