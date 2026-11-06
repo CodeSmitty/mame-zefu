@@ -2,33 +2,53 @@ import { Controller } from "@hotwired/stimulus"
 import debounce from "lodash/debounce"
 
 export default class extends Controller {
-  static targets = ["query"]
-
   initialize() {
-    this.focusQueryAfterSubmit = false
     this.throttledSubmit = debounce(this.submit, 800).bind(this)
   }
 
-  focus() {
-    if (!this.focusQueryAfterSubmit) return
+  rememberFocus() {
+    const target = document.activeElement
+    if (!this.element.contains(target)) {
+      this.focusedElement = null
+      return
+    }
 
-    this.focusQueryAfterSubmit = false
-    const input = this.queryTarget
+    this.focusedElement = {
+      target,
+      selectionStart:
+        typeof target.selectionStart === "number" ? target.selectionStart : null,
+      selectionEnd:
+        typeof target.selectionEnd === "number" ? target.selectionEnd : null,
+      selectionDirection: target.selectionDirection,
+    }
+  }
 
-    if (!input) return
+  restoreFocus() {
+    const focusedElement = this.focusedElement
+    this.focusedElement = null
+    if (!focusedElement?.target.isConnected) return
 
     requestAnimationFrame(() => {
-      input.focus()
-      const end = input.value.length
-      if (typeof input.setSelectionRange === "function") {
-        input.setSelectionRange(end, end)
+      if (document.activeElement !== document.body) return
+
+      const { target, selectionStart, selectionEnd, selectionDirection } =
+        focusedElement
+      target.focus()
+      if (
+        selectionStart !== null &&
+        selectionEnd !== null &&
+        typeof target.setSelectionRange === "function"
+      ) {
+        target.setSelectionRange(
+          selectionStart,
+          selectionEnd,
+          selectionDirection,
+        )
       }
     })
   }
 
   submit(event) {
-    this.focusQueryAfterSubmit = event?.target?.name === "query"
-
     if (event) {
       event.preventDefault()
     }
