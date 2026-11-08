@@ -16,7 +16,9 @@ export default class extends Controller {
     this.focusedElement = {
       target,
       selectionStart:
-        typeof target.selectionStart === "number" ? target.selectionStart : null,
+        typeof target.selectionStart === "number"
+          ? target.selectionStart
+          : null,
       selectionEnd:
         typeof target.selectionEnd === "number" ? target.selectionEnd : null,
       selectionDirection: target.selectionDirection,
