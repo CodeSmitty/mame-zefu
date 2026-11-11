@@ -1,6 +1,6 @@
 <div class="w-full">
   <div class="m-1">
-    <%= form_tag recipes_path, method: :get, data: { turbo_frame: :recipes, turbo_action: "advance", controller: "filter" } do |f| %>
+    <%= form_tag recipes_path, method: :get, data: { turbo_frame: :recipes, turbo_action: "advance", controller: "filter", action: "turbo:submit-start->filter#rememberFocus turbo:submit-end->filter#restoreFocus" } do |f| %>
       <div class="mb-5">
         <div class="lg:w-7/12 flex flex-col justify-center m-auto">
           <div class="relative my-2">
@@ -13,6 +13,13 @@
           <div>
             <%= select_tag(:category_names, options_for_select(category_filter_options, params[:category_names]), { data: { controller: "tom-select", 'tom-select-create-value': false, action: "change->filter#submit" }, multiple: true, placeholder: "Select Categories" }) %>
           </div>
+          <div class="my-4 flex justify-end w-full">
+            <label class="inline-flex items-center cursor-pointer">
+              <input type="checkbox" value="true" class="sr-only peer" data-controller="filter-favorite" data-filter-favorite-target="checkbox" data-action="change->filter-favorite#submit" name="is_favorite" <%= "checked" if params[:is_favorite] == "true" %>>
+              <div class="relative w-9 h-5 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-gray-600"></div>
+              <span class="select-none ms-3 text-sm font-medium text-heading">Favorites Only</span>
+            </label>
+          </div>
           <div class="mt-2 flex justify-end w-full">
             <%= link_to archive_download_recipes_path, data: { turbo: false }, class: "inline-flex items-center rounded-lg py-2 px-3 bg-white hover:bg-secondary text-secondary hover:text-white border border-secondary font-medium cursor-pointer" do %>
               <%= render_icon "mini/arrow_down_tray", classes: "me-1" %> Download
@@ -22,10 +29,10 @@
       </div>
     <% end %>
   </div>
-  <div id="recipes" class="flex-column flex-wrap justify-center lg:flex-nowrap">
+  <turbo-frame id="recipes" class="flex-column flex-wrap justify-center lg:flex-nowrap">
     <% @recipes.each do |recipe| %>
       <div class="lg:w-3/6 lg:m-auto border border-b-1 border-secondary border-l-0 border-r-0 border-t-0 m-2 hover:border-tertiary">
-        <%= link_to recipe, class: "recipe block m-auto pb-1 lg-w-7/12 font-medium mb-1 text-2l p-4 text-left lg:text-left" do %>
+        <%= link_to recipe, data: { turbo_frame: "_top" }, class: "recipe block m-auto pb-1 lg-w-7/12 font-medium mb-1 text-2l p-4 text-left lg:text-left" do %>
           <%= recipe.name %>
           <% if recipe.is_favorite? %>
             <%= render_icon "mini/heart", classes: "inline text-rose-600" %>
@@ -33,5 +40,5 @@
         <% end %>
       </div>
     <% end %>
-  </div>
+  </turbo-frame>
 </div>
