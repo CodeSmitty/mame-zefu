@@ -23,5 +23,9 @@ Use the `bin/docker/` scripts rather than ad-hoc `docker compose exec`:
 - Specs use RSpec with shallow `context 'when ...'` blocks, one primary assertion per example, and verifying doubles.
 - Existing assertions describe current behavior; update them when behavior intentionally changes, but never weaken them just to pass.
 
+## Documentation
+- Use the GitHub wiki for project documentation; do not add documentation to `README.md`.
+- The wiki is a separate Git repository. If it cannot be updated, report the documentation that remains to be published.
+
 ## Agents
 Task-specific guidance lives in `.github/agents/` (application and test implementation).
