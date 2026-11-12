@@ -14,9 +14,9 @@ services:
     environment:
       - DB_HOST=postgres
   postgres:
-    image: postgres:15-alpine
+    image: postgres:18-alpine
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata18:/var/lib/postgresql
     ports:
       - "5432:5432"
     environment:
@@ -31,4 +31,4 @@ services:
       start_period: 5s
 volumes:
   cache:
-  pgdata:
+  pgdata18:
