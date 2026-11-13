@@ -39,6 +39,15 @@ module RecipesHelper
     "user:#{current_user.id}:recipe:#{draft_id}"
   end
 
+  def preview_image_url(recipe)
+    return if recipe.persisted? || recipe.image_src.blank?
+
+    uri = URI.parse(recipe.image_src)
+    uri.to_s if uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)
+  rescue URI::InvalidURIError
+    nil
+  end
+
   def category_select_options(recipe)
     user = recipe.user || current_user
     existing_categories = user.categories.pluck(:name)

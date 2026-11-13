@@ -38,6 +38,33 @@ RSpec.describe RecipesHelper do
       allow(helper).to receive(:current_user).and_return(current_user)
     end
 
+    describe '#preview_image_url' do
+      it 'returns an HTTP image URL for an unsaved recipe' do
+        recipe = Recipe.new(image_src: 'https://example.com/image.jpg')
+
+        expect(helper.preview_image_url(recipe)).to eq('https://example.com/image.jpg')
+      end
+
+      it 'does not return URLs with another scheme' do
+        expect(helper.preview_image_url(Recipe.new(image_src: 'javascript:alert(1)'))).to be_nil
+      end
+
+      it 'does not return invalid URLs' do
+        expect(helper.preview_image_url(Recipe.new(image_src: 'http://['))).to be_nil
+      end
+
+      it 'does not return URLs for saved recipes' do
+        recipe = create(:recipe)
+        recipe.image_src = 'https://example.com/image.jpg'
+
+        expect(helper.preview_image_url(recipe)).to be_nil
+      end
+
+      it 'handles missing URLs' do
+        expect(helper.preview_image_url(Recipe.new)).to be_nil
+      end
+    end
+
     it 'delegates to Feature.recipe_scaling_enabled?' do
       allow(Feature).to receive(:recipe_scaling_enabled?).and_return(true)
 

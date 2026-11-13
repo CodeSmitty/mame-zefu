@@ -1,6 +1,7 @@
 class RecipesController < ApplicationController # rubocop:disable Metrics/ClassLength
   before_action :require_login
-  before_action :ensure_extraction_enabled, only: %i[extraction_form extraction extraction_result]
+  before_action :ensure_extraction_enabled, only: %i[extraction_form extraction extraction_result create],
+                                            if: :extraction_action?
   before_action :validate_image_upload, only: [:extraction]
   before_action :set_recipe, only: %i[show edit update destroy toggle_favorite delete_image]
   skip_after_action :verify_pundit_authorization, only: %i[
@@ -14,12 +15,11 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
 
   def web_result
     @recipe = Recipes::Import.new(uri: uri_from_params, force_json_schema: force_json).recipe
+    @recipe.user = current_user
+    assign_preview_name('imported')
   rescue StandardError => e
-    @recipe = Recipe.new(source: uri_from_params)
-
-    flash.now[:alert] = 'Unable to import recipe.'
-
-    Rails.logger.error("Recipe import error: #{e.class} - #{e.message}. Source: #{uri_from_params}")
+    Rails.logger.error("Recipe import error: #{e.class} - #{e.message}. Source: #{params[:url]}")
+    redirect_to web_search_recipes_path, alert: 'Unable to import recipe.'
   end
 
   def extraction_form; end
@@ -46,6 +46,7 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
     end
 
     @recipe = current_user.recipes.new(recipe_attributes)
+    assign_preview_name('extracted')
   end
 
   # GET /recipes/archive/download
@@ -109,10 +110,10 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
 
     respond_to do |format|
       if @recipe.save
-        format.html { redirect_to recipe_url(@recipe), notice: 'Recipe was successfully created.' }
+        format.html { create_html_response }
         format.json { render :show, status: :created, location: @recipe }
       else
-        format.html { render :new, status: :unprocessable_content }
+        format.html { render create_failure_template, status: :unprocessable_content }
         format.json { render json: @recipe.errors, status: :unprocessable_content }
       end
     end
@@ -153,6 +154,36 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
   end
 
   private
+
+  def extraction_action?
+    action_name != 'create' || params[:preview_source] == 'extraction'
+  end
+
+  def assign_preview_name(source)
+    return if @recipe.name.present?
+
+    @recipe.name = "Untitled #{source} recipe"
+    @fallback_name = true
+  end
+
+  def create_html_response
+    redirect_to create_redirect_path, notice: 'Recipe was successfully created.'
+  end
+
+  def create_redirect_path
+    return edit_recipe_path(@recipe) if preview_source && params[:save_action] == 'edit'
+
+    recipe_url(@recipe)
+  end
+
+  def create_failure_template
+    @fallback_name = params[:fallback_name] == '1'
+    { 'web' => :web_result, 'extraction' => :extraction_result }.fetch(preview_source, :new)
+  end
+
+  def preview_source
+    params[:preview_source] if %w[web extraction].include?(params[:preview_source])
+  end
 
   # Use callbacks to share common setup or constraints between actions.
   def set_recipe

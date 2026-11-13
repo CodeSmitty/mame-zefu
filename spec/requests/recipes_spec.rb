@@ -225,6 +225,37 @@ RSpec.describe 'Recipes' do
 
         expect(response).to have_http_status(:unprocessable_content)
       end
+
+      context 'when a preview fails validation' do
+        before do
+          allow(Recipes::Extraction).to receive(:enabled?).and_return(true)
+        end
+
+        %w[web extraction].each do |source|
+          it "re-renders the #{source} preview without creating a recipe" do # rubocop:disable RSpec/ExampleLength
+            expect do
+              post recipes_path(as: user), params: {
+                preview_source: source, save_action: 'edit', recipe: { name: '', ingredients: 'Flour' }
+              }
+            end.not_to change(Recipe, :count)
+            expect(response).to have_http_status(:unprocessable_content)
+            expect(response.body).to include('Unable to save this recipe:', 'Flour', 'not been saved')
+          end
+        end
+      end
+
+      context 'when extraction preview saving is disabled' do
+        before do
+          allow(Recipes::Extraction).to receive(:enabled?).and_return(false)
+        end
+
+        it 'does not create the recipe' do
+          expect do
+            post recipes_path(as: user), params: { preview_source: 'extraction', recipe: { name: 'Toast' } }
+          end.not_to change(Recipe, :count)
+          expect(response).to redirect_to(recipes_path)
+        end
+      end
     end
   end
 
@@ -379,10 +410,17 @@ RSpec.describe 'Recipes' do
           allow(import_service).to receive(:recipe).and_raise(StandardError.new('Import failed'))
         end
 
-        it 'returns a 200 and shows an alert' do
+        it 'redirects to web search with an alert' do
           get web_result_recipes_path(url: url, as: user)
-          expect(response).to have_http_status(:ok)
-          expect(response.body).to include('Unable to import recipe')
+
+          expect(response).to redirect_to(web_search_recipes_path)
+          expect(flash[:alert]).to eq('Unable to import recipe.')
+        end
+
+        it 'handles an invalid URL without raising another error' do
+          get web_result_recipes_path(url: 'http://[', as: user)
+
+          expect(response).to redirect_to(web_search_recipes_path)
         end
       end
     end

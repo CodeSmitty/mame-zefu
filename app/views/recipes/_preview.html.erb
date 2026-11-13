@@ -1,0 +1,45 @@
+<div class="form-container lg:w-auto lg:mx-auto">
+  <div class="mx-auto lg:w-8/12 px-4 pt-4">
+    <h1 class="font-bold text-2xl text-secondary"><%= title %></h1>
+    <p role="status" class="my-4 rounded-lg bg-yellow-50 border border-yellow-400 p-4 font-medium">
+      This recipe has not been saved. Choose Save or Save and edit to add it to your recipes.
+    </p>
+    <% if @fallback_name %>
+      <p class="my-4">No recipe name was found. The placeholder name "<%= recipe.name %>" will be saved; you can change it after saving.</p>
+    <% end %>
+    <% if recipe.errors.any? %>
+      <div role="alert" class="my-4 rounded-lg bg-red-50 p-4 text-red-600">
+        <p>Unable to save this recipe:</p>
+        <ul>
+          <% recipe.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </div>
+
+  <%= render recipe %>
+
+  <%= form_with model: recipe, id: "recipe_preview_form" do |form| %>
+    <%= hidden_field_tag :preview_source, source %>
+    <%= hidden_field_tag :fallback_name, "1" if @fallback_name %>
+    <% Recipes::Import::Base::IMPORT_FIELDS.excluding("category_names").each do |field| %>
+      <%= form.hidden_field field %>
+    <% end %>
+    <% recipe.category_names.each do |category| %>
+      <%= hidden_field_tag "recipe[category_names][]", category %>
+    <% end %>
+    <div class="pt-0 lg:pt-4 lg:px-8 edit-delete-container shadow-xl lg:shadow-none fixed bottom-0 lg:static bg-black lg:bg-transparent w-screen lg:w-8/12 inset-x-0 lg:inset-auto mx-0 lg:mx-auto flex flex-row justify-center lg:justify-start gap-2 z-50 lg:z-auto">
+      <%= button_tag name: "save_action", value: "save", class: "inline-flex items-center rounded-lg py-2 px-3 bg-transparent border border-transparent text-white hover:text-secondary font-medium cursor-pointer lg:bg-white lg:border-secondary lg:text-secondary lg:hover:bg-secondary lg:hover:text-white" do %>
+        <%= render_icon "micro/document_check", classes: "me-1" %> Save
+      <% end %>
+      <%= button_tag name: "save_action", value: "edit", class: "inline-flex items-center rounded-lg py-2 px-3 bg-transparent border border-transparent text-white hover:text-secondary font-medium cursor-pointer lg:bg-white lg:border-secondary lg:text-secondary lg:hover:bg-secondary lg:hover:text-white" do %>
+        <%= render_icon "micro/pencil_square", classes: "me-1" %> Save and edit
+      <% end %>
+      <%= link_to back_path, class: "inline-flex items-center rounded-lg py-2 px-3 bg-transparent border border-transparent text-white hover:text-secondary font-medium cursor-pointer lg:bg-white lg:border-secondary lg:text-secondary lg:hover:bg-secondary lg:hover:text-white" do %>
+        <%= render_icon "micro/arrow_uturn_left", classes: "me-1" %> Back
+      <% end %>
+    </div>
+  <% end %>
+</div>

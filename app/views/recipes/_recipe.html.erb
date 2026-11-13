@@ -7,6 +7,9 @@
             style="background-image: url('<%= url_for(recipe.image) %>'); background-size: cover; background-position: center;"
             class="relative h-100 flex flex-col justify-end mb-4"
             itemprop="image">
+        <% elsif preview_image_url(recipe) %>
+          <div class="relative h-100 flex flex-col justify-end mb-4" itemprop="image">
+            <%= image_tag preview_image_url(recipe), alt: "", class: "absolute inset-0 w-full h-full object-cover" %>
         <% else %>
           <div
             style="background-image: url('<%= asset_path('placeholder.jpg') %>'); background-size: cover; background-position: center;"
@@ -15,7 +18,8 @@
           <h1 class="relative flex flex-wrap items-center gap-x-2 gap-y-2 text-white bg-black/70 py-2 pl-4 pr-12">
             <strong class="text-2xl break-words flex-1 min-w-0" itemprop="name"><%= recipe.name %></strong>
             <span class="absolute top-2 right-2 flex items-center gap-2">
-              <button
+              <% if recipe.persisted? %>
+                <button
                 type="button"
                 class="btn btn-xs text-black hover:cursor-pointer"
                 aria-label="<%= recipe.is_favorite ? "Remove from favorites" : "Add to favorites" %>"
@@ -25,7 +29,8 @@
                 data-toggle-favorite-is-favorite-value="<%= recipe.is_favorite %>"
                 data-toggle-favorite-heart-value='<%= render_icon "mini/heart", classes: "text-rose-600" %>'
                 data-toggle-favorite-empty-heart-value='<%= render_icon "mini/empty_heart", classes: "text-rose-600" %>'>
-              </button>
+                </button>
+              <% end %>
               <% if recipe.source.present? %>
                 <%= link_to recipe.source, target: "_blank", rel: "noopener" do %>
                   <%= render_icon "mini/link" %>
@@ -79,7 +84,7 @@
         <div class="mx-auto">
           <div id="ingredients" class="flex items-center flex-wrap gap-x-2 mt-8 mb-2 scroll-mt-36">
             <h2 class="text-2xl font-semibold">Ingredients</h2>
-            <% if recipe_scaling_enabled? && ingredient_parsing_enabled? %>
+            <% if recipe.persisted? && recipe_scaling_enabled? && ingredient_parsing_enabled? %>
               <div class="flex items-center gap-1 text-gray-600">
                 <% if previous_recipe_scale %>
                   <%= link_to recipe_path(recipe, scale: previous_recipe_scale, anchor: "ingredients"),
@@ -107,7 +112,7 @@
                     <li
                       data-action="click->list#strike"
                       class="break-words leading-snug py-1"
-                      itemprop="recipeIngredient"><%= parsed_ingredient_markup(item) %></li>
+                      itemprop="recipeIngredient"><%= parsed_ingredient_markup(item, scale: recipe.persisted? ? recipe_scale : 1) %></li>
                   <% end %>
                 </ul>
               </div>
