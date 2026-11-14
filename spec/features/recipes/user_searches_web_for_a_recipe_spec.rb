@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.feature 'User searches for a recipe', :js do
+RSpec.feature 'User searches the web for a recipe', :js do
   given(:user) { create(:user) }
   given(:recipe_url) { 'https://example.com/recipes/cake?servings=2&unit=cups' }
   given(:import_service) { instance_double(Recipes::Import, recipe: Recipe.new(name: 'Imported cake')) }

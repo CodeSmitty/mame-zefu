@@ -1,21 +1,21 @@
 <nav class="w-full z-20 top-0 fixed bg-black">
   <div class="max-w-(--breakpoint-xl) flex flex-wrap items-center justify-between mx-auto p-2">
    <div class="flex items-center">
-      <%= link_to root_path, class: "group inline-block mx-4 p-[4px] rounded-full flex flex-row flex-nowrap items-center text-gray-300" do %>
-        <div class="size-10 lg:size-20 mx-auto rounded-full bg-transparent flex items-center justify-center">
+      <%= link_to root_path, class: "group mx-4 p-[4px] rounded-full flex flex-row flex-nowrap items-center text-gray-300" do %>
+        <div class="size-10 mx-auto rounded-full bg-transparent flex items-center justify-center">
           <%= image_tag "Mamezefu-02.png", class: "h-full w-full object-contain rounded-full rounded-full border-2 border-gray-200 group-hover:border-secondary transform duration-500" %>
         </div>
         <span class="font-semibold relative ml-2 group-hover:text-secondary transform duration-500">MameZefu</span>
       <% end %>
     </div>
-    <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center justify-center rounded-lg p-3 text-white md:hidden  hover:text-secondary focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-secondary" aria-controls="navbar-default" aria-expanded="false">
+    <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center justify-center rounded-lg p-3 text-white lg:hidden hover:text-secondary focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-secondary" aria-controls="navbar-default" aria-expanded="false">
         <span class="sr-only">Open main menu</span>
         <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
         </svg>
     </button>
-    <div class="hidden w-full lg:w-6/12 md:block md:w-auto" id="navbar-default">
-      <ul class="font-medium lg:w-full lg:h-full lg:justify-end text-gray-200 flex flex-col justify-around p-4 md:p-0 mt-4 mr-7 border border-white rounded-lg md:flex-row rtl:space-x-reverse md:mt-0 md:border-0">
+    <div class="hidden w-full max-h-[calc(100dvh-4rem)] overflow-y-auto lg:block lg:w-auto lg:max-h-none lg:overflow-visible" id="navbar-default">
+      <ul class="font-medium lg:justify-end text-gray-200 flex flex-col justify-around p-4 lg:p-0 mt-4 lg:mr-2 border border-white rounded-lg lg:flex-row rtl:space-x-reverse lg:mt-0 lg:border-0">
         <% if signed_in? %>
           <li>
             <%= link_to new_recipe_path, class: "group relative block flex items-center mt-3 px-3 text-gray-200" do %>
@@ -69,6 +69,20 @@
                   <span class="block whitespace-nowrap transition-colors duration-300 group-hover:text-transparent">Upload</span>
                   <span class="absolute inset-0 whitespace-nowrap text-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 flex items-center">
                     Upload
+                  </span>
+                </span>
+              </span>
+              <span class="absolute bottom-0 left-3 right-3 h-0.5 bg-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+            <% end %>
+          </li>
+          <li>
+            <%= link_to archive_download_recipes_path, class: "group relative block flex items-center mt-3 px-3 text-gray-200" do %>
+              <span class="flex items-center">
+                <%= render_icon "outline/arrow_down_tray", classes: "h-5 w-5 mx-1 transition-colors duration-300 group-hover:text-secondary" %>
+                <span class="relative overflow-hidden whitespace-nowrap">
+                  <span class="block whitespace-nowrap transition-colors duration-300 group-hover:text-transparent">Download</span>
+                  <span class="absolute inset-0 whitespace-nowrap text-secondary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 flex items-center">
+                    Download
                   </span>
                 </span>
               </span>
