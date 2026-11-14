@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.feature 'User searches recipes', :js do
+RSpec.feature 'User searches the recipe index', :js do
   given(:user) { create(:user) }
   given!(:soup) { create(:recipe, user:, name: 'Tomato soup', category_names: ['Lunch']) }
   given!(:cake) { create(:recipe, user:, name: 'Chocolate cake', category_names: ['Dessert']) }
@@ -48,7 +48,7 @@ RSpec.feature 'User searches recipes', :js do
     expect(page).to have_css('.ts-control .item', text: 'New category')
   end
 
-  scenario 'shows a result above a simulated mobile keyboard and keeps download in the menu' do # rubocop:disable RSpec/ExampleLength
+  scenario 'shows a result in the upper half of a mobile viewport' do # rubocop:disable RSpec/ExampleLength
     page.current_window.resize_to(390, 700)
     visit recipes_path(as: user)
     find('.ts-control input')
@@ -60,10 +60,6 @@ RSpec.feature 'User searches recipes', :js do
 
     expect(result_bottom).to be <= 350
     expect(search_top).to be >= navigation_bottom
-    expect(page).to have_no_link('Download')
-
-    find('button[aria-controls="navbar-default"]').click
-    expect(page).to have_link('Download', href: archive_download_recipes_path)
   ensure
     page.current_window.resize_to(1400, 1400)
   end
@@ -88,6 +84,8 @@ RSpec.feature 'User searches recipes', :js do
   scenario 'opens the download page from the mobile menu' do # rubocop:disable RSpec/ExampleLength
     page.current_window.resize_to(390, 700)
     visit recipes_path(as: user)
+    find('.ts-control input')
+    expect(page).to have_no_link('Download')
     find('button[aria-controls="navbar-default"]').click
     within('nav') { click_link 'Download' }
 
