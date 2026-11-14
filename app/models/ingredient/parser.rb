@@ -1,7 +1,7 @@
 require 'ingreedy'
 
 class Ingredient
-  # rubocop:disable Metrics/ClassLength
+  # rubocop:disable-next Metrics/ClassLength
   class Parser
     attr_reader :ingredient
 
@@ -149,5 +149,4 @@ class Ingredient
       }
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end
