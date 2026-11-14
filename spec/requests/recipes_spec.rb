@@ -19,6 +19,22 @@ RSpec.describe 'Recipes' do
       expect(response.body).to include('data-turbo-frame="_top"')
     end
 
+    it 'places the download page in the navigation' do
+      get recipes_path(as: user)
+
+      expect(Capybara.string(response.body)).to have_css(
+        "nav a[href='#{archive_download_recipes_path}']"
+      )
+    end
+
+    it 'requests keyboard suggestions be disabled for the recipe search' do
+      get recipes_path(as: user)
+
+      expect(Capybara.string(response.body)).to have_css(
+        "input#query[type='search'][autocomplete='off'][autocorrect='off'][spellcheck='false']"
+      )
+    end
+
     it 'filters to favorite recipes when requested' do
       favorite_recipe = create(:recipe, user: user, name: 'Favorite recipe', is_favorite: true)
 
@@ -32,6 +48,12 @@ RSpec.describe 'Recipes' do
       it 'redirects to login' do
         get '/recipes'
         expect(response).to redirect_to(sign_in_path)
+      end
+
+      it 'does not show archive download in the navigation' do
+        get sign_in_path
+
+        expect(Capybara.string(response.body)).to have_no_css("nav a[href='#{archive_download_recipes_path}']")
       end
     end
   end
@@ -539,6 +561,46 @@ RSpec.describe 'Recipes' do
   end
 
   describe 'GET /recipes/archive/download' do
+    it 'redirects when unauthenticated' do
+      get '/recipes/archive/download'
+
+      expect(response).to redirect_to(sign_in_path)
+    end
+
+    it 'shows a download link' do # rubocop:disable RSpec/ExampleLength
+      get archive_download_recipes_path(as: user)
+
+      expect(response).to have_http_status(:ok)
+      expect(archive_download_recipes_path).to eq('/recipes/archive/download')
+      expect(Capybara.string(response.body)).to have_css('h1', text: 'Download Recipes')
+      expect(Capybara.string(response.body)).to have_css(
+        "main a[href='#{archive_download_file_recipes_path}'][data-turbo='false']", text: 'Download'
+      )
+    end
+
+    it 'does not generate an archive when rendering the page' do
+      allow(Recipes::Archive).to receive(:new)
+
+      get archive_download_recipes_path(as: user)
+
+      expect(Recipes::Archive).not_to have_received(:new)
+    end
+  end
+
+  describe 'GET /recipes/archive/download/file with a real archive' do
+    it 'contains only recipes owned by the current user' do # rubocop:disable RSpec/ExampleLength
+      create(:recipe, user: other_user)
+
+      get archive_download_file_recipes_path(as: user)
+
+      Zip::File.open_buffer(response.body) do |zip|
+        recipes = JSON.parse(zip.read('recipes.json'))
+        expect(recipes.pluck('name')).to contain_exactly(recipe.name)
+      end
+    end
+  end
+
+  describe 'GET /recipes/archive/download/file' do
     let(:tmpfile) do
       Tempfile.new('recipes-archive').tap do |tempfile|
         tempfile.write('zipdata')
@@ -552,12 +614,12 @@ RSpec.describe 'Recipes' do
     end
 
     it 'redirects when unauthenticated' do
-      get '/recipes/archive/download'
+      get '/recipes/archive/download/file'
       expect(response).to redirect_to(sign_in_path)
     end
 
     it 'sends zip file when authenticated' do
-      get archive_download_recipes_path(as: user)
+      get archive_download_file_recipes_path(as: user)
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to eq('zipdata')

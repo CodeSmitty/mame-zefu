@@ -2,9 +2,9 @@ import { Controller } from "@hotwired/stimulus"
 import TomSelect from "tom-select"
 
 export default class extends Controller {
-  static values = { create: Boolean }
+  static values = { create: Boolean, suppressSuggestions: Boolean }
   connect() {
-    new TomSelect(this.element, {
+    const select = new TomSelect(this.element, {
       plugins: ["remove_button", "input_autogrow"],
       create: this.createValue,
       createOnBlur: true,
@@ -14,5 +14,11 @@ export default class extends Controller {
         this.refreshOptions()
       },
     })
+
+    if (this.suppressSuggestionsValue) {
+      select.control_input.setAttribute("autocomplete", "off")
+      select.control_input.setAttribute("autocorrect", "off")
+      select.control_input.setAttribute("spellcheck", "false")
+    }
   }
 }

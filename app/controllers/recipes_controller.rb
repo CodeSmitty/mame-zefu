@@ -5,7 +5,7 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
   before_action :set_recipe, only: %i[show edit update destroy toggle_favorite delete_image]
   skip_after_action :verify_pundit_authorization, only: %i[
     web_search web_result
-    download_archive upload_archive_form upload_archive
+    download_archive_form download_archive upload_archive_form upload_archive
     extraction_form extraction extraction_result
     new create
   ]
@@ -49,6 +49,9 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
   end
 
   # GET /recipes/archive/download
+  def download_archive_form; end
+
+  # GET /recipes/archive/download/file
   def download_archive
     name = "Recipes_#{Time.current.strftime('%Y%m%d_%H%M%S')}.zip"
     file = Recipes::Archive.new(current_user).generate
