@@ -96,28 +96,6 @@ RSpec.feature 'Recipe drafts', :js do
     end
   end
 
-  context 'when editing a saved web import' do
-    background do
-      store_draft(new_draft_key, { 'recipe[name]' => 'New draft' })
-      imported = Recipe.new(name: 'Imported recipe', ingredients: 'Flour')
-      allow(Recipes::Import).to receive(:new).and_return(instance_double(Recipes::Import, recipe: imported))
-      visit web_result_recipes_path(url: 'https://example.com/recipe')
-      click_button 'Save and edit'
-      wait_for_controller('recipe_form', 'recipe-draft')
-      saved_recipe = user.recipes.last
-      key = "recipe_draft:storage:user:#{user.id}:recipe:#{saved_recipe.id}"
-      fill_in 'Name', with: 'Edited import'
-      wait_for_draft(key, 'recipe[name]', 'Edited import')
-      visit recipe_path(saved_recipe)
-      click_link 'Review'
-    end
-
-    scenario 'restores edits without replacing the new-recipe draft' do
-      expect(page).to have_field('Name', with: 'Edited import')
-      expect(JSON.parse(storage_value(new_draft_key)).dig('fields', 'recipe[name]')).to eq('New draft')
-    end
-  end
-
   context 'when draft maintenance is due' do
     background do
       store_draft(draft_key, { 'recipe[name]' => 'Old draft' }, age: 31.days)

@@ -2,7 +2,7 @@
   <div class="mx-auto lg:w-8/12 px-4 pt-4">
     <h1 class="font-bold text-2xl text-secondary"><%= title %></h1>
     <p role="status" class="my-4 rounded-lg bg-yellow-50 border border-yellow-400 p-4 font-medium">
-      This recipe has not been saved. Choose Save or Save and edit to add it to your recipes.
+      This recipe has not been saved. Select Save to add it to your recipes.
     </p>
     <% if @fallback_name %>
       <p class="my-4">No recipe name was found. The placeholder name "<%= recipe.name %>" will be saved; you can change it after saving.</p>
@@ -31,11 +31,8 @@
       <%= hidden_field_tag "recipe[category_names][]", category %>
     <% end %>
     <div class="pt-0 lg:pt-4 lg:px-8 edit-delete-container shadow-xl lg:shadow-none fixed bottom-0 lg:static bg-black lg:bg-transparent w-screen lg:w-8/12 inset-x-0 lg:inset-auto mx-0 lg:mx-auto flex flex-row justify-center lg:justify-start gap-2 z-50 lg:z-auto">
-      <%= button_tag name: "save_action", value: "save", class: "inline-flex items-center rounded-lg py-2 px-3 bg-transparent border border-transparent text-white hover:text-secondary font-medium cursor-pointer lg:bg-white lg:border-secondary lg:text-secondary lg:hover:bg-secondary lg:hover:text-white" do %>
+      <%= button_tag class: "inline-flex items-center rounded-lg py-2 px-3 bg-transparent border border-transparent text-white hover:text-secondary font-medium cursor-pointer lg:bg-white lg:border-secondary lg:text-secondary lg:hover:bg-secondary lg:hover:text-white" do %>
         <%= render_icon "micro/document_check", classes: "me-1" %> Save
-      <% end %>
-      <%= button_tag name: "save_action", value: "edit", class: "inline-flex items-center rounded-lg py-2 px-3 bg-transparent border border-transparent text-white hover:text-secondary font-medium cursor-pointer lg:bg-white lg:border-secondary lg:text-secondary lg:hover:bg-secondary lg:hover:text-white" do %>
-        <%= render_icon "micro/pencil_square", classes: "me-1" %> Save and edit
       <% end %>
       <%= link_to back_path, data: { controller: "history-back", action: "click->history-back#back" }, class: "inline-flex items-center rounded-lg py-2 px-3 bg-transparent border border-transparent text-white hover:text-secondary font-medium cursor-pointer lg:bg-white lg:border-secondary lg:text-secondary lg:hover:bg-secondary lg:hover:text-white" do %>
         <%= render_icon "micro/arrow_uturn_left", classes: "me-1" %> Back

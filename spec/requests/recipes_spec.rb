@@ -235,7 +235,7 @@ RSpec.describe 'Recipes' do
           it "re-renders the #{source} preview without creating a recipe" do # rubocop:disable RSpec/ExampleLength
             expect do
               post recipes_path(as: user), params: {
-                preview_source: source, save_action: 'edit', recipe: { name: '', ingredients: 'Flour' }
+                preview_source: source, recipe: { name: '', ingredients: 'Flour' }
               }
             end.not_to change(Recipe, :count)
             expect(response).to have_http_status(:unprocessable_content)

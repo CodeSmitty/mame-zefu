@@ -167,13 +167,7 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
   end
 
   def create_html_response
-    redirect_to create_redirect_path, notice: 'Recipe was successfully created.'
-  end
-
-  def create_redirect_path
-    return edit_recipe_path(@recipe) if preview_source && params[:save_action] == 'edit'
-
-    recipe_url(@recipe)
+    redirect_to recipe_url(@recipe), notice: 'Recipe was successfully created.'
   end
 
   def create_failure_template

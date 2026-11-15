@@ -37,6 +37,7 @@ RSpec.feature 'Recipe previews' do
 
     scenario 'shows the remote image without persisted controls' do
       expect(page).to have_no_css('[data-controller="toggle-favorite"]')
+      expect(page).to have_no_field('Keep screen awake', visible: :all)
       expect(page).to have_css('img[src="https://example.com/cake.png"]', visible: :all)
       expect(user.recipes.count).to eq(0)
     end
@@ -69,15 +70,6 @@ RSpec.feature 'Recipe previews' do
 
       expect(user.recipes.last.attributes).to include('directions' => 'Mix well', 'description' => 'A cake')
     end
-
-    scenario 'saves before opening the edit page' do
-      click_button 'Save and edit'
-
-      recipe = user.recipes.last
-      expect(page).to have_current_path(edit_recipe_path(recipe))
-      expect(page).to have_field('Name', with: 'Imported cake')
-      expect(page).to have_css("[data-recipe-draft-storage-key-value='user:#{user.id}:recipe:#{recipe.id}']")
-    end
   end
 
   context 'when an imported recipe has duplicate categories' do
@@ -86,12 +78,10 @@ RSpec.feature 'Recipe previews' do
       visit web_result_recipes_path(url:, as: user)
     end
 
-    ['Save', 'Save and edit'].each do |button|
-      scenario "saves unique categories with #{button}" do
-        click_button button, exact: true
+    scenario 'saves unique categories' do
+      click_button 'Save', exact: true
 
-        expect(user.recipes.last.category_names).to contain_exactly('Dessert', 'Cake')
-      end
+      expect(user.recipes.last.category_names).to contain_exactly('Dessert', 'Cake')
     end
   end
 
@@ -104,9 +94,9 @@ RSpec.feature 'Recipe previews' do
     scenario 'explains the fallback name before saving it' do
       expect(page).to have_text('No recipe name was found.')
       expect(page).to have_text('Untitled imported recipe')
-      click_button 'Save and edit'
+      click_button 'Save', exact: true
 
-      expect(page).to have_field('Name', with: 'Untitled imported recipe')
+      expect(page).to have_current_path(recipe_path(user.recipes.last))
       expect(user.recipes.last.name).to eq('Untitled imported recipe')
     end
   end
@@ -127,19 +117,15 @@ RSpec.feature 'Recipe previews' do
       expect(user.recipes.count).to eq(0)
     end
 
+    scenario 'does not show the keep screen awake toggle' do
+      expect(page).to have_no_field('Keep screen awake', visible: :all)
+    end
+
     scenario 'returns to extraction without creating a recipe' do
       click_link 'Back'
 
       expect(page).to have_current_path(extraction_recipes_path)
       expect(user.recipes.count).to eq(0)
-    end
-
-    scenario 'saves and opens the edit page' do
-      click_button 'Save and edit'
-
-      expect(page).to have_current_path(edit_recipe_path(user.recipes.last))
-      expect(page).to have_field('Name', with: 'Imported cake')
-      expect(user.recipes.last.category_names).to include('Dessert')
     end
 
     scenario 'saves and opens the recipe page' do
@@ -156,9 +142,10 @@ RSpec.feature 'Recipe previews' do
       scenario 'explains and saves the fallback name' do
         visit extraction_result_recipes_path(token:, as: user)
         expect(page).to have_text('No recipe name was found.')
-        click_button 'Save and edit'
+        click_button 'Save', exact: true
 
-        expect(page).to have_field('Name', with: 'Untitled extracted recipe')
+        expect(page).to have_current_path(recipe_path(user.recipes.last))
+        expect(user.recipes.last.name).to eq('Untitled extracted recipe')
       end
     end
   end
@@ -171,12 +158,10 @@ RSpec.feature 'Recipe previews' do
 
     background { visit extraction_result_recipes_path(token:, as: user) }
 
-    ['Save', 'Save and edit'].each do |button|
-      scenario "saves unique categories with #{button}" do
-        click_button button, exact: true
+    scenario 'saves unique categories' do
+      click_button 'Save', exact: true
 
-        expect(user.recipes.last.category_names).to contain_exactly('Dessert', 'Cake')
-      end
+      expect(user.recipes.last.category_names).to contain_exactly('Dessert', 'Cake')
     end
   end
 end
