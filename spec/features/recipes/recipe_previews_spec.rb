@@ -80,6 +80,21 @@ RSpec.feature 'Recipe previews' do
     end
   end
 
+  context 'when an imported recipe has duplicate categories' do
+    background do
+      imported_recipe.category_names = %w[Dessert dessert Dessert Cake]
+      visit web_result_recipes_path(url:, as: user)
+    end
+
+    ['Save', 'Save and edit'].each do |button|
+      scenario "saves unique categories with #{button}" do
+        click_button button, exact: true
+
+        expect(user.recipes.last.category_names).to contain_exactly('Dessert', 'Cake')
+      end
+    end
+  end
+
   context 'when an imported name is missing' do
     background do
       imported_recipe.name = nil
@@ -144,6 +159,23 @@ RSpec.feature 'Recipe previews' do
         click_button 'Save and edit'
 
         expect(page).to have_field('Name', with: 'Untitled extracted recipe')
+      end
+    end
+  end
+
+  context 'when an extracted recipe has duplicate categories' do
+    given(:token) do
+      imported_recipe.category_names = %w[Dessert dessert Dessert Cake]
+      Recipes::Extraction::ResultStore.store(user:, recipe: imported_recipe)
+    end
+
+    background { visit extraction_result_recipes_path(token:, as: user) }
+
+    ['Save', 'Save and edit'].each do |button|
+      scenario "saves unique categories with #{button}" do
+        click_button button, exact: true
+
+        expect(user.recipes.last.category_names).to contain_exactly('Dessert', 'Cake')
       end
     end
   end

@@ -45,6 +45,43 @@ RSpec.describe Recipe do
       end
     end
 
+    context 'when category names contain duplicates' do
+      let(:category_names) { %w[Dessert dessert Dessert Cake] }
+
+      it 'associates each matching category once on create' do
+        set_category_names
+        recipe.save!
+
+        expect(recipe.reload.category_names).to contain_exactly('Dessert', 'Cake')
+      end
+
+      it 'associates each matching category once on update' do
+        recipe.save!
+        set_category_names
+        recipe.save!
+
+        expect(recipe.reload.category_names).to contain_exactly('Dessert', 'Cake')
+      end
+
+      it 'reuses a matching category belonging to the user' do
+        category = create(:category, user: recipe.user, name: 'DESSERT')
+        set_category_names
+        recipe.save!
+
+        expect(recipe.reload.categories).to include(category)
+      end
+
+      it 'retains pending names after validation fails so the recipe can be saved' do # rubocop:disable RSpec/ExampleLength
+        recipe.name = nil
+        set_category_names
+        recipe.save
+        recipe.name = 'Spaghetti'
+        recipe.save!
+
+        expect(recipe.reload.category_names).to contain_exactly('Dessert', 'Cake')
+      end
+    end
+
     context 'when the recipe already has categories' do
       let(:existing_categories) { %w[Main Vegetarian] }
 
