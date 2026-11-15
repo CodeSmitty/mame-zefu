@@ -14,5 +14,9 @@
           <%= render_icon "micro/trash", classes: "me-1" %>
           <span>Delete</span>
         <% end %>
+        <%= link_to recipes_path, data: { controller: "history-back", action: "click->history-back#back" }, class: "inline-flex items-center rounded-lg py-2 px-3 bg-transparent border border-transparent text-white hover:text-secondary font-medium cursor-pointer lg:bg-white lg:border-secondary lg:text-secondary lg:hover:bg-secondary lg:hover:text-white" do %>
+          <%= render_icon "micro/arrow_uturn_left", classes: "me-1" %>
+          <span>Back</span>
+        <% end %>
   </div>
 </div>

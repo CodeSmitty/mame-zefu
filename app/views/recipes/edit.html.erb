@@ -4,7 +4,7 @@
   <%= button_tag(form: "recipe_form", class: "inline-flex items-center rounded-lg py-2 px-3 bg-transparent border border-transparent text-white hover:text-secondary font-medium cursor-pointer lg:bg-white lg:border-secondary lg:text-secondary lg:hover:bg-secondary lg:hover:text-white") do %>
     <%= render_icon "micro/document_check", classes: "me-1" %> Save
   <% end %>
-  <%= link_to @recipe, class: "inline-flex items-center rounded-lg py-2 px-3 bg-transparent border border-transparent text-white hover:text-secondary font-medium cursor-pointer lg:bg-white lg:border-secondary lg:text-secondary lg:hover:bg-secondary lg:hover:text-white" do %>
+  <%= link_to @recipe, data: { controller: "history-back", action: "click->history-back#back" }, class: "inline-flex items-center rounded-lg py-2 px-3 bg-transparent border border-transparent text-white hover:text-secondary font-medium cursor-pointer lg:bg-white lg:border-secondary lg:text-secondary lg:hover:bg-secondary lg:hover:text-white" do %>
     <%= render_icon "micro/arrow_uturn_left", classes: "me-1" %> Back
   <% end %>
 </div>
