@@ -30,7 +30,8 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     get 'extraction', on: :collection, action: :extraction_form
     post 'extraction', on: :collection, action: :extraction
     get 'extraction/result/:token', on: :collection, action: :extraction_result, as: :extraction_result
-    get 'archive/download', on: :collection, action: :download_archive
+    get 'archive/download', on: :collection, action: :download_archive_form
+    get 'archive/download/file', on: :collection, action: :download_archive
     get 'archive/upload', on: :collection, action: :upload_archive_form
     post 'archive/upload', on: :collection, action: :upload_archive
   end

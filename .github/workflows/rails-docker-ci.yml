@@ -47,6 +47,10 @@ jobs:
         if: inputs.job_type == 'test'
         run: docker compose run --rm -T -e RAILS_ENV=test web bin/rails db:prepare
 
+      - name: Verify browser and driver
+        if: inputs.job_type == 'test'
+        run: docker compose run --rm -T web sh -c 'chromium --version && chromedriver --version'
+
       - name: Run tests
         if: inputs.job_type == 'test'
         run: docker compose run --rm -T -e CI=true -e GITHUB_ACTIONS=true web bundle exec rspec --format documentation
