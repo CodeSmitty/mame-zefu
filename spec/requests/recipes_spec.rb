@@ -13,14 +13,12 @@ RSpec.describe 'Recipes' do
       expect(response).to have_http_status(:ok)
     end
 
-    it 'loads recipe links outside the search results frame' do
+    it 'loads recipe links with full page navigation' do
       get recipes_path(as: user)
 
-      expect(response.body).to include('data-turbo-frame="_top"')
+      expect(response.body).to include('data-turbo="false"')
     end
 
-<<<<<<< HEAD
-=======
     it 'places the download page in the navigation' do
       get recipes_path(as: user)
 
@@ -37,7 +35,6 @@ RSpec.describe 'Recipes' do
       )
     end
 
->>>>>>> origin/main
     it 'filters to favorite recipes when requested' do
       favorite_recipe = create(:recipe, user: user, name: 'Favorite recipe', is_favorite: true)
 
