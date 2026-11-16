@@ -181,7 +181,7 @@ RSpec.describe 'Recipes' do
           get extraction_result_recipes_path(token:, as: user)
 
           expect(response).to have_http_status(:ok)
-          expect(response.body).to include('Extracted Recipe')
+          expect(response.body).to include('Recipe extracted. Review and save.')
           expect(response.body).to include('Toast')
           expect(response.body).to include('Bread')
         end
@@ -239,7 +239,8 @@ RSpec.describe 'Recipes' do
               }
             end.not_to change(Recipe, :count)
             expect(response).to have_http_status(:unprocessable_content)
-            expect(response.body).to include('Unable to save this recipe:', 'Flour', 'not been saved')
+            message = source == 'web' ? 'Recipe imported. Review and save.' : 'Recipe extracted. Review and save.'
+            expect(response.body).to include('Unable to save this recipe:', 'Flour', message)
           end
         end
       end
@@ -484,6 +485,10 @@ RSpec.describe 'Recipes' do
 
         it 'redirects to extraction result' do
           expect(response).to redirect_to(extraction_result_recipes_path(token:))
+        end
+
+        it 'does not add a duplicate flash notice' do
+          expect(flash[:notice]).to be_nil
         end
       end
 

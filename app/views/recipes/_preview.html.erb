@@ -1,12 +1,10 @@
 <div class="form-container lg:w-auto lg:mx-auto">
   <div class="mx-auto lg:w-8/12 px-4 pt-4">
-    <h1 class="font-bold text-2xl text-secondary"><%= title %></h1>
-    <p role="status" class="my-4 rounded-lg bg-yellow-50 border border-yellow-400 p-4 font-medium">
-      This recipe has not been saved. Select Save to add it to your recipes.
-    </p>
-    <% if @fallback_name %>
-      <p class="my-4">No recipe name was found. The placeholder name "<%= recipe.name %>" will be saved; you can change it after saving.</p>
-    <% end %>
+    <div class="my-4 flex justify-center text-xs">
+      <p role="status" class="flash border py-2 px-3 m-1 font-medium rounded-lg inline-block bg-gray-50 text-gray-500 border-gray-600">
+        <%= message %>
+      </p>
+    </div>
     <% if recipe.errors.any? %>
       <div role="alert" class="my-4 rounded-lg bg-red-50 p-4 text-red-600">
         <p>Unable to save this recipe:</p>
@@ -23,7 +21,6 @@
 
   <%= form_with model: recipe, id: "recipe_preview_form" do |form| %>
     <%= hidden_field_tag :preview_source, source %>
-    <%= hidden_field_tag :fallback_name, "1" if @fallback_name %>
     <% Recipes::Import::Base::IMPORT_FIELDS.excluding("category_names").each do |field| %>
       <%= form.hidden_field field %>
     <% end %>

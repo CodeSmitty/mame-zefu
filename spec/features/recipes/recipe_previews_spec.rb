@@ -29,10 +29,15 @@ RSpec.feature 'Recipe previews' do
     end
 
     scenario 'shows an unsaved unscaled recipe' do
-      expect(page).to have_text('This recipe has not been saved.')
+      expect(page).to have_css('[role="status"]', text: 'Recipe imported. Review and save.')
       expect(page).to have_text('Imported cake')
       expect(page).to have_css('[itemprop="recipeIngredient"]', text: '1 c flour')
       expect(page).to have_no_css('[aria-label^="Scale recipe"]')
+    end
+
+    scenario 'omits the old preview heading and notice' do
+      expect(page).to have_no_css('h1', text: 'Imported Recipe')
+      expect(page).to have_no_text('This recipe has not been saved.')
     end
 
     scenario 'shows the remote image without persisted controls' do
@@ -91,8 +96,8 @@ RSpec.feature 'Recipe previews' do
       visit web_result_recipes_path(url:, as: user)
     end
 
-    scenario 'explains the fallback name before saving it' do
-      expect(page).to have_text('No recipe name was found.')
+    scenario 'shows and saves the fallback name' do
+      expect(page).to have_no_text('No recipe name was found.')
       expect(page).to have_text('Untitled imported recipe')
       click_button 'Save', exact: true
 
@@ -111,10 +116,14 @@ RSpec.feature 'Recipe previews' do
     scenario 'can be refreshed without being saved' do
       visit current_url
 
-      expect(page).to have_text('Extracted Recipe')
-      expect(page).to have_text('This recipe has not been saved.')
+      expect(page).to have_css('[role="status"]', text: 'Recipe extracted. Review and save.', count: 1)
       expect(page).to have_css('[itemprop="recipeIngredient"]', text: '1 c flour')
       expect(user.recipes.count).to eq(0)
+    end
+
+    scenario 'omits the old preview heading and notice' do
+      expect(page).to have_no_css('h1', text: 'Extracted Recipe')
+      expect(page).to have_no_text('This recipe has not been saved.')
     end
 
     scenario 'does not show the keep screen awake toggle' do
@@ -139,9 +148,9 @@ RSpec.feature 'Recipe previews' do
         Recipes::Extraction::ResultStore.store(user:, recipe: Recipe.new(ingredients: 'Flour'))
       end
 
-      scenario 'explains and saves the fallback name' do
-        visit extraction_result_recipes_path(token:, as: user)
-        expect(page).to have_text('No recipe name was found.')
+      scenario 'shows and saves the fallback name' do
+        expect(page).to have_text('Untitled extracted recipe')
+        expect(page).to have_no_text('No recipe name was found.')
         click_button 'Save', exact: true
 
         expect(page).to have_current_path(recipe_path(user.recipes.last))

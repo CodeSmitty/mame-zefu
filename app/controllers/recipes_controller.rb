@@ -27,10 +27,7 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
   def extraction
     token = Recipes::Extraction::ResultStore.store(user: current_user, recipe: extracted_recipe)
 
-    redirect_to(
-      extraction_result_recipes_path(token:),
-      notice: 'Recipe extracted. Review and save.'
-    )
+    redirect_to extraction_result_recipes_path(token:)
   rescue Recipes::Extraction::Error => e
     Rails.logger.error("Recipe extraction error: #{e.class} - #{e.message}")
     flash.now[:alert] = e.message
@@ -163,7 +160,6 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
     return if @recipe.name.present?
 
     @recipe.name = "Untitled #{source} recipe"
-    @fallback_name = true
   end
 
   def create_html_response
@@ -171,7 +167,6 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
   end
 
   def create_failure_template
-    @fallback_name = params[:fallback_name] == '1'
     { 'web' => :web_result, 'extraction' => :extraction_result }.fetch(preview_source, :new)
   end
 

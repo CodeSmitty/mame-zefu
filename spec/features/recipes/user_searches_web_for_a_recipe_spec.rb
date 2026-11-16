@@ -111,7 +111,7 @@ RSpec.feature 'User searches the web for a recipe', :js do
   def expect_imported_recipe
     expect(page).to have_current_path(web_result_recipes_path(url: recipe_url))
     expect(page).to have_text('Imported cake')
-    expect(page).to have_text('This recipe has not been saved.')
+    expect(page).to have_text('Recipe imported. Review and save.')
   end
 
   def simulate_google_search
