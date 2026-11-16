@@ -1,7 +1,6 @@
 class RecipesController < ApplicationController # rubocop:disable Metrics/ClassLength
   before_action :require_login
-  before_action :ensure_extraction_enabled, only: %i[extraction_form extraction extraction_result create],
-                                            if: :extraction_action?
+  before_action :ensure_extraction_enabled, only: %i[extraction_form extraction extraction_result]
   before_action :validate_image_upload, only: [:extraction]
   before_action :set_recipe, only: %i[show edit update destroy toggle_favorite delete_image]
   skip_after_action :verify_pundit_authorization, only: %i[
@@ -151,10 +150,6 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
   end
 
   private
-
-  def extraction_action?
-    action_name != 'create' || params[:preview_source] == 'extraction'
-  end
 
   def assign_preview_name(source)
     return if @recipe.name.present?

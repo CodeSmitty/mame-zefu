@@ -217,6 +217,20 @@ RSpec.describe 'Recipes' do
         follow_redirect!
         expect(response).to have_http_status(:ok)
       end
+
+      context 'when saving an extraction preview after extraction is disabled' do
+        before do
+          allow(Recipes::Extraction).to receive(:enabled?).and_return(false)
+        end
+
+        it 'creates the recipe' do
+          expect do
+            post recipes_path(as: user), params: {
+              preview_source: 'extraction', recipe: attributes_for(:recipe)
+            }
+          end.to change(Recipe, :count).by(1)
+        end
+      end
     end
 
     context 'when recipe fails validation' do
@@ -242,19 +256,6 @@ RSpec.describe 'Recipes' do
             message = source == 'web' ? 'Recipe imported. Review and save.' : 'Recipe extracted. Review and save.'
             expect(response.body).to include('Unable to save this recipe:', 'Flour', message)
           end
-        end
-      end
-
-      context 'when extraction preview saving is disabled' do
-        before do
-          allow(Recipes::Extraction).to receive(:enabled?).and_return(false)
-        end
-
-        it 'does not create the recipe' do
-          expect do
-            post recipes_path(as: user), params: { preview_source: 'extraction', recipe: { name: 'Toast' } }
-          end.not_to change(Recipe, :count)
-          expect(response).to redirect_to(recipes_path)
         end
       end
     end
