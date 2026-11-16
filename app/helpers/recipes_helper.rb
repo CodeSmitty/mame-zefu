@@ -43,7 +43,7 @@ module RecipesHelper
     return if recipe.persisted? || recipe.image_src.blank?
 
     uri = URI.parse(recipe.image_src)
-    uri.to_s if uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)
+    uri.to_s if (uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)) && uri.host.present?
   rescue URI::InvalidURIError
     nil
   end
