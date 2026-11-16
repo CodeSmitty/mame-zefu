@@ -84,9 +84,10 @@
           </div>
         <% end %>
         <div class="mx-auto">
+          <% ingredient_parsing_enabled = ingredient_parsing_enabled? %>
           <div id="ingredients" class="flex items-center flex-wrap gap-x-2 mt-8 mb-2 scroll-mt-36">
             <h2 class="text-2xl font-semibold">Ingredients</h2>
-            <% if recipe.persisted? && recipe_scaling_enabled? && ingredient_parsing_enabled? %>
+            <% if recipe.persisted? && recipe_scaling_enabled? && ingredient_parsing_enabled %>
               <div class="flex items-center gap-1 text-gray-600">
                 <% if previous_recipe_scale %>
                   <%= link_to recipe_path(recipe, scale: previous_recipe_scale, anchor: "ingredients"),
@@ -114,7 +115,7 @@
                     <li
                       data-action="click->list#strike"
                       class="break-words leading-snug py-1"
-                      itemprop="recipeIngredient"><%= parsed_ingredient_markup(item, scale: recipe.persisted? ? recipe_scale : 1) %></li>
+                      itemprop="recipeIngredient"><%= parsed_ingredient_markup(item, scale: recipe.persisted? ? recipe_scale : 1, parsing_enabled: ingredient_parsing_enabled) %></li>
                   <% end %>
                 </ul>
               </div>
