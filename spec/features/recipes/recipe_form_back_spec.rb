@@ -88,6 +88,19 @@ RSpec.feature 'Returning from recipe forms', :js do
     expect(user.recipes.count).to eq(1)
   end
 
+  scenario 'falls back when history has forward entries but cannot go back' do # rubocop:disable RSpec/ExampleLength
+    visit new_recipe_path(as: user)
+    wait_for_back_controller
+    page.execute_script(<<~JS)
+      Object.defineProperty(window.history, 'length', { configurable: true, value: 2 })
+      Object.defineProperty(window.history, 'back', { configurable: true, value: () => {} })
+    JS
+    click_link 'Back'
+
+    expect(page).to have_current_path(recipes_path)
+    expect(user.recipes.count).to eq(1)
+  end
+
   scenario 'falls back to the recipe from the edit form with no previous history entry' do # rubocop:disable RSpec/ExampleLength
     visit edit_recipe_path(recipe, as: user)
     wait_for_back_controller
