@@ -20,10 +20,7 @@ module Recipes
       end
 
       def self.fetch(user:, token:)
-        key = cache_key(user:, token:)
-        payload = cache_store.read(key)
-        cache_store.delete(key)
-        payload
+        cache_store.read(cache_key(user:, token:))
       end
 
       def self.recipe_attributes(recipe)

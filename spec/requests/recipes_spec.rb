@@ -181,7 +181,7 @@ RSpec.describe 'Recipes' do
           get extraction_result_recipes_path(token:, as: user)
 
           expect(response).to have_http_status(:ok)
-          expect(response.body).to include('Extracted Recipe')
+          expect(response.body).to include('Recipe extracted. Review and save.')
           expect(response.body).to include('Toast')
           expect(response.body).to include('Bread')
         end
@@ -217,6 +217,20 @@ RSpec.describe 'Recipes' do
         follow_redirect!
         expect(response).to have_http_status(:ok)
       end
+
+      context 'when saving an extraction preview after extraction is disabled' do
+        before do
+          allow(Recipes::Extraction).to receive(:enabled?).and_return(false)
+        end
+
+        it 'creates the recipe' do
+          expect do
+            post recipes_path(as: user), params: {
+              preview_source: 'extraction', recipe: attributes_for(:recipe)
+            }
+          end.to change(Recipe, :count).by(1)
+        end
+      end
     end
 
     context 'when recipe fails validation' do
@@ -224,6 +238,25 @@ RSpec.describe 'Recipes' do
         post recipes_path(params: { recipe: attributes_for(:recipe, name: '') }, as: user)
 
         expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      context 'when a preview fails validation' do
+        before do
+          allow(Recipes::Extraction).to receive(:enabled?).and_return(true)
+        end
+
+        %w[web extraction].each do |source|
+          it "re-renders the #{source} preview without creating a recipe" do # rubocop:disable RSpec/ExampleLength
+            expect do
+              post recipes_path(as: user), params: {
+                preview_source: source, recipe: { name: '', ingredients: 'Flour' }
+              }
+            end.not_to change(Recipe, :count)
+            expect(response).to have_http_status(:unprocessable_content)
+            message = source == 'web' ? 'Recipe imported. Review and save.' : 'Recipe extracted. Review and save.'
+            expect(response.body).to include('Unable to save this recipe:', 'Flour', message)
+          end
+        end
       end
     end
   end
@@ -379,10 +412,17 @@ RSpec.describe 'Recipes' do
           allow(import_service).to receive(:recipe).and_raise(StandardError.new('Import failed'))
         end
 
-        it 'returns a 200 and shows an alert' do
+        it 'redirects to web search with an alert' do
           get web_result_recipes_path(url: url, as: user)
-          expect(response).to have_http_status(:ok)
-          expect(response.body).to include('Unable to import recipe')
+
+          expect(response).to redirect_to(web_search_recipes_path)
+          expect(flash[:alert]).to eq('Unable to import recipe.')
+        end
+
+        it 'handles an invalid URL without raising another error' do
+          get web_result_recipes_path(url: 'http://[', as: user)
+
+          expect(response).to redirect_to(web_search_recipes_path)
         end
       end
     end
@@ -446,6 +486,10 @@ RSpec.describe 'Recipes' do
 
         it 'redirects to extraction result' do
           expect(response).to redirect_to(extraction_result_recipes_path(token:))
+        end
+
+        it 'does not add a duplicate flash notice' do
+          expect(flash[:notice]).to be_nil
         end
       end
 

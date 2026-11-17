@@ -1,9 +1,9 @@
 module IngredientMarkupHelper
-  def parsed_ingredient_markup(item)
-    return item unless ingredient_parsing_enabled?
+  def parsed_ingredient_markup(item, scale: recipe_scale, parsing_enabled: ingredient_parsing_enabled?)
+    return item unless parsing_enabled
 
     ingredient = Ingredient::Parser.new(item).parse || Ingredient.new(name: item)
-    scaled = ingredient.scale(recipe_scale)
+    scaled = ingredient.scale(scale)
     content = safe_join(ingredient_pieces(scaled), ' ')
 
     current_user&.is_admin? ? ingredient_debug_markup(content, ingredient, item) : content
