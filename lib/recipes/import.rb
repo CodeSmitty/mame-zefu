@@ -2,16 +2,11 @@
 
 module Recipes
   class Import
-    require 'net/http'
-    require 'nokogiri'
     require 'uri'
 
     RECIPE_CLASSES = {
       'www.gordonramsay.com' => GordonRamsay
     }.freeze
-    USER_AGENT = 'Mozilla/5.0 (compatible; MameZefu/1.0)'
-    MAX_REDIRECTS = 5
-
     def recipe
       klass = recipe_class
       imported_recipe = import_recipe(klass)
@@ -66,22 +61,7 @@ module Recipes
     end
 
     def document
-      @document ||= Nokogiri::HTML(body)
-    end
-
-    def body
-      @body ||= fetch_body(uri)
-    end
-
-    def fetch_body(url, redirects = MAX_REDIRECTS)
-      response = Net::HTTP.get_response(url, 'User-Agent' => USER_AGENT)
-      return response.body if response.is_a?(Net::HTTPSuccess)
-
-      if response.is_a?(Net::HTTPRedirection) && response['location'].present? && redirects.positive?
-        return fetch_body(URI.join(url, response['location']), redirects - 1)
-      end
-
-      raise FetchError, "Recipe page request failed: HTTP #{response.code}"
+      @document ||= PageFetcher.new(uri).document
     end
   end
 end

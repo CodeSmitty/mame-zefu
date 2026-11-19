@@ -14,8 +14,8 @@ namespace :recipes do # rubocop:disable Metrics/BlockLength
     ]
 
     args
-      .then { |args| Recipes::Import.from_url(args.url) }
-      .then { |importer| Recipes::Import::JsonSchema.new(importer.send(:document)) }
+      .then { |args| Recipes::Import::PageFetcher.new(URI(args.url)).document }
+      .then { |document| Recipes::Import::JsonSchema.new(document) }
       .then { |json_schema| json_schema.send(:recipe_json) }
       .then { |json| json.slice(*fields) }
       .then { |sliced_json| puts JSON.pretty_generate(sliced_json) }

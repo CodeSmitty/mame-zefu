@@ -33,11 +33,6 @@ RSpec.describe Recipes::Import do
       expect(stub).to have_been_requested
     end
 
-    it 'fetches the page with a browser-compatible user agent' do
-      import.recipe
-      expect(stub.with(headers: { 'User-Agent' => described_class::USER_AGENT })).to have_been_requested
-    end
-
     it 'parses the document with Nokogiri' do
       import.recipe
       expect(import.send(:document)).to be_a(Nokogiri::HTML::Document)
@@ -56,29 +51,11 @@ RSpec.describe Recipes::Import do
       end
     end
 
-    context 'when the page redirects' do
-      let!(:stub) { stub_request(:get, uri.to_s).to_return(status: 302, headers: { 'Location' => '/new-recipe' }) }
-      let!(:redirect_stub) { stub_request(:get, 'https://example.com/new-recipe').to_return(body: html_body) }
-
-      it 'fetches the redirected page' do
-        import.recipe
-        expect(redirect_stub).to have_been_requested
-      end
-    end
-
     context 'when the page request fails' do
       let!(:stub) { stub_request(:get, uri.to_s).to_return(status: 403) }
 
       it 'reports the HTTP status' do
         expect { import.recipe }.to raise_error(Recipes::Import::FetchError, /HTTP 403/)
-      end
-    end
-
-    context 'when redirects exceed the limit' do
-      let!(:stub) { stub_request(:get, uri.to_s).to_return(status: 302, headers: { 'Location' => url }) }
-
-      it 'reports the redirect failure' do
-        expect { import.recipe }.to raise_error(Recipes::Import::FetchError, /HTTP 302/)
       end
     end
   end
