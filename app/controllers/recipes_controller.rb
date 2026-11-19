@@ -13,7 +13,7 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
   def web_search; end
 
   def web_result
-    @recipe = Recipes::Import.new(uri: uri_from_params, force_json_schema: force_json).recipe
+    @recipe = Recipes::Import.new(uri: uri_from_params).recipe
     @recipe.user = current_user
     assign_preview_name('imported')
   rescue StandardError => e
@@ -176,10 +176,6 @@ class RecipesController < ApplicationController # rubocop:disable Metrics/ClassL
 
   def uri_from_params
     @uri_from_params ||= URI(params.require(:url))
-  end
-
-  def force_json
-    ActiveModel::Type::Boolean.new.cast(params[:force_json])
   end
 
   # Only allow a list of trusted parameters through.

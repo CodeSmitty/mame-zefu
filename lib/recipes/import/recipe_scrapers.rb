@@ -98,8 +98,7 @@ module Recipes
       def scrape_recipe
         stdout, stderr, status = Open3.capture3(
           SCRAPER_PATH,
-          source.to_s,
-          stdin_data: document.to_html
+          source.to_s
         )
 
         raise NotFoundError, "Recipe scrape failed: #{stderr.strip.presence || 'unknown error'}" unless status.success?

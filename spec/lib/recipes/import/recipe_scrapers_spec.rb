@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Recipes::Import::RecipeScrapers do
   subject(:import) { described_class.new(document, source) }
 
-  let(:document) { Nokogiri::HTML('<html><body>Test</body></html>') }
+  let(:document) { nil }
   let(:source) { 'https://example.com/recipe' }
   let(:scrape_path) { Recipes::Import::RecipeScrapers::SCRAPER_PATH }
   let(:scrape_status) { instance_double(Process::Status, success?: scrape_success?) }
@@ -17,7 +17,7 @@ RSpec.describe Recipes::Import::RecipeScrapers do
 
   before do
     allow(Open3).to receive(:capture3)
-      .with(scrape_path, source.to_s, stdin_data: document.to_html)
+      .with(scrape_path, source.to_s)
       .and_return([scrape_output, scrape_error, scrape_status])
   end
 

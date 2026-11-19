@@ -2,48 +2,66 @@
 
 module Recipes
   class Import
-    require 'net/http'
-    require 'nokogiri'
     require 'uri'
-
-    delegate :recipe, to: :recipe_class_instance
 
     RECIPE_CLASSES = {
       'www.gordonramsay.com' => GordonRamsay
     }.freeze
+    def recipe
+      klass = recipe_class
+      imported_recipe = import_recipe(klass)
+      return imported_recipe if imported_recipe
 
-    def self.from_url(url, force_json_schema: false)
-      new(uri: URI(url), force_json_schema:)
+      if klass == RecipeScrapers
+        Rails.logger.warn('RecipeScrapers did not produce recipe details, trying JSON-LD')
+        imported_recipe = import_recipe(JsonSchema)
+        return imported_recipe if imported_recipe
+      end
+
+      raise NotFoundError, 'No recipe details found on the page'
     end
+
+    def self.from_url(url)
+      new(uri: URI(url))
+    end
+
+    class NotFoundError < StandardError; end
+    class FetchError < StandardError; end
 
     private
 
-    attr_reader :uri, :force_json_schema
+    attr_reader :uri
 
-    def initialize(uri:, force_json_schema: false)
+    def import_recipe(klass)
+      importer = klass.new(klass == RecipeScrapers ? nil : document, uri)
+      imported_recipe = importer.recipe
+      imported_recipe unless recipe_blank?(imported_recipe)
+    rescue RecipeScrapers::NotFoundError => e
+      raise unless klass == RecipeScrapers
+
+      Rails.logger.warn("RecipeScrapers import failed: #{e.message}")
+      nil
+    end
+
+    def recipe_blank?(recipe)
+      Base::IMPORT_FIELDS
+        .excluding('source', 'is_favorite')
+        .none? { |field| recipe.public_send(field).present? }
+    end
+
+    def initialize(uri:)
       @uri = uri
-      @force_json_schema = force_json_schema
     end
 
     def recipe_class
-      return JsonSchema if force_json_schema
-
       return RECIPE_CLASSES[uri.host] if RECIPE_CLASSES.key?(uri.host)
       return RecipeScrapers if RecipeScrapers.supported_host?(uri.host)
 
       JsonSchema
     end
 
-    def recipe_class_instance
-      @recipe_class_instance ||= recipe_class.new(document, uri)
-    end
-
     def document
-      @document ||= Nokogiri::HTML(body)
-    end
-
-    def body
-      @body ||= Net::HTTP.get(uri)
+      @document ||= PageFetcher.new(uri).document
     end
   end
 end
