@@ -35,7 +35,7 @@ module Recipes
     def import_recipe(klass)
       importer = klass.new(klass == RecipeScrapers ? nil : document, uri)
       imported_recipe = importer.recipe
-      imported_recipe if imported_recipe_fields_present?(imported_recipe)
+      imported_recipe unless recipe_blank?(imported_recipe)
     rescue RecipeScrapers::NotFoundError => e
       raise unless klass == RecipeScrapers
 
@@ -43,10 +43,10 @@ module Recipes
       nil
     end
 
-    def imported_recipe_fields_present?(recipe)
+    def recipe_blank?(recipe)
       Base::IMPORT_FIELDS
         .excluding('source', 'is_favorite')
-        .any? { |field| recipe.public_send(field).present? }
+        .none? { |field| recipe.public_send(field).present? }
     end
 
     def initialize(uri:)
