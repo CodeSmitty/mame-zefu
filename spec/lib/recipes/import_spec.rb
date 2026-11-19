@@ -11,15 +11,10 @@ RSpec.describe Recipes::Import do
       instance = described_class.from_url(url)
       expect(instance.send(:uri)).to eq(uri)
     end
-
-    it 'passes force_json_schema option' do
-      instance = described_class.from_url(url, force_json_schema: true)
-      expect(instance.send(:force_json_schema)).to be true
-    end
   end
 
   describe '#recipe' do
-    subject(:import) { described_class.new(uri: uri, force_json_schema: true) }
+    subject(:import) { described_class.new(uri: uri) }
 
     let!(:stub) { stub_request(:get, uri.to_s).to_return(body: html_body) }
     let(:html_body) { '<html><body>Recipe content</body></html>' }
@@ -28,6 +23,7 @@ RSpec.describe Recipes::Import do
     let(:recipe) { build(:recipe) }
 
     before do
+      allow(Recipes::Import::RecipeScrapers).to receive(:supported_host?).with(uri.host).and_return(false)
       allow(recipe_class).to receive(:new).and_return(recipe_instance)
       allow(recipe_instance).to receive(:recipe).and_return(recipe)
     end
@@ -166,9 +162,8 @@ RSpec.describe Recipes::Import do
   end
 
   describe '#recipe_class' do
-    subject(:import) { described_class.new(uri: uri, force_json_schema: force_json_schema) }
+    subject(:import) { described_class.new(uri: uri) }
 
-    let(:force_json_schema) { false }
     let(:json_schema_class) { Recipes::Import::JsonSchema }
     let(:recipe_scraper_class) { Recipes::Import::RecipeScrapers }
     let(:recipe_scraper_supported?) { false }
@@ -185,14 +180,6 @@ RSpec.describe Recipes::Import do
 
       it 'returns the specific class' do
         expect(import.send(:recipe_class)).to eq(Recipes::Import::GordonRamsay)
-      end
-
-      context 'when force_json_schema is true' do
-        let(:force_json_schema) { true }
-
-        it 'returns JsonSchema' do
-          expect(import.send(:recipe_class)).to eq(json_schema_class)
-        end
       end
     end
 

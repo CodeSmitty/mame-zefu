@@ -26,8 +26,8 @@ module Recipes
       raise NotFoundError, 'No recipe details found on the page'
     end
 
-    def self.from_url(url, force_json_schema: false)
-      new(uri: URI(url), force_json_schema:)
+    def self.from_url(url)
+      new(uri: URI(url))
     end
 
     class NotFoundError < StandardError; end
@@ -35,7 +35,7 @@ module Recipes
 
     private
 
-    attr_reader :uri, :force_json_schema
+    attr_reader :uri
 
     def import_recipe(klass)
       importer = klass.new(klass == RecipeScrapers ? nil : document, uri)
@@ -54,14 +54,11 @@ module Recipes
         .any? { |field| recipe.public_send(field).present? }
     end
 
-    def initialize(uri:, force_json_schema: false)
+    def initialize(uri:)
       @uri = uri
-      @force_json_schema = force_json_schema
     end
 
     def recipe_class
-      return JsonSchema if force_json_schema
-
       return RECIPE_CLASSES[uri.host] if RECIPE_CLASSES.key?(uri.host)
       return RecipeScrapers if RecipeScrapers.supported_host?(uri.host)
 
